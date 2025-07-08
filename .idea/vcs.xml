@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/MAVSDK" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/MAVSDK/build/third_party/curl/curl/src/curl" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/MAVSDK/build/third_party/gtest/gtest/src/gtest" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/MAVSDK/build/third_party/jsoncpp/jsoncpp/src/jsoncpp" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/MAVSDK/build/third_party/libevents/libevents-prefix/src/libevents" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/MAVSDK/build/third_party/mavlink/mavlink/src/mavlink" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/MAVSDK/build/third_party/mavlink/mavlink/src/mavlink/pymavlink" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/MAVSDK/build/third_party/tinyxml2/tinyxml2/src/tinyxml2" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/MAVSDK/proto" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/third_party/mavlink" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/third_party/mavlink/pymavlink" vcs="Git" />
+  </component>
+</project>
