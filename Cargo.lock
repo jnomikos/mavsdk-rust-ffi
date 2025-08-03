@@ -553,6 +553,7 @@ dependencies = [
  "autocxx",
  "autocxx-build",
  "cxx",
+ "glob",
  "miette",
 ]
 

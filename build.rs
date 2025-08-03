@@ -2,6 +2,12 @@ fn main() -> miette::Result<()> {
     let path = std::path::PathBuf::from("MAVSDK/src");
 
     let plugin_includes = vec![
+        "action",
+        "action_server",
+        "arm_authorizer_server",
+        "calibration",
+        "camera",
+        "camera_server",
         "telemetry"
     ];
 
@@ -31,6 +37,7 @@ fn main() -> miette::Result<()> {
         .flag_if_supported("-Wno-address-of-packed-member")
         .include("MAVSDK/src/mavsdk/core/include/mavsdk")
         .include("MAVSDK/src/mavsdk/plugins")
+        .file("cxx/mavsdk_shim.cpp")
         .compile("autocxx-mavssdk-example");
     println!("cargo:rerun-if-changed=src/main.rs");
     println!("cargo:rustc-link-search=native=MAVSDK/build");

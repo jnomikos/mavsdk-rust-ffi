@@ -1,11 +1,28 @@
+// TODO: Compile shim code so linker can find it
 #pragma once
+#include <map>
+#include <mutex>
+
 #include "mavsdk.h"
+#include "system.h"
+
+
+typedef void (*new_system_cb_t)(void* userdata);
+
+static std::unique_ptr<mavsdk::Mavsdk::NewSystemHandle> g_handle;
+
 
 namespace mavsdk {
     // This makes the nested typedef usable as a proper FFI target
     using Mavsdk_ConnectionHandle = Mavsdk::ConnectionHandle;
 }
 
-int test_function() {
-    return 42;
+extern "C" {
+void mavsdk_wait_on_new_system(
+    void* object
+);
 }
+
+void* test_function_handle(int number);
+
+int test_function();
