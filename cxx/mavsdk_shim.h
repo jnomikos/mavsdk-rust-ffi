@@ -23,6 +23,11 @@ void mavsdk_wait_on_new_system(
 );
 }
 
+std::shared_ptr<mavsdk::System> mavsdk_system_get(
+    mavsdk::Mavsdk* mavsdk_instance,
+    size_t index
+);
+
 void* test_function_handle(int number);
 
 int test_function();
