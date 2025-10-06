@@ -238,7 +238,7 @@ pub mod failure {
     pub use failure::*;
 }
 
-/*pub mod ftp {
+pub mod ftp {
     autocxx::include_cpp! {
         #include "ftp.h"
         name!(ftp)
@@ -248,12 +248,14 @@ pub mod failure {
         generate!("mavsdk::Ftp_ListDirectoryData")
         generate_pod!("mavsdk::Ftp_ProgressData")
         generate_pod!("mavsdk::Ftp_Result")
+        block!("mavsdk::Ftp_DownloadCallback")
+        block!("mavsdk::Ftp_UploadCallback")
 
 
         extern_cpp_type!("mavsdk::System", crate::base::mavsdk::System)
     }
     pub use ftp::*;
-}*/
+}
 
 pub mod ftp_server {
     autocxx::include_cpp! {
@@ -324,7 +326,7 @@ pub mod info {
     pub use info::*;
 }
 
-/*pub mod log_files {
+pub mod log_files {
     autocxx::include_cpp! {
         #include "log_files.h"
         name!(log_files)
@@ -334,11 +336,12 @@ pub mod info {
         generate_pod!("mavsdk::LogFiles_ProgressData")
         generate!("mavsdk::LogFiles_Entry")
         generate_pod!("mavsdk::LogFiles_Result")
+        block!("mavsdk::LogFiles_DownloadLogFileCallback")
 
         extern_cpp_type!("mavsdk::System", crate::base::mavsdk::System)
     }
     pub use log_files::*;
-}*/
+}
 
 pub mod log_streaming {
     autocxx::include_cpp! {
@@ -385,7 +388,7 @@ pub mod mavlink_passthrough {
     pub use mavlink_passthrough::*;
 }
 
-/*pub mod mission {
+pub mod mission {
     autocxx::include_cpp! {
         #include "mission.h"
         name!(mission)
@@ -400,11 +403,13 @@ pub mod mavlink_passthrough {
         generate_pod!("mavsdk::Mission_Result")
         generate_pod!("mavsdk::Mission_ProgressData")
         generate!("mavsdk::Mission_ProgressDataOrMission")
+        block!("mavsdk::Mission_DownloadMissionWithProgressCallback")
+        block!("mavsdk::Mission_UploadMissionWithProgressCallback")
 
         extern_cpp_type!("mavsdk::System", crate::base::mavsdk::System)
     }
     pub use mission::*;
-}*/
+}
 
 pub mod mission_raw {
     autocxx::include_cpp! {
@@ -688,4 +693,59 @@ pub mod telemetry_server {
     }
 
     pub use telemetry_server::*;
+}
+
+pub mod transponder {
+    autocxx::include_cpp! {
+        #include "transponder.h"
+        name!(transponder)
+
+        safety!(unsafe_ffi)
+        generate!("mavsdk::Transponder")
+        generate_pod!("mavsdk::Transponder_AdsbEmitterType")
+        generate_pod!("mavsdk::Transponder_AdsbAltitudeType")
+        generate!("mavsdk::Transponder_AdsbVehicle")
+        generate_pod!("mavsdk::Transponder_Result")
+        
+        extern_cpp_type!("mavsdk::System", crate::base::mavsdk::System)
+    }
+
+    pub use transponder::*;
+}
+
+pub mod tune {
+    autocxx::include_cpp! {
+        #include "tune.h"
+        name!(tune)
+
+        safety!(unsafe_ffi)
+        generate!("mavsdk::Tune")
+        generate_pod!("mavsdk::Tune_SongElement")
+        generate!("mavsdk::Tune_TuneDescription")
+        generate_pod!("mavsdk::Tune_Result")
+
+        
+        extern_cpp_type!("mavsdk::System", crate::base::mavsdk::System)
+    }
+
+    pub use tune::*;
+}
+
+pub mod winch {
+    autocxx::include_cpp! {
+        #include "winch.h"
+        name!(winch)
+
+        safety!(unsafe_ffi)
+        generate!("mavsdk::Winch")
+        generate_pod!("mavsdk::Winch_WinchAction")
+        generate_pod!("mavsdk::Winch_StatusFlags")
+        generate_pod!("mavsdk::Winch_Status")
+        generate_pod!("mavsdk::Winch_Result")
+
+
+        extern_cpp_type!("mavsdk::System", crate::base::mavsdk::System)
+    }
+
+    pub use winch::*;
 }
