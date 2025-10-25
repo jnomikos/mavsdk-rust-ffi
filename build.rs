@@ -1,4 +1,12 @@
 fn main() -> miette::Result<()> {
+    let dst = cmake::Config::new("MAVSDK")
+        .profile("Release") // or match Cargo profile dynamically
+        .build();
+
+    let src_include = "MAVSDK/src/mavsdk/core/include/mavsdk";
+    let generated_include = dst.join("build/src/mavsdk/core/include/mavsdk");
+    let mavlink_include = dst.join("build/third_party/mavlink/mavlink/src/mavlink-build/include");
+    let lib_dir = dst.join("lib");
     let path = std::path::PathBuf::from("MAVSDK/src");
 
     let plugin_includes = vec![
@@ -40,7 +48,9 @@ fn main() -> miette::Result<()> {
 
     let mut extra_clang_args = vec![
         "-std=c++17".to_string(),
-        "-IMAVSDK/src/mavsdk/core/include/mavsdk".to_string(),
+        format!("-I{}", src_include),
+        format!("-I{}", generated_include.display()),
+        format!("-I{}", mavlink_include.display()),
         "-I/usr/include/c++/11".to_string(),
         "-I/usr/include/x86_64-linux-gnu/c++/11".to_string(),
     ];
@@ -60,14 +70,19 @@ fn main() -> miette::Result<()> {
         b.include(format!("MAVSDK/src/mavsdk/plugins/{plugin}/include/plugins/{plugin}"));
     }
 
+    
+
     b.flag_if_supported("-std=c++17")
         .flag_if_supported("-Wno-address-of-packed-member")
         .include("MAVSDK/src/mavsdk/core/include/mavsdk")
         .include("MAVSDK/src/mavsdk/plugins")
+        .include(src_include)
+        .include(&generated_include)
+        .include(&mavlink_include)
         .file("cxx/mavsdk_shim.cpp")
         .compile("autocxx-mavssdk-example");
     println!("cargo:rerun-if-changed=src/lib.rs");
-    println!("cargo:rustc-link-search=native=MAVSDK/build");
+    println!("cargo:rustc-link-search=native={}", lib_dir.display());
     // Link dynamic library
     println!("cargo:rustc-link-lib=dylib=mavsdk");
     Ok(())
