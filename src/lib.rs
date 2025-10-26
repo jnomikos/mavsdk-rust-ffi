@@ -15,6 +15,7 @@ pub mod core {
         #include "log_callback.h"
         #include "mavlink_address.h"
         #include "mavsdk.h"
+        #include "overloaded.h"
         #include "plugin_base.h"
         #include "server_component.h"
         #include "server_plugin_base.h"
@@ -38,6 +39,7 @@ pub mod core {
         generate!("mavsdk::log::subscribe")
         generate_pod!("MavlinkAddress")
         generate!("mavsdk::Mavsdk")
+        generate!("mavsdk::Mavsdk_MavlinkMessage")
         generate_pod!("mavsdk::ForwardingOption")
         generate!("mavsdk::Mavsdk_Configuration")
         generate!("mavsdk::PluginBase")
@@ -375,6 +377,23 @@ pub mod manual_control {
     pub use manual_control::*;
 }
 
+pub mod mavlink_direct {
+    autocxx::include_cpp! {
+        #include "mavlink_direct.h"
+        name!(mavlink_direct)
+
+        safety!(unsafe_ffi)
+        generate!("mavsdk::MavlinkDirect")
+        generate!("mavsdk::MavlinkDirect_MavlinkMessage")
+        generate_pod!("mavsdk::MavlinkDirect_Result")
+
+
+        extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
+    }
+    pub use mavlink_direct::*;
+}
+/*
+DEPRECATED
 pub mod mavlink_passthrough {
     autocxx::include_cpp! {
         #include "mavlink_passthrough.h"
@@ -389,7 +408,7 @@ pub mod mavlink_passthrough {
         extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
     pub use mavlink_passthrough::*;
-}
+}*/
 
 pub mod mission {
     autocxx::include_cpp! {
