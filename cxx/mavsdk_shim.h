@@ -27,4 +27,6 @@ std::shared_ptr<mavsdk::System> mavsdk_system_get(
 );
 
 using SystemCallbackFn = void(*)(std::shared_ptr<mavsdk::System> system);
-void subscribe_on_new_system(mavsdk::Mavsdk* mavsdk_instance, uintptr_t cb_ptr);
+uintptr_t subscribe_on_new_system(mavsdk::Mavsdk* mavsdk_instance, uintptr_t cb_ptr);
+
+void unsubscribe_on_new_system(mavsdk::Mavsdk* mavsdk_instance, uintptr_t handle_ptr);

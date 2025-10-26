@@ -39,9 +39,9 @@ std::shared_ptr<mavsdk::System> mavsdk_system_get(
     return systems[index];
 }
 
-void subscribe_on_new_system(mavsdk::Mavsdk* mavsdk_instance, uintptr_t cb_ptr) {
+uintptr_t subscribe_on_new_system(mavsdk::Mavsdk* mavsdk_instance, uintptr_t cb_ptr) {
     SystemCallbackFn callback = reinterpret_cast<SystemCallbackFn>(cb_ptr);
-    mavsdk_instance->subscribe_on_new_system(
+    mavsdk::Mavsdk::NewSystemHandle system_handle = mavsdk_instance->subscribe_on_new_system(
         [callback, mavsdk_instance]() {
             if (callback) {
                 auto new_system = mavsdk_instance->systems().back();
@@ -51,4 +51,17 @@ void subscribe_on_new_system(mavsdk::Mavsdk* mavsdk_instance, uintptr_t cb_ptr) 
             }
         }
     );
+
+    return reinterpret_cast<uintptr_t>(new mavsdk::Mavsdk::NewSystemHandle(system_handle));
+}
+
+void unsubscribe_on_new_system(mavsdk::Mavsdk* mavsdk_instance, uintptr_t handle_ptr) {
+    if (!handle_ptr) {
+        std::cerr << "Handle pointer is null." << std::endl;
+        return;
+    }
+
+    auto* handle = reinterpret_cast<mavsdk::Mavsdk::NewSystemHandle*>(handle_ptr);
+    mavsdk_instance->unsubscribe_on_new_system(*handle);
+    delete handle;
 }
