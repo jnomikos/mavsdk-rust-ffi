@@ -28,7 +28,8 @@ fn main() -> miette::Result<()> {
         "log_files",
         "log_streaming",
         "manual_control",
-        "mavlink_passthrough",
+        "mavlink_direct",
+        //"mavlink_passthrough", DEPRECATED
         "mission",
         "mission_raw",
         "mission_raw_server",
