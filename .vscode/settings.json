@@ -60,7 +60,26 @@
         "thread": "cpp",
         "cinttypes": "cpp",
         "typeinfo": "cpp",
-        "__nullptr": "cpp"
+        "__nullptr": "cpp",
+        "future": "cpp",
+        "forward_list": "cpp",
+        "map": "cpp",
+        "set": "cpp",
+        "unordered_set": "cpp",
+        "iomanip": "cpp",
+        "iostream": "cpp",
+        "typeindex": "cpp",
+        "variant": "cpp",
+        "hash_map": "cpp",
+        "hash_set": "cpp",
+        "regex": "cpp",
+        "valarray": "cpp",
+        "__hash_table": "cpp",
+        "__split_buffer": "cpp",
+        "__tree": "cpp",
+        "list": "cpp",
+        "queue": "cpp",
+        "stack": "cpp"
     },
     "cmake.sourceDirectory": "/media/john/ssd2/personal/mavsdk-rust-ffi/MAVSDK/examples/fly_mission"
 }

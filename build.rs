@@ -80,6 +80,7 @@ fn main() -> miette::Result<()> {
         .include(&generated_include)
         .include(&mavlink_include)
         .file("cxx/mavsdk_shim.cpp")
+        .file("cxx/callback.cpp")
         .compile("autocxx-mavssdk-example");
     println!("cargo:rerun-if-changed=src/lib.rs");
     println!("cargo:rustc-link-search=native={}", lib_dir.display());

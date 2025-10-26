@@ -3,6 +3,7 @@ pub mod base {
 
         // Shims
         #include "../../cxx/mavsdk_shim.h"
+        #include "../../cxx/callback.h"
 
         // Core MAVSDK headers
         #include "autopilot.h"
@@ -45,11 +46,13 @@ pub mod base {
         generate!("mavsdk::System")
         generate_pod!("mavsdk::Vehicle")
         generate!("mavsdk::to_vehicle_from_mav_type")
-        
         // Shim
         generate!("mavsdk_wait_on_new_system")
         generate!("mavsdk_system_get")
-        
+        generate!("register_callback_shim")
+        generate!("trigger_callback_shim")
+        generate!("unregister_callback_shim")
+        generate!("subscribe_on_new_system")
     }
     pub use ffi::*;
 }

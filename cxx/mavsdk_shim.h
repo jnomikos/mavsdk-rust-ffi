@@ -1,7 +1,7 @@
 // TODO: Compile shim code so linker can find it
 #pragma once
-#include <map>
 #include <mutex>
+#include <cstdint>
 
 #include "mavsdk.h"
 #include "system.h"
@@ -17,17 +17,14 @@ namespace mavsdk {
     using Mavsdk_ConnectionHandle = Mavsdk::ConnectionHandle;
 }
 
-extern "C" {
-void mavsdk_wait_on_new_system(
+std::shared_ptr<mavsdk::System> mavsdk_wait_on_new_system(
     void* object
 );
-}
 
 std::shared_ptr<mavsdk::System> mavsdk_system_get(
     mavsdk::Mavsdk* mavsdk_instance,
     size_t index
 );
 
-void* test_function_handle(int number);
-
-int test_function();
+using SystemCallbackFn = void(*)(std::shared_ptr<mavsdk::System> system);
+void subscribe_on_new_system(mavsdk::Mavsdk* mavsdk_instance, uintptr_t cb_ptr);
