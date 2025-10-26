@@ -1,8 +1,9 @@
-pub mod base {
+pub mod core {
     autocxx::include_cpp! {
 
         // Shims
         #include "../../cxx/mavsdk_shim.h"
+        #include "../../cxx/callback.h"
 
         // Core MAVSDK headers
         #include "autopilot.h"
@@ -45,15 +46,17 @@ pub mod base {
         generate!("mavsdk::System")
         generate_pod!("mavsdk::Vehicle")
         generate!("mavsdk::to_vehicle_from_mav_type")
-        
         // Shim
         generate!("mavsdk_wait_on_new_system")
         generate!("mavsdk_system_get")
-        
+        generate!("register_callback_shim")
+        generate!("trigger_callback_shim")
+        generate!("unregister_callback_shim")
+        generate!("subscribe_on_new_system")
+        generate!("unsubscribe_on_new_system")
     }
     pub use ffi::*;
 }
-
 pub mod action {
     autocxx::include_cpp! {
         #include "action.h"
@@ -64,7 +67,7 @@ pub mod action {
         generate_pod!("mavsdk::Action_OrbitYawBehavior")
         generate_pod!("mavsdk::Action_Result")
         
-        extern_cpp_type!("mavsdk::System", crate::base::mavsdk::System)
+        extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
     pub use action::*;
 }
@@ -81,7 +84,7 @@ pub mod action_server {
         generate_pod!("mavsdk::ActionServer_ArmDisarm")
         generate_pod!("mavsdk::ActionServer_Result")
 
-        extern_cpp_type!("mavsdk::ServerComponent", crate::base::mavsdk::ServerComponent)
+        extern_cpp_type!("mavsdk::ServerComponent", crate::core::mavsdk::ServerComponent)
     }
     pub use action_server::*;
 }
@@ -96,7 +99,7 @@ pub mod arm_authorizer_server {
         generate_pod!("mavsdk::ArmAuthorizerServer_RejectionReason")
         generate_pod!("mavsdk::ArmAuthorizerServer_Result")
 
-        extern_cpp_type!("mavsdk::ServerComponent", crate::base::mavsdk::ServerComponent)
+        extern_cpp_type!("mavsdk::ServerComponent", crate::core::mavsdk::ServerComponent)
     }
     pub use arm_authorizer_server::*;
 }
@@ -133,7 +136,7 @@ pub mod camera {
         generate!("mavsdk::Camera_Information")
         generate!("mavsdk::Camera_CameraList")
 
-        extern_cpp_type!("mavsdk::System", crate::base::mavsdk::System)
+        extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
     pub use camera::*;
 }
@@ -163,7 +166,7 @@ pub mod camera_server {
         generate_pod!("mavsdk::CameraServer_TrackRectangle")
 
 
-        extern_cpp_type!("mavsdk::ServerComponent", crate::base::mavsdk::ServerComponent)
+        extern_cpp_type!("mavsdk::ServerComponent", crate::core::mavsdk::ServerComponent)
     }
     pub use camera_server::*;
 }
@@ -180,7 +183,7 @@ pub mod component_metadata {
         generate_pod!("mavsdk::ComponentMetadata_Result")
         generate!("mavsdk::ComponentMetadata_MetadataUpdate")
 
-        extern_cpp_type!("mavsdk::ServerComponent", crate::base::mavsdk::ServerComponent)
+        extern_cpp_type!("mavsdk::ServerComponent", crate::core::mavsdk::ServerComponent)
     }
     pub use component_metadata::*;
 }
@@ -196,7 +199,7 @@ pub mod component_metadata_server {
         generate!("mavsdk::ComponentMetadataServer_Metadata")
 
 
-        extern_cpp_type!("mavsdk::ServerComponent", crate::base::mavsdk::ServerComponent)
+        extern_cpp_type!("mavsdk::ServerComponent", crate::core::mavsdk::ServerComponent)
     }
     pub use component_metadata_server::*;
 }
@@ -216,7 +219,7 @@ pub mod events {
         generate!("mavsdk::Events_HealthAndArmingCheckReport")
         generate_pod!("mavsdk::Events_Result")
 
-        extern_cpp_type!("mavsdk::System", crate::base::mavsdk::System)
+        extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
     pub use events::*;
 }
@@ -233,7 +236,7 @@ pub mod failure {
         generate_pod!("mavsdk::Failure_Result")
 
 
-        extern_cpp_type!("mavsdk::System", crate::base::mavsdk::System)
+        extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
     pub use failure::*;
 }
@@ -252,7 +255,7 @@ pub mod ftp {
         block!("mavsdk::Ftp_UploadCallback")
 
 
-        extern_cpp_type!("mavsdk::System", crate::base::mavsdk::System)
+        extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
     pub use ftp::*;
 }
@@ -268,7 +271,7 @@ pub mod ftp_server {
 
 
 
-        extern_cpp_type!("mavsdk::ServerComponent", crate::base::mavsdk::ServerComponent)
+        extern_cpp_type!("mavsdk::ServerComponent", crate::core::mavsdk::ServerComponent)
     }
     pub use ftp_server::*;
 }
@@ -287,7 +290,7 @@ pub mod geofence {
         generate!("mavsdk::Geofence_GeofenceData")
         generate_pod!("mavsdk::Geofence_Result")
 
-        extern_cpp_type!("mavsdk::System", crate::base::mavsdk::System)
+        extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
     pub use geofence::*;
 }
@@ -302,7 +305,7 @@ pub mod gripper {
         generate_pod!("mavsdk::Gripper_GripperAction")
         generate_pod!("mavsdk::Gripper_Result")
 
-        extern_cpp_type!("mavsdk::System", crate::base::mavsdk::System)
+        extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
     pub use gripper::*;
 }
@@ -321,7 +324,7 @@ pub mod info {
         generate_pod!("mavsdk::Info_Version_FlightSoftwareVersionType")
         generate_pod!("mavsdk::Info_Result")
 
-        extern_cpp_type!("mavsdk::System", crate::base::mavsdk::System)
+        extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
     pub use info::*;
 }
@@ -338,7 +341,7 @@ pub mod log_files {
         generate_pod!("mavsdk::LogFiles_Result")
         block!("mavsdk::LogFiles_DownloadLogFileCallback")
 
-        extern_cpp_type!("mavsdk::System", crate::base::mavsdk::System)
+        extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
     pub use log_files::*;
 }
@@ -353,7 +356,7 @@ pub mod log_streaming {
         generate!("mavsdk::LogStreaming_LogStreamingRaw")
         generate_pod!("mavsdk::LogStreaming_Result")
 
-        extern_cpp_type!("mavsdk::System", crate::base::mavsdk::System)
+        extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
     pub use log_streaming::*;
 }
@@ -367,7 +370,7 @@ pub mod manual_control {
         generate!("mavsdk::ManualControl")
         generate_pod!("mavsdk::ManualControl_Result")
 
-        extern_cpp_type!("mavsdk::System", crate::base::mavsdk::System)
+        extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
     pub use manual_control::*;
 }
@@ -383,7 +386,7 @@ pub mod mavlink_passthrough {
         generate_pod!("mavsdk::MavlinkPassthrough_CommandLong")
         generate_pod!("mavsdk::MavlinkPassthrough_CommandInt")
 
-        extern_cpp_type!("mavsdk::System", crate::base::mavsdk::System)
+        extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
     pub use mavlink_passthrough::*;
 }
@@ -406,7 +409,7 @@ pub mod mission {
         block!("mavsdk::Mission_DownloadMissionWithProgressCallback")
         block!("mavsdk::Mission_UploadMissionWithProgressCallback")
 
-        extern_cpp_type!("mavsdk::System", crate::base::mavsdk::System)
+        extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
     pub use mission::*;
 }
@@ -423,7 +426,7 @@ pub mod mission_raw {
         generate!("mavsdk::MissionRaw_MissionImportData")
         generate_pod!("mavsdk::MissionRaw_Result")
 
-        extern_cpp_type!("mavsdk::System", crate::base::mavsdk::System)
+        extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
 
     pub use mission_raw::*;
@@ -441,7 +444,7 @@ pub mod mission_raw_server {
         generate_pod!("mavsdk::MissionRawServer_MissionProgress")
         generate_pod!("mavsdk::MissionRawServer_Result")
 
-        extern_cpp_type!("mavsdk::ServerComponent", crate::base::mavsdk::ServerComponent)
+        extern_cpp_type!("mavsdk::ServerComponent", crate::core::mavsdk::ServerComponent)
     }
 
     pub use mission_raw_server::*;
@@ -469,7 +472,7 @@ pub mod mocap {
         generate_pod!("mavsdk::Mocap_Result")
 
 
-        extern_cpp_type!("mavsdk::System", crate::base::mavsdk::System)
+        extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
 
     pub use mocap::*;
@@ -495,7 +498,7 @@ pub mod offboard {
         generate_pod!("mavsdk::Offboard_AccelerationNed")
         generate_pod!("mavsdk::Offboard_Result")
 
-        extern_cpp_type!("mavsdk::System", crate::base::mavsdk::System)
+        extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
 
     pub use offboard::*;
@@ -518,7 +521,7 @@ pub mod param {
         generate_pod!("mavsdk::Param_Result")
 
 
-        extern_cpp_type!("mavsdk::System", crate::base::mavsdk::System)
+        extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
 
     pub use param::*;
@@ -540,7 +543,7 @@ pub mod param_server {
 
 
 
-        extern_cpp_type!("mavsdk::ServerComponent", crate::base::mavsdk::ServerComponent)
+        extern_cpp_type!("mavsdk::ServerComponent", crate::core::mavsdk::ServerComponent)
     }
 
     pub use param_server::*;
@@ -558,7 +561,7 @@ pub mod rtk {
         generate_pod!("mavsdk::Rtk_Result")
 
 
-        extern_cpp_type!("mavsdk::System", crate::base::mavsdk::System)
+        extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
 
     pub use rtk::*;
@@ -574,7 +577,7 @@ pub mod server_utility {
         generate_pod!("mavsdk::ServerUtility_StatusTextType")
         generate_pod!("mavsdk::ServerUtility_Result")
 
-        extern_cpp_type!("mavsdk::System", crate::base::mavsdk::System)
+        extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
 
     pub use server_utility::*;
@@ -589,7 +592,7 @@ pub mod shell {
         generate!("mavsdk::Shell")
         generate_pod!("mavsdk::Shell_Result")
         
-        extern_cpp_type!("mavsdk::System", crate::base::mavsdk::System)
+        extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
 
     pub use shell::*;
@@ -642,7 +645,7 @@ pub mod telemetry {
         generate_pod!("mavsdk::Telemetry_Wind")
         generate_pod!("mavsdk::Telemetry_Result")
 
-        extern_cpp_type!("mavsdk::System", crate::base::mavsdk::System)
+        extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
     pub use telemetry::*;
 }
@@ -689,7 +692,7 @@ pub mod telemetry_server {
         generate_pod!("mavsdk::TelemetryServer_Result")
         
         
-        extern_cpp_type!("mavsdk::ServerComponent", crate::base::mavsdk::ServerComponent)
+        extern_cpp_type!("mavsdk::ServerComponent", crate::core::mavsdk::ServerComponent)
     }
 
     pub use telemetry_server::*;
@@ -707,7 +710,7 @@ pub mod transponder {
         generate!("mavsdk::Transponder_AdsbVehicle")
         generate_pod!("mavsdk::Transponder_Result")
         
-        extern_cpp_type!("mavsdk::System", crate::base::mavsdk::System)
+        extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
 
     pub use transponder::*;
@@ -725,7 +728,7 @@ pub mod tune {
         generate_pod!("mavsdk::Tune_Result")
 
         
-        extern_cpp_type!("mavsdk::System", crate::base::mavsdk::System)
+        extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
 
     pub use tune::*;
@@ -744,7 +747,7 @@ pub mod winch {
         generate_pod!("mavsdk::Winch_Result")
 
 
-        extern_cpp_type!("mavsdk::System", crate::base::mavsdk::System)
+        extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
 
     pub use winch::*;
