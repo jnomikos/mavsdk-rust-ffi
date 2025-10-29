@@ -4,72 +4,29 @@
 #include "mavsdk.h"
 
 
-#define DECLARE_SUBSCRIBE_SHIM(INSTANCE_TYPE, SUBSCRIBE_FN, CALLBACK_PARAMETER_TYPE) \
-    uintptr_t SUBSCRIBE_FN(INSTANCE_TYPE instance, uintptr_t cb_ptr) { \
-        using CallbackType = void(*)(CALLBACK_PARAMETER_TYPE); \
-        auto callback = reinterpret_cast<CallbackType>(cb_ptr); \
-        auto handle = instance->SUBSCRIBE_FN( \
-            [callback, instance](CALLBACK_PARAMETER_TYPE param) { \
-                callback(param); \
-            } \
-        ); \
-        auto handle_ptr = new decltype(handle)(handle); \
-        return reinterpret_cast<uintptr_t>(handle_ptr); \
-    } \
-    void un##SUBSCRIBE_FN(INSTANCE_TYPE instance, uintptr_t handle_ptr) { \
-        if (!handle_ptr) { \
-            std::cerr << "Handle pointer is null." << std::endl; \
-            return; \
-        } \
-        using HandleType = decltype(std::declval<INSTANCE_TYPE>()->SUBSCRIBE_FN( \
-            std::declval<std::function<void(CALLBACK_PARAMETER_TYPE)>>() \
-        )); \
-        auto* handle = reinterpret_cast<HandleType*>(handle_ptr); \
-        instance->un##SUBSCRIBE_FN(*handle); \
-        delete handle; \
-    }
-        
-#define DECLARE_SUBSCRIBE_SHIM_NO_PARAM(INSTANCE_TYPE, SUBSCRIBE_FN) \
-    uintptr_t SUBSCRIBE_FN(INSTANCE_TYPE instance, uintptr_t cb_ptr) { \
-        using CallbackType = void(*)(); \
-        auto callback = reinterpret_cast<CallbackType>(cb_ptr); \
-        auto handle = instance->SUBSCRIBE_FN( \
-            [callback, instance]() { \
-                callback(); \
-            } \
-        ); \
-        auto handle_ptr = new decltype(handle)(handle); \
-        return reinterpret_cast<uintptr_t>(handle_ptr); \
-    } \
-    void un##SUBSCRIBE_FN(INSTANCE_TYPE instance, uintptr_t handle_ptr) { \
-        if (!handle_ptr) { \
-            std::cerr << "Handle pointer is null." << std::endl; \
-            return; \
-        } \
-        using HandleType = decltype(std::declval<INSTANCE_TYPE>()->SUBSCRIBE_FN( \
-            std::declval<std::function<void()>>() \
-        )); \
-        auto* handle = reinterpret_cast<HandleType*>(handle_ptr); \
-        instance->un##SUBSCRIBE_FN(*handle); \
-        delete handle; \
-    }
+#define DECLARE_SUBSCRIBE_SHIM(INSTANCE_TYPE, SUBSCRIBE_FN, ...) \
+    DECLARE_SUBSCRIBE_SHIM_RET(INSTANCE_TYPE, void, SUBSCRIBE_FN, __VA_ARGS__)
 
-#define DECLARE_SUBSCRIBE_SHIM_BOOL(INSTANCE_TYPE, SUBSCRIBE_FN, CALLBACK_PARAMETER_TYPE) \
+#define DECLARE_SUBSCRIBE_SHIM_RET(INSTANCE_TYPE, RETURN_TYPE, SUBSCRIBE_FN, ...) \
     uintptr_t SUBSCRIBE_FN(INSTANCE_TYPE instance, uintptr_t cb_ptr) { \
-        using CallbackType = bool(*)(CALLBACK_PARAMETER_TYPE); \
+        using CallbackType = RETURN_TYPE(*)(__VA_ARGS__); \
         auto callback = reinterpret_cast<CallbackType>(cb_ptr); \
         auto handle = instance->SUBSCRIBE_FN( \
-            [callback](CALLBACK_PARAMETER_TYPE param) -> bool { \
-                return callback(param); \
+            [callback, instance](auto&&... args) -> RETURN_TYPE { \
+                return callback(std::forward<decltype(args)>(args)...); \
             } \
         ); \
-        auto* handle_ptr = new decltype(handle)(std::move(handle)); \
+        auto handle_ptr = new decltype(handle)(handle); \
         return reinterpret_cast<uintptr_t>(handle_ptr); \
     } \
     void un##SUBSCRIBE_FN(INSTANCE_TYPE instance, uintptr_t handle_ptr) { \
-        if (!handle_ptr) return; \
+        if (!handle_ptr) { \
+            std::cerr << "Handle pointer is null." << std::endl; \
+            return; \
+        } \
         using HandleType = decltype(std::declval<INSTANCE_TYPE>()->SUBSCRIBE_FN( \
-            std::declval<std::function<bool(CALLBACK_PARAMETER_TYPE)>>())); \
+            std::declval<std::function<RETURN_TYPE(__VA_ARGS__)>>() \
+        )); \
         auto* handle = reinterpret_cast<HandleType*>(handle_ptr); \
         instance->un##SUBSCRIBE_FN(*handle); \
         delete handle; \
