@@ -2,8 +2,7 @@ pub mod core {
     autocxx::include_cpp! {
 
         // Shims
-        #include "../../cxx/mavsdk_shim.h"
-        #include "../../cxx/callback.h"
+        #include "core_shim.h"
 
         // Core MAVSDK headers
         #include "autopilot.h"
@@ -48,14 +47,9 @@ pub mod core {
         generate!("mavsdk::System")
         generate_pod!("mavsdk::Vehicle")
         generate!("mavsdk::to_vehicle_from_mav_type")
-        // Shim
-        generate!("mavsdk_wait_on_new_system")
-        generate!("mavsdk_system_get")
-        generate!("register_callback_shim")
-        generate!("trigger_callback_shim")
-        generate!("unregister_callback_shim")
-        generate!("subscribe_on_new_system")
-        generate!("unsubscribe_on_new_system")
+
+        // Shims
+        generate_ns!("subscriptions")
     }
     pub use ffi::*;
 }
@@ -77,6 +71,7 @@ pub mod action {
 pub mod action_server {
     autocxx::include_cpp! {
         #include "action_server.h"
+        #include "action_server_shim.h"
         name!(action_server)
 
         safety!(unsafe_ffi)
@@ -86,6 +81,9 @@ pub mod action_server {
         generate_pod!("mavsdk::ActionServer_ArmDisarm")
         generate_pod!("mavsdk::ActionServer_Result")
 
+        // Shims
+        generate_ns!("subscriptions")
+
         extern_cpp_type!("mavsdk::ServerComponent", crate::core::mavsdk::ServerComponent)
     }
     pub use action_server::*;
@@ -94,12 +92,16 @@ pub mod action_server {
 pub mod arm_authorizer_server {
     autocxx::include_cpp! {
         #include "arm_authorizer_server.h"
+        #include "arm_authorizer_server_shim.h"
         name!(arm_authorizer_server)
 
         safety!(unsafe_ffi)
         generate!("mavsdk::ArmAuthorizerServer")
         generate_pod!("mavsdk::ArmAuthorizerServer_RejectionReason")
         generate_pod!("mavsdk::ArmAuthorizerServer_Result")
+
+        // Shims
+        generate_ns!("subscriptions")
 
         extern_cpp_type!("mavsdk::ServerComponent", crate::core::mavsdk::ServerComponent)
     }
@@ -109,6 +111,7 @@ pub mod arm_authorizer_server {
 pub mod camera {
     autocxx::include_cpp! {
         #include "camera.h"
+        #include "camera_shim.h"
         name!(camera)
 
         safety!(unsafe_ffi)
@@ -137,6 +140,9 @@ pub mod camera {
         generate!("mavsdk::Camera_CaptureInfo")
         generate!("mavsdk::Camera_Information")
         generate!("mavsdk::Camera_CameraList")
+
+        // Shims
+        generate_ns!("subscriptions")
 
         extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }

@@ -62,7 +62,7 @@ fn main() -> miette::Result<()> {
 
     let extra_clang_args_refs: Vec<&str> = extra_clang_args.iter().map(|s| s.as_str()).collect();
     
-    let mut b = autocxx_build::Builder::new("src/lib.rs", &[&path])
+    let mut b = autocxx_build::Builder::new("src/lib.rs", &["cxx", path.to_str().unwrap()])
         .extra_clang_args(&extra_clang_args_refs)
         .build()?;
 
@@ -80,8 +80,6 @@ fn main() -> miette::Result<()> {
         .include(src_include)
         .include(&generated_include)
         .include(&mavlink_include)
-        .file("cxx/mavsdk_shim.cpp")
-        .file("cxx/callback.cpp")
         .compile("autocxx-mavssdk-example");
     println!("cargo:rerun-if-changed=src/lib.rs");
     println!("cargo:rustc-link-search=native={}", lib_dir.display());

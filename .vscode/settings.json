@@ -79,7 +79,8 @@
         "__tree": "cpp",
         "list": "cpp",
         "queue": "cpp",
-        "stack": "cpp"
+        "stack": "cpp",
+        "__config": "cpp"
     },
     "cmake.sourceDirectory": "/media/john/ssd2/personal/mavsdk-rust-ffi/MAVSDK/examples/fly_mission"
 }
