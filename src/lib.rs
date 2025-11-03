@@ -152,6 +152,7 @@ pub mod camera {
 pub mod camera_server {
     autocxx::include_cpp! {
         #include "camera_server.h"
+        #include "camera_server_shim.h"
         name!(camera_server)
 
         safety!(unsafe_ffi)
@@ -173,6 +174,8 @@ pub mod camera_server {
         generate_pod!("mavsdk::CameraServer_TrackPoint")
         generate_pod!("mavsdk::CameraServer_TrackRectangle")
 
+        // Shims
+        generate_ns!("subscriptions")
 
         extern_cpp_type!("mavsdk::ServerComponent", crate::core::mavsdk::ServerComponent)
     }
@@ -182,6 +185,7 @@ pub mod camera_server {
 pub mod component_metadata {
     autocxx::include_cpp! {
         #include "component_metadata.h"
+        #include "component_metadata_shim.h"
         name!(component_metadata)
 
         safety!(unsafe_ffi)
@@ -190,6 +194,9 @@ pub mod component_metadata {
         generate!("mavsdk::ComponentMetadata_MetadataData")
         generate_pod!("mavsdk::ComponentMetadata_Result")
         generate!("mavsdk::ComponentMetadata_MetadataUpdate")
+
+        // Shims
+        generate_ns!("subscriptions")
 
         extern_cpp_type!("mavsdk::ServerComponent", crate::core::mavsdk::ServerComponent)
     }
@@ -206,7 +213,6 @@ pub mod component_metadata_server {
         generate_pod!("mavsdk::ComponentMetadataServer_MetadataType")
         generate!("mavsdk::ComponentMetadataServer_Metadata")
 
-
         extern_cpp_type!("mavsdk::ServerComponent", crate::core::mavsdk::ServerComponent)
     }
     pub use component_metadata_server::*;
@@ -215,6 +221,7 @@ pub mod component_metadata_server {
 pub mod events {
     autocxx::include_cpp! {
         #include "events.h"
+        #include "events_shim.h"
         name!(events)
 
         safety!(unsafe_ffi)
@@ -226,6 +233,9 @@ pub mod events {
         generate!("mavsdk::Events_HealthComponentReport")
         generate!("mavsdk::Events_HealthAndArmingCheckReport")
         generate_pod!("mavsdk::Events_Result")
+
+        // Shims
+        generate_ns!("subscriptions")
 
         extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
@@ -303,6 +313,35 @@ pub mod geofence {
     pub use geofence::*;
 }
 
+pub mod gimbal {
+    autocxx::include_cpp! {
+        #include "gimbal.h"
+        #include "gimbal_shim.h"
+        name!(gimbal)
+
+        safety!(unsafe_ffi)
+        generate!("mavsdk::Gimbal")
+        generate_pod!("mavsdk::Gimbal_GimbalMode")
+        generate_pod!("mavsdk::Gimbal_ControlMode")
+        generate_pod!("mavsdk::Gimbal_SendMode")
+        generate_pod!("mavsdk::Gimbal_Quaternion")
+        generate_pod!("mavsdk::Gimbal_EulerAngle")
+        generate_pod!("mavsdk::Gimbal_AngularVelocityBody")
+        generate_pod!("mavsdk::Gimbal_Attitude")
+        generate!("mavsdk::Gimbal_GimbalItem")
+        generate!("mavsdk::Gimbal_GimbalList")
+        generate_pod!("mavsdk::Gimbal_ControlStatus")
+        generate_pod!("mavsdk::Gimbal_Result")
+
+        
+        // Shims
+        generate_ns!("subscriptions")
+
+        extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
+    }
+    pub use gimbal::*;
+}
+
 pub mod gripper {
     autocxx::include_cpp! {
         #include "gripper.h"
@@ -321,6 +360,7 @@ pub mod gripper {
 pub mod info {
     autocxx::include_cpp! {
         #include "info.h"
+        #include "info_shim.h"
         name!(info)
 
         safety!(unsafe_ffi)
@@ -331,6 +371,9 @@ pub mod info {
         generate!("mavsdk::Info_Version")
         generate_pod!("mavsdk::Info_Version_FlightSoftwareVersionType")
         generate_pod!("mavsdk::Info_Result")
+
+        // Shims
+        generate_ns!("subscriptions")
 
         extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
@@ -357,12 +400,16 @@ pub mod log_files {
 pub mod log_streaming {
     autocxx::include_cpp! {
         #include "log_streaming.h"
+        #include "log_streaming_shim.h"
         name!(log_streaming)
 
         safety!(unsafe_ffi)
         generate!("mavsdk::LogStreaming")
         generate!("mavsdk::LogStreaming_LogStreamingRaw")
         generate_pod!("mavsdk::LogStreaming_Result")
+
+        // Shims
+        generate_ns!("subscriptions")
 
         extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
@@ -386,6 +433,7 @@ pub mod manual_control {
 pub mod mavlink_direct {
     autocxx::include_cpp! {
         #include "mavlink_direct.h"
+        #include "mavlink_direct_shim.h"
         name!(mavlink_direct)
 
         safety!(unsafe_ffi)
@@ -393,32 +441,19 @@ pub mod mavlink_direct {
         generate!("mavsdk::MavlinkDirect_MavlinkMessage")
         generate_pod!("mavsdk::MavlinkDirect_Result")
 
+        // Shims
+        generate_ns!("subscriptions")
+
 
         extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
     pub use mavlink_direct::*;
 }
-/*
-DEPRECATED
-pub mod mavlink_passthrough {
-    autocxx::include_cpp! {
-        #include "mavlink_passthrough.h"
-        name!(mavlink_passthrough)
-
-        safety!(unsafe_ffi)
-        generate!("mavsdk::MavlinkPassthrough")
-        generate_pod!("mavsdk::MavlinkPassthrough_Result")
-        generate_pod!("mavsdk::MavlinkPassthrough_CommandLong")
-        generate_pod!("mavsdk::MavlinkPassthrough_CommandInt")
-
-        extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
-    }
-    pub use mavlink_passthrough::*;
-}*/
 
 pub mod mission {
     autocxx::include_cpp! {
         #include "mission.h"
+        #include "mission_shim.h"
         name!(mission)
 
         safety!(unsafe_ffi)
@@ -434,6 +469,9 @@ pub mod mission {
         block!("mavsdk::Mission_DownloadMissionWithProgressCallback")
         block!("mavsdk::Mission_UploadMissionWithProgressCallback")
 
+        // Shims
+        generate_ns!("subscriptions")
+
         extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
     pub use mission::*;
@@ -442,6 +480,7 @@ pub mod mission {
 pub mod mission_raw {
     autocxx::include_cpp! {
         #include "mission_raw.h"
+        #include "mission_raw_shim.h"
         name!(mission_raw)
 
         safety!(unsafe_ffi)
@@ -450,6 +489,9 @@ pub mod mission_raw {
         generate_pod!("mavsdk::MissionRaw_MissionItem")
         generate!("mavsdk::MissionRaw_MissionImportData")
         generate_pod!("mavsdk::MissionRaw_Result")
+
+        // Shims
+        generate_ns!("subscriptions")
 
         extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
@@ -460,6 +502,7 @@ pub mod mission_raw {
 pub mod mission_raw_server {
     autocxx::include_cpp! {
         #include "mission_raw_server.h"
+        #include "mission_raw_server_shim.h"
         name!(mission_raw_server)
 
         safety!(unsafe_ffi)
@@ -468,6 +511,9 @@ pub mod mission_raw_server {
         generate!("mavsdk::MissionRawServer_MissionPlan")
         generate_pod!("mavsdk::MissionRawServer_MissionProgress")
         generate_pod!("mavsdk::MissionRawServer_Result")
+
+        // Shims
+        generate_ns!("subscriptions")
 
         extern_cpp_type!("mavsdk::ServerComponent", crate::core::mavsdk::ServerComponent)
     }
@@ -556,6 +602,7 @@ pub mod param {
 pub mod param_server {
     autocxx::include_cpp! {
         #include "param_server.h"
+        #include "param_server_shim.h"
         name!(param_server)
 
         safety!(unsafe_ffi)
@@ -566,7 +613,8 @@ pub mod param_server {
         generate!("mavsdk::ParamServer_AllParams")
         generate_pod!("mavsdk::ParamServer_Result")
 
-
+        // Shims
+        generate_ns!("subscriptions")
 
         extern_cpp_type!("mavsdk::ServerComponent", crate::core::mavsdk::ServerComponent)
     }
@@ -611,11 +659,15 @@ pub mod server_utility {
 pub mod shell {
     autocxx::include_cpp! {
         #include "shell.h"
+        #include "shell_shim.h"
         name!(shell)
 
         safety!(unsafe_ffi)
         generate!("mavsdk::Shell")
         generate_pod!("mavsdk::Shell_Result")
+
+        // Shims
+        generate_ns!("subscriptions")
         
         extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
@@ -626,6 +678,7 @@ pub mod shell {
 pub mod telemetry {
     autocxx::include_cpp! {
         #include "telemetry.h"
+        #include "telemetry_shim.h"
         name!(telemetry)
 
         safety!(unsafe_ffi)
@@ -669,6 +722,9 @@ pub mod telemetry {
         generate_pod!("mavsdk::Telemetry_Altitude")
         generate_pod!("mavsdk::Telemetry_Wind")
         generate_pod!("mavsdk::Telemetry_Result")
+
+        // Shims
+        generate_ns!("subscriptions")
 
         extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
@@ -726,6 +782,7 @@ pub mod telemetry_server {
 pub mod transponder {
     autocxx::include_cpp! {
         #include "transponder.h"
+        #include "transponder_shim.h"
         name!(transponder)
 
         safety!(unsafe_ffi)
@@ -734,6 +791,9 @@ pub mod transponder {
         generate_pod!("mavsdk::Transponder_AdsbAltitudeType")
         generate!("mavsdk::Transponder_AdsbVehicle")
         generate_pod!("mavsdk::Transponder_Result")
+
+        // Shims
+        generate_ns!("subscriptions")
         
         extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
@@ -762,6 +822,7 @@ pub mod tune {
 pub mod winch {
     autocxx::include_cpp! {
         #include "winch.h"
+        #include "winch_shim.h"
         name!(winch)
 
         safety!(unsafe_ffi)
@@ -771,6 +832,8 @@ pub mod winch {
         generate_pod!("mavsdk::Winch_Status")
         generate_pod!("mavsdk::Winch_Result")
 
+        // Shims
+        generate_ns!("subscriptions")
 
         extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
