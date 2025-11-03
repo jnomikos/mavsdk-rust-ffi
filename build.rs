@@ -1,6 +1,10 @@
+use std::env;
+use std::process::Command;
+use std::path::Path;
+
 fn main() -> miette::Result<()> {
     let dst = cmake::Config::new("MAVSDK")
-        .profile("Release") // or match Cargo profile dynamically
+        .profile("Release")
         .build();
 
     let src_include = "MAVSDK/src/mavsdk/core/include/mavsdk";
@@ -12,38 +16,39 @@ fn main() -> miette::Result<()> {
     let plugin_includes = vec![
         "action",
         "action_server",
-        "arm_authorizer_server",
-        "calibration",
+        "arm_authorizer_server", 
+        "calibration", 
         "camera",
-        "camera_server",
-        "component_metadata",
-        "component_metadata_server",
+        "camera_server", 
+        "component_metadata", 
+        "component_metadata_server", 
         "events",
-        "failure",
-        "ftp",
-        "ftp_server",
-        "geofence",
-        "gripper",
+        "failure", 
+        "ftp", 
+        "ftp_server", 
+        "geofence", 
+        "gimbal", 
+        "gripper", 
         "info",
-        "log_files",
-        "log_streaming",
-        "manual_control",
+        "log_files", 
+        "log_streaming", 
+        "manual_control", 
         "mavlink_direct",
-        //"mavlink_passthrough", DEPRECATED
-        "mission",
-        "mission_raw",
+        //"mavlink_passthrough", 
+        "mission", 
+        "mission_raw", 
         "mission_raw_server",
-        "mocap",
-        "offboard",
-        "param",
-        "param_server",
-        "rtk",
+        "mocap", 
+        "offboard", 
+        "param", 
+        "param_server", 
+        "rtk", 
         "server_utility",
-        "shell",
-        "telemetry",
+        "shell", 
+        "telemetry", 
         "telemetry_server",
-        "transponder",
-        "tune",
+        "transponder", 
+        "tune", 
         "winch"
     ];
 
@@ -52,26 +57,39 @@ fn main() -> miette::Result<()> {
         format!("-I{}", src_include),
         format!("-I{}", generated_include.display()),
         format!("-I{}", mavlink_include.display()),
-        "-I/usr/include/c++/11".to_string(),
-        "-I/usr/include/x86_64-linux-gnu/c++/11".to_string(),
     ];
-    
+
+    // Dynamically detect C++ standard library include paths on Linux
+    if env::var("CARGO_CFG_TARGET_OS").as_deref() == Ok("linux") {
+        // Try to get the GCC version
+        if let Ok(output) = Command::new("g++").arg("-dumpversion").output() {
+            let version = String::from_utf8_lossy(&output.stdout).trim().to_string();
+            let gcc_base = format!("/usr/include/c++/{}", version);
+            if Path::new(&gcc_base).exists() {
+                extra_clang_args.push(format!("-I{}", gcc_base));
+            }
+            let multiarch = format!("/usr/include/x86_64-linux-gnu/c++/{}", version);
+            if Path::new(&multiarch).exists() {
+                extra_clang_args.push(format!("-I{}", multiarch));
+            }
+        }
+    }
+
+    // Windows: usually MSVC/Clang auto-detects, but you can add logic here if needed
+
     for plugin in &plugin_includes {
         extra_clang_args.push(format!("-IMAVSDK/src/mavsdk/plugins/{plugin}/include/plugins/{plugin}"));
     }
 
     let extra_clang_args_refs: Vec<&str> = extra_clang_args.iter().map(|s| s.as_str()).collect();
-    
+
     let mut b = autocxx_build::Builder::new("src/lib.rs", &["cxx", path.to_str().unwrap()])
         .extra_clang_args(&extra_clang_args_refs)
         .build()?;
 
-
     for plugin in plugin_includes {
         b.include(format!("MAVSDK/src/mavsdk/plugins/{plugin}/include/plugins/{plugin}"));
     }
-
-    
 
     b.flag_if_supported("-std=c++17")
         .flag_if_supported("-Wno-address-of-packed-member")
@@ -83,7 +101,6 @@ fn main() -> miette::Result<()> {
         .compile("autocxx-mavssdk-example");
     println!("cargo:rerun-if-changed=src/lib.rs");
     println!("cargo:rustc-link-search=native={}", lib_dir.display());
-    // Link dynamic library
     println!("cargo:rustc-link-lib=dylib=mavsdk");
     Ok(())
 }
