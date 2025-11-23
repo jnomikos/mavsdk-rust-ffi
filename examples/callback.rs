@@ -5,6 +5,22 @@ fn system_callback() {
     println!("New system detected");
 }
 
+#[unsafe(no_mangle)]
+pub extern "C" fn message_callback_ffi(msg: *const core::mavsdk::Mavsdk_MavlinkMessage) -> bool {
+    // SAFETY: Only if msg is valid and not null
+    if msg.is_null() {
+        return false;
+    }
+    println!("Incoming JSON message received");
+    // Print out the message as JSON
+    unsafe {
+        let msg_ref = &*msg;
+        dbg!(std::mem::size_of::<core::mavsdk::Mavsdk_MavlinkMessage>());
+        println!("Message: {}", core::MavlinkMessage::get_message_name(msg_ref));
+    }
+    true
+}
+
 fn main() {
     let config = core::mavsdk::Mavsdk_Configuration::new(1, 1, true).within_unique_ptr();
     let mut mavsdk_instance = core::mavsdk::Mavsdk::new1(&config).within_unique_ptr();
@@ -13,10 +29,20 @@ fn main() {
 
     let sys_cb_ptr = system_callback as usize;
     unsafe {
-        let system_handle = core::subscriptions::subscribe_on_new_system(mavsdk_instance.as_mut_ptr(), sys_cb_ptr as libc::uintptr_t);
+        let system_handle = core::core_subscriptions::subscribe_on_new_system(mavsdk_instance.as_mut_ptr(), sys_cb_ptr as libc::uintptr_t);
+
+        let msg_cb_ptr = message_callback_ffi as usize;
+        let msg_handle = core::core_subscriptions::subscribe_incoming_messages_json(
+            mavsdk_instance.as_mut_ptr(),
+            msg_cb_ptr as libc::uintptr_t,
+        );
 
         // Await until we get system
         std::thread::sleep(std::time::Duration::from_secs(10));
-        core::subscriptions::unsubscribe_on_new_system(mavsdk_instance.as_mut_ptr(),system_handle);
+        core::core_subscriptions::unsubscribe_on_new_system(mavsdk_instance.as_mut_ptr(),system_handle);
+        core::core_subscriptions::unsubscribe_incoming_messages_json(
+            mavsdk_instance.as_mut_ptr(),
+            msg_handle,
+        );
     }
 }

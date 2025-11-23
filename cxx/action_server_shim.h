@@ -3,7 +3,7 @@
 #include "action_server.h"
 #include "shim_macros.h"
 
-namespace subscriptions {
+namespace action_server_subscriptions {
     DECLARE_SUBSCRIBE_SHIM(mavsdk::ActionServer*, subscribe_arm_disarm, mavsdk::ActionServer::ArmDisarmCallback)
 
     DECLARE_SUBSCRIBE_SHIM(mavsdk::ActionServer*, subscribe_flight_mode_change, mavsdk::ActionServer::FlightModeChangeCallback)

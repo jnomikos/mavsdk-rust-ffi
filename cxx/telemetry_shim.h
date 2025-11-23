@@ -3,7 +3,7 @@
 #include "telemetry.h"
 #include "shim_macros.h"
 
-namespace subscriptions {
+namespace telemetry_subscriptions {
     DECLARE_SUBSCRIBE_SHIM(mavsdk::Telemetry*, subscribe_position, mavsdk::Telemetry::PositionCallback)
 
     DECLARE_SUBSCRIBE_SHIM(mavsdk::Telemetry*, subscribe_home, mavsdk::Telemetry::HomeCallback)

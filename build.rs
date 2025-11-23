@@ -75,7 +75,7 @@ fn main() -> miette::Result<()> {
         }
     }
 
-    // Windows: usually MSVC/Clang auto-detects, but you can add logic here if needed
+    // Windows: usually MSVC/Clang auto-detects
 
     for plugin in &plugin_includes {
         extra_clang_args.push(format!("-IMAVSDK/src/mavsdk/plugins/{plugin}/include/plugins/{plugin}"));
@@ -83,7 +83,7 @@ fn main() -> miette::Result<()> {
 
     let extra_clang_args_refs: Vec<&str> = extra_clang_args.iter().map(|s| s.as_str()).collect();
 
-    let mut b = autocxx_build::Builder::new("src/lib.rs", &["cxx", path.to_str().unwrap()])
+    let mut b = autocxx_build::Builder::new("src/lib.rs", &["cxx", "cxx/gen", path.to_str().unwrap()])
         .extra_clang_args(&extra_clang_args_refs)
         .build()?;
 

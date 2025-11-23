@@ -10,7 +10,7 @@ namespace mavsdk {
     using Mavsdk_ConnectionHandle = Mavsdk::ConnectionHandle;
 }
 
-namespace subscriptions {
+namespace core_subscriptions {
     DECLARE_SUBSCRIBE_SHIM(mavsdk::Mavsdk*, subscribe_connection_errors, mavsdk::Mavsdk::ConnectionErrorCallback)
 
     DECLARE_SUBSCRIBE_SHIM(mavsdk::Mavsdk*, subscribe_on_new_system, mavsdk::Mavsdk::NewSystemCallback)

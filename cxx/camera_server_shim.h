@@ -3,7 +3,7 @@
 #include "camera_server.h"
 #include "shim_macros.h"
 
-namespace subscriptions {
+namespace camera_server_subscriptions {
     DECLARE_SUBSCRIBE_SHIM(mavsdk::CameraServer*, subscribe_take_photo, mavsdk::CameraServer::TakePhotoCallback)
 
     DECLARE_SUBSCRIBE_SHIM(mavsdk::CameraServer*, subscribe_start_video, mavsdk::CameraServer::StartVideoCallback)

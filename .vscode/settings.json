@@ -80,7 +80,13 @@
         "list": "cpp",
         "queue": "cpp",
         "stack": "cpp",
-        "__config": "cpp"
+        "__config": "cpp",
+        "__functional_base": "cpp",
+        "__functional_base_03": "cpp",
+        "__tuple": "cpp",
+        "filesystem": "cpp",
+        "__locale": "cpp",
+        "*.inc": "cpp"
     },
     "cmake.sourceDirectory": "/media/john/ssd2/personal/mavsdk-rust-ffi/MAVSDK/examples/fly_mission"
 }

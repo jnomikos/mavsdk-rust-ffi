@@ -3,6 +3,7 @@ pub mod core {
 
         // Shims
         #include "core_shim.h"
+        #include "core_getters.h"
 
         // Core MAVSDK headers
         #include "autopilot.h"
@@ -49,7 +50,9 @@ pub mod core {
         generate!("mavsdk::to_vehicle_from_mav_type")
 
         // Shims
-        generate_ns!("subscriptions")
+        generate_ns!("core_subscriptions")
+        generate_ns!("ConnectionError")
+        generate_ns!("MavlinkMessage")
     }
     pub use ffi::*;
 }
@@ -82,7 +85,7 @@ pub mod action_server {
         generate_pod!("mavsdk::ActionServer_Result")
 
         // Shims
-        generate_ns!("subscriptions")
+        generate_ns!("action_server_subscriptions")
 
         extern_cpp_type!("mavsdk::ServerComponent", crate::core::mavsdk::ServerComponent)
     }
@@ -101,7 +104,7 @@ pub mod arm_authorizer_server {
         generate_pod!("mavsdk::ArmAuthorizerServer_Result")
 
         // Shims
-        generate_ns!("subscriptions")
+        generate_ns!("arm_authorizer_server_subscriptions")
 
         extern_cpp_type!("mavsdk::ServerComponent", crate::core::mavsdk::ServerComponent)
     }
@@ -112,6 +115,7 @@ pub mod camera {
     autocxx::include_cpp! {
         #include "camera.h"
         #include "camera_shim.h"
+        #include "camera_getters.h"
         name!(camera)
 
         safety!(unsafe_ffi)
@@ -142,7 +146,7 @@ pub mod camera {
         generate!("mavsdk::Camera_CameraList")
 
         // Shims
-        generate_ns!("subscriptions")
+        generate_ns!("camera_subscriptions")
 
         extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
@@ -175,7 +179,7 @@ pub mod camera_server {
         generate_pod!("mavsdk::CameraServer_TrackRectangle")
 
         // Shims
-        generate_ns!("subscriptions")
+        generate_ns!("camera_server_subscriptions")
 
         extern_cpp_type!("mavsdk::ServerComponent", crate::core::mavsdk::ServerComponent)
     }
@@ -196,7 +200,7 @@ pub mod component_metadata {
         generate!("mavsdk::ComponentMetadata_MetadataUpdate")
 
         // Shims
-        generate_ns!("subscriptions")
+        generate_ns!("component_metadata_subscriptions")
 
         extern_cpp_type!("mavsdk::ServerComponent", crate::core::mavsdk::ServerComponent)
     }
@@ -235,7 +239,7 @@ pub mod events {
         generate_pod!("mavsdk::Events_Result")
 
         // Shims
-        generate_ns!("subscriptions")
+        generate_ns!("events_subscriptions")
 
         extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
@@ -335,7 +339,7 @@ pub mod gimbal {
 
         
         // Shims
-        generate_ns!("subscriptions")
+        generate_ns!("gimbal_subscriptions")
 
         extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
@@ -373,7 +377,7 @@ pub mod info {
         generate_pod!("mavsdk::Info_Result")
 
         // Shims
-        generate_ns!("subscriptions")
+        generate_ns!("info_subscriptions")
 
         extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
@@ -409,7 +413,7 @@ pub mod log_streaming {
         generate_pod!("mavsdk::LogStreaming_Result")
 
         // Shims
-        generate_ns!("subscriptions")
+        generate_ns!("log_streaming_subscriptions")
 
         extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
@@ -442,7 +446,7 @@ pub mod mavlink_direct {
         generate_pod!("mavsdk::MavlinkDirect_Result")
 
         // Shims
-        generate_ns!("subscriptions")
+        generate_ns!("mavlink_direct_subscriptions")
 
 
         extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
@@ -470,7 +474,7 @@ pub mod mission {
         block!("mavsdk::Mission_UploadMissionWithProgressCallback")
 
         // Shims
-        generate_ns!("subscriptions")
+        generate_ns!("mission_subscriptions")
 
         extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
@@ -491,7 +495,7 @@ pub mod mission_raw {
         generate_pod!("mavsdk::MissionRaw_Result")
 
         // Shims
-        generate_ns!("subscriptions")
+        generate_ns!("mission_raw_subscriptions")
 
         extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
@@ -513,7 +517,7 @@ pub mod mission_raw_server {
         generate_pod!("mavsdk::MissionRawServer_Result")
 
         // Shims
-        generate_ns!("subscriptions")
+        generate_ns!("mission_raw_server_subscriptions")
 
         extern_cpp_type!("mavsdk::ServerComponent", crate::core::mavsdk::ServerComponent)
     }
@@ -614,7 +618,7 @@ pub mod param_server {
         generate_pod!("mavsdk::ParamServer_Result")
 
         // Shims
-        generate_ns!("subscriptions")
+        generate_ns!("param_server_subscriptions")
 
         extern_cpp_type!("mavsdk::ServerComponent", crate::core::mavsdk::ServerComponent)
     }
@@ -667,7 +671,7 @@ pub mod shell {
         generate_pod!("mavsdk::Shell_Result")
 
         // Shims
-        generate_ns!("subscriptions")
+        generate_ns!("shell_subscriptions")
         
         extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
@@ -724,7 +728,7 @@ pub mod telemetry {
         generate_pod!("mavsdk::Telemetry_Result")
 
         // Shims
-        generate_ns!("subscriptions")
+        generate_ns!("telemetry_subscriptions")
 
         extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
@@ -793,7 +797,7 @@ pub mod transponder {
         generate_pod!("mavsdk::Transponder_Result")
 
         // Shims
-        generate_ns!("subscriptions")
+        generate_ns!("transponder_subscriptions")
         
         extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
@@ -833,7 +837,7 @@ pub mod winch {
         generate_pod!("mavsdk::Winch_Result")
 
         // Shims
-        generate_ns!("subscriptions")
+        generate_ns!("winch_subscriptions")
 
         extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
