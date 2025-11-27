@@ -3,7 +3,6 @@ pub mod core {
 
         // Shims
         #include "core_shim.h"
-        #include "core_getters.h"
 
         // Core MAVSDK headers
         #include "autopilot.h"
@@ -51,8 +50,6 @@ pub mod core {
 
         // Shims
         generate_ns!("core_subscriptions")
-        generate_ns!("ConnectionError")
-        generate_ns!("MavlinkMessage")
     }
     pub use ffi::*;
 }
@@ -115,7 +112,6 @@ pub mod camera {
     autocxx::include_cpp! {
         #include "camera.h"
         #include "camera_shim.h"
-        #include "camera_getters.h"
         name!(camera)
 
         safety!(unsafe_ffi)
