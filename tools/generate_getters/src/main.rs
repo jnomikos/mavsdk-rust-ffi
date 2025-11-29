@@ -63,7 +63,7 @@ fn struct_members_are_all_pod(entity: &clang::Entity) -> bool {
     true
 }
 
-fn visit_entity(entity: &clang::Entity, target_file: &str, write_file: &mut fs::File) -> i32 {
+fn visit_entity(entity: &clang::Entity, target_file: &str, write_file: &mut fs::File, namespaces_written: &mut std::collections::HashSet<String>) -> i32 {
     // Only process entities defined in the target file
     if let Some(location) = entity.get_location() {
         if let Some(file) = location.get_file_location().file {
@@ -78,28 +78,33 @@ fn visit_entity(entity: &clang::Entity, target_file: &str, write_file: &mut fs::
 
     // print if entry is pod struct
     debug!(
-        "Visiting entity: {:?}, kind: {:?}, is_pod: {}",
+        "Visiting entity: {:?}, kind: {:?}, is_pod: {}, location: {:?}",
         entity.get_name(),
         entity.get_kind(),
-        entity.get_type().map_or(false, |ty| ty.is_pod())
+        entity.get_type().map_or(false, |ty| ty.is_pod()),
+        entity.get_location()
     );
 
+    /*
+       Instead of checking if the struct itself is POD, we go through each member and check if they are POD, because autocxx is more lax with POD detection than clang. Clang can determine a struct as non-POD even if all its members are POD, due to other factors like constructors, destructors, etc. By checking each member individually, we ensure that we only generate getters for structs that truly have non-POD members.
+    */
     match entity.get_kind() {
         EntityKind::StructDecl if entity.get_type().map_or(false, |ty| !ty.is_pod()) => {
             if let Some(qualified_name) = get_qualified_name(entity) {
-                warn!("Struct: {}", qualified_name);
-
-                /*
-                    We cannot simply only check if the struct itself is pod, because by c++ standards, a struct with all pod members but {} after each member is still non-pod. Autocxx is more lax when it comes to pod determination. So we also check if each member is pod and if they all are, we don't generate getters for it.
-                 */
                 let struct_name = entity.get_name().unwrap();
                 let mut write_content = String::new();
                 let mut all_members_pod = true;
-
                 let orig_gen_count = gen_count;
+                let struct_parent_name = entity
+                    .get_semantic_parent()
+                    .and_then(|p| p.get_name())
+                    .unwrap_or_default();
 
-                //writeln!(write_file, "namespace {}Getters {{", struct_name).unwrap();
-                write_content.push_str(&format!("namespace {}Getters {{\n", struct_name));
+                warn!("Struct: {}", qualified_name);
+
+                write_content.push_str(&format!("\tstruct {} {{\n", struct_name));
+                write_content.push_str(&format!("\t\t{}() = delete;\n", struct_name));
+
                 for field in entity.get_children() {
                     if field.get_kind() == EntityKind::FieldDecl {
                         let field_name = field.get_name().unwrap();
@@ -135,9 +140,9 @@ fn visit_entity(entity: &clang::Entity, target_file: &str, write_file: &mut fs::
                         }
 
                         let (ret_prefix, ret_suffix) = if field_is_pod {
-                            (format!("{}", field_type_name), "".to_string())
+                            (format!("static {}", field_type_name), "".to_string())
                         } else {
-                            (format!("const {}&", field_type_name), "".to_string())
+                            (format!("static const {}&", field_type_name), "".to_string())
                         };
 
                         debug!("  Field: {} {}", field_type_name, field_name);
@@ -146,7 +151,7 @@ fn visit_entity(entity: &clang::Entity, target_file: &str, write_file: &mut fs::
                             ret_prefix, field_name, qualified_name, field_name
                         );
                         write_content.push_str(&format!(
-                            "  {} get_{}(const {}& s) {{ return s.{}; }}\n",
+                            "\t\t{} get_{}(const {}& s) {{ return s.{}; }}\n",
                             ret_prefix, field_name, qualified_name, field_name
                         ));
 
@@ -154,7 +159,13 @@ fn visit_entity(entity: &clang::Entity, target_file: &str, write_file: &mut fs::
                         gen_count += 1;
                     }
                 }
-                write_content.push_str(&format!("}} // namespace {}\n", qualified_name));
+                write_content.push_str(&format!("\t}};\n"));
+                if !namespaces_written.contains(&struct_parent_name) {
+                    // Write namespace declaration
+                    writeln!(write_file, "namespace {}Getters {{", struct_parent_name).unwrap();
+
+                    namespaces_written.insert(struct_parent_name.clone());
+                }
 
                 if !all_members_pod {
                     write_file.write_all(write_content.as_bytes()).unwrap();
@@ -171,7 +182,7 @@ fn visit_entity(entity: &clang::Entity, target_file: &str, write_file: &mut fs::
 
     // Recurse into children
     for child in entity.get_children() {
-        gen_count += visit_entity(&child, target_file, write_file);
+        gen_count += visit_entity(&child, target_file, write_file, namespaces_written);
     }
 
     gen_count
@@ -218,16 +229,21 @@ fn parse_file(target_file: &str, write_to: &Path, clang_args: &[String]) {
     
     let mut write_file = fs::File::create(write_to).expect("Unable to create output file"); 
 
-    writeln!(write_file, "// THIS FILE IS AUTO-GENERATED. DO NOT EDIT MANUALLY!").unwrap();
+    writeln!(write_file, "// WARNING: THIS FILE IS AUTOGENERATED! As such, it should not be edited.").unwrap();
     writeln!(write_file, "#pragma once").unwrap();
 
-    let gen_count = visit_entity(&tu.get_entity(), target_file, &mut write_file);
+    let mut namespaces_written = std::collections::HashSet::new();
+    let gen_count = visit_entity(&tu.get_entity(), target_file, &mut write_file, &mut namespaces_written);
 
     if gen_count == 0 {
         // Remove the file if nothing was generated
         fs::remove_file(write_to).unwrap();
         //println!("No getters generated for {}, file removed.", target_file);
     } else {
+        for ns in namespaces_written {
+            writeln!(write_file, "}} // namespace {}Getters", ns).unwrap();
+        }
+
         info!("Generated {} getters for {}", gen_count, target_file);
     }
 }

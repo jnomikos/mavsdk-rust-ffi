@@ -16,19 +16,9 @@ pub extern "C" fn message_callback_ffi(msg: *const core::mavsdk::Mavsdk_MavlinkM
     unsafe {
         let msg_ref = &*msg;
         
-        match msg_ref.message_name.to_str() { 
-            Ok(name) => {
-                println!("Incoming MAVLink message: {}", name);
-            }
-            Err(e) => {
-                println!("Error decoding string: {:?}", e);
-            }
-        }
-
-        // For the JSON string, do the same:
-        if let Ok(json) = msg_ref.fields_json.to_str() {
-             println!("JSON Content: {}", json);
-        }
+        // Print msg_ref.message_name
+        let message_name = msg_ref.message_name();
+        println!("Message Name: {}", message_name);
     }
     true
 }
