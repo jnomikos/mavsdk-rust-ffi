@@ -1,0 +1,18 @@
+warning: unused import: `error`
+ --> src/main.rs:7:23
+  |
+7 | use log::{info, warn, error, debug};
+  |                       ^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `ret_suffix`
+  --> src/main.rs:72:42
+   |
+72 |                         let (ret_prefix, ret_suffix) = if is_small {
+   |                                          ^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_ret_suffix`
+   |
+   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `generate_getters` (bin "generate_getters") generated 2 warnings (run `cargo fix --bin "generate_getters"` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.01s

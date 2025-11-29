@@ -32,6 +32,37 @@ fn get_qualified_name(entity: &clang::Entity) -> Option<String> {
     })
 }
 
+fn struct_members_are_all_pod(entity: &clang::Entity) -> bool {
+    for child in entity.get_children() {
+        if child.get_kind() != EntityKind::FieldDecl {
+            continue;
+        }
+        if let Some(field_type) = child.get_type() {
+            if field_type.is_pod() {
+                println!("  Member {} is POD", child.get_name().unwrap_or_default());
+                continue;
+            }
+
+            // If it's a struct, recursively check its members
+            if let Some(decl) = field_type.get_declaration() {
+                println!("  Member {} is a struct, checking members", child.get_name().unwrap_or_default());
+                if decl.get_kind() == EntityKind::StructDecl {
+                    println!("    Struct {} found, checking if all members are POD", decl.get_name().unwrap_or_default());
+                    if !struct_members_are_all_pod(&decl) {
+                        println!("    Struct {} has non-POD members", decl.get_name().unwrap_or_default());
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+    }
+    true
+}
+
 fn visit_entity(entity: &clang::Entity, target_file: &str, write_file: &mut fs::File) -> i32 {
     // Only process entities defined in the target file
     if let Some(location) = entity.get_location() {
@@ -56,20 +87,54 @@ fn visit_entity(entity: &clang::Entity, target_file: &str, write_file: &mut fs::
     match entity.get_kind() {
         EntityKind::StructDecl if entity.get_type().map_or(false, |ty| !ty.is_pod()) => {
             if let Some(qualified_name) = get_qualified_name(entity) {
-                debug!("Struct: {}", qualified_name);
+                warn!("Struct: {}", qualified_name);
 
-                
+                /*
+                    We cannot simply only check if the struct itself is pod, because by c++ standards, a struct with all pod members but {} after each member is still non-pod. Autocxx is more lax when it comes to pod determination. So we also check if each member is pod and if they all are, we don't generate getters for it.
+                 */
                 let struct_name = entity.get_name().unwrap();
-                writeln!(write_file, "namespace {} {{", struct_name).unwrap();
+                let mut write_content = String::new();
+                let mut all_members_pod = true;
+
+                let orig_gen_count = gen_count;
+
+                //writeln!(write_file, "namespace {}Getters {{", struct_name).unwrap();
+                write_content.push_str(&format!("namespace {}Getters {{\n", struct_name));
                 for field in entity.get_children() {
                     if field.get_kind() == EntityKind::FieldDecl {
                         let field_name = field.get_name().unwrap();
                         let field_type = field.get_type().unwrap();
-                        let field_type_name = field_type.get_display_name();
+                        let display_name = field_type.get_display_name();
+                        let field_type_name = if display_name.contains('<') {
+                            // Complex/template type (e.g., vector)
+                            field_type.get_canonical_type().get_display_name()
+                        } else {
+                            // Simple type
+                            display_name
+                        };
 
-                        let is_small = field_type.is_pod();
+                        let field_is_pod = field_type.is_pod();
+                        println!("  Field: {} of type {} is_pod: {}", field_name, field_type_name, field_is_pod);
 
-                        let (ret_prefix, ret_suffix) = if is_small {
+                        if let Some(field_type_decl) = field_type.get_declaration() {
+                            if field_type_decl.get_kind() == EntityKind::StructDecl {
+                                println!("Field {} is a struct, checking if all members are pod", field_name);
+                                if !struct_members_are_all_pod(&field_type_decl) {
+                                    all_members_pod = false;
+                                    println!("Field {} has non-POD members", field_name);
+                                }
+                            } else if !field_is_pod {
+                                println!("Field {} is non-POD type", field_name);
+                                all_members_pod = false;
+                            }
+                        } else {
+                            if !field_is_pod {
+                                println!("Field {} is non-POD type with no declaration", field_name);
+                                all_members_pod = false;
+                            } 
+                        }
+
+                        let (ret_prefix, ret_suffix) = if field_is_pod {
                             (format!("{}", field_type_name), "".to_string())
                         } else {
                             (format!("const {}&", field_type_name), "".to_string())
@@ -80,17 +145,25 @@ fn visit_entity(entity: &clang::Entity, target_file: &str, write_file: &mut fs::
                             "  Getter: {} get_{}(const {}& s) {{ return s.{}; }}",
                             ret_prefix, field_name, qualified_name, field_name
                         );
-                        writeln!(
-                            write_file,
-                            "  {} get_{}(const {}& s) {{ return s.{}; }}",
+                        write_content.push_str(&format!(
+                            "  {} get_{}(const {}& s) {{ return s.{}; }}\n",
                             ret_prefix, field_name, qualified_name, field_name
-                        ).unwrap();
+                        ));
 
 
                         gen_count += 1;
                     }
                 }
-                writeln!(write_file, "}} // namespace {}", qualified_name).unwrap();
+                write_content.push_str(&format!("}} // namespace {}\n", qualified_name));
+
+                if !all_members_pod {
+                    write_file.write_all(write_content.as_bytes()).unwrap();
+                }
+                else {
+                    // Reset gen_count if all members are pod
+                    gen_count = orig_gen_count;
+                    debug!("Skipping generation for {} as all members are POD", qualified_name);
+                }
             }
         }
         _ => {}
@@ -160,7 +233,7 @@ fn parse_file(target_file: &str, write_to: &Path, clang_args: &[String]) {
 }
 
 fn main() {
-
+    env_logger::init();
     let mut clang_args = vec![
         "-I.".to_string(), // your current directory (project headers)
         "-I/usr/lib/llvm-14/lib/clang/14.0.0/include".to_string(),

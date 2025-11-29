@@ -1,6 +1,6 @@
 // THIS FILE IS AUTO-GENERATED. DO NOT EDIT MANUALLY!
 #pragma once
-namespace AdsbVehicle {
+namespace AdsbVehicleGetters {
   uint32_t get_icao_address(const mavsdk::Transponder::AdsbVehicle& s) { return s.icao_address; }
   double get_latitude_deg(const mavsdk::Transponder::AdsbVehicle& s) { return s.latitude_deg; }
   double get_longitude_deg(const mavsdk::Transponder::AdsbVehicle& s) { return s.longitude_deg; }

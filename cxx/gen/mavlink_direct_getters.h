@@ -1,6 +1,6 @@
 // THIS FILE IS AUTO-GENERATED. DO NOT EDIT MANUALLY!
 #pragma once
-namespace MavlinkMessage {
+namespace MavlinkMessageGetters {
   const std::string& get_message_name(const mavsdk::MavlinkDirect::MavlinkMessage& s) { return s.message_name; }
   uint32_t get_system_id(const mavsdk::MavlinkDirect::MavlinkMessage& s) { return s.system_id; }
   uint32_t get_component_id(const mavsdk::MavlinkDirect::MavlinkMessage& s) { return s.component_id; }
