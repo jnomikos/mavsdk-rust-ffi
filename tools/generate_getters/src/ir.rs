@@ -196,6 +196,7 @@ fn resolve_cpp_type(field_type: &clang::Type) -> String {
 }
 
 fn resolve_simple_rust_type(field_kind: TypeKind) -> Option<String> {
+    debug!("Resolving simple rust type for TypeKind: {:?}", field_kind);
     match field_kind {
         TypeKind::Void => Some("()".to_string()),
         TypeKind::Bool => Some("bool".to_string()),
@@ -216,18 +217,18 @@ fn resolve_simple_rust_type(field_kind: TypeKind) -> Option<String> {
     }
 }
 
-fn stdint_type_to_rust_type(stdint_type: &str) -> Option<String> {
+fn stdint_type_to_rust_type(stdint_type: &str) -> String {
     match stdint_type {
-        "int8_t" => Some("i8".to_string()),
-        "uint8_t" => Some("u8".to_string()),
-        "int16_t" => Some("i16".to_string()),
-        "uint16_t" => Some("u16".to_string()),
-        "int32_t" => Some("i32".to_string()),
-        "uint32_t" => Some("u32".to_string()),
-        "int64_t" => Some("i64".to_string()),
-        "uint64_t" => Some("u64".to_string()),
-        _ => Some(stdint_type.to_string()),
-    }
+        "int8_t" => "i8",
+        "uint8_t" => "u8",
+        "int16_t" => "i16",
+        "uint16_t" => "u16",
+        "int32_t" => "i32",
+        "uint32_t" => "u32",
+        "int64_t" => "i64",
+        "uint64_t" => "u64",
+        _ => stdint_type,
+    }.to_string()
 }
 
 fn resolve_rust_type(module_name: &str, entity: &clang::Entity) -> String {
@@ -278,6 +279,7 @@ fn resolve_rust_type(module_name: &str, entity: &clang::Entity) -> String {
     debug!("Declaration: {:?}", declaration);
     match field_kind {
         TypeKind::Typedef => {
+            debug!("Typedef found: {}", field_type_name);
             if field_type_name == "std::string" || field_type_name == "std::basic_string<char>" {
                 return "CxxString".to_string();
             }
@@ -285,10 +287,7 @@ fn resolve_rust_type(module_name: &str, entity: &clang::Entity) -> String {
                 Some(decl) => {
                     let decl_name = decl.get_name().unwrap_or_default();
                     debug!("Typedef found: {}", decl_name);
-                    stdint_type_to_rust_type(&decl_name).unwrap_or_else(|| {
-                        error!("Unsupported typedef type: {} for entity {:?}", decl_name, entity.get_name());
-                        std::process::exit(1);
-                    })
+                    stdint_type_to_rust_type(&decl_name)
                 },
                 None => {
                     error!("Typedef without declaration");
@@ -297,11 +296,10 @@ fn resolve_rust_type(module_name: &str, entity: &clang::Entity) -> String {
             }
         },
         TypeKind::Elaborated | TypeKind::Record | TypeKind::Enum | TypeKind::Vector => {
-            debug!("Complex type found: {}", field_type_name);
+            debug!("Complex type found: {} with typekind {:?}", field_type_name, field_kind);
 
             if field_type_is_pod {
-                debug!("Field type is POD with name: {}", field_type_name);
-                field_type_name
+                stdint_type_to_rust_type(&field_type_name)
             }
             else if field_type_name == "std::string" || field_type_name == "std::basic_string<char>" {
                 "CxxString".to_string()
@@ -347,6 +345,7 @@ fn resolve_rust_type(module_name: &str, entity: &clang::Entity) -> String {
             }
         },
         _ => {
+            debug!("Other type found: {} with typekind {:?}", field_type_name, field_kind);
             resolve_simple_rust_type(field_kind).unwrap_or_else(|| {
                 error!("Unsupported field type kind: {:?} for entity {:?}", field_kind, entity.get_name());
                 std::process::exit(1);

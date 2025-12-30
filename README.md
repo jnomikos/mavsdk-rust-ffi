@@ -1,1 +1,1 @@
-MAVSDK Rust using autocxx generated FFI rather than GRPC. Highly experimental
+Experimental MAVSDK Rust implementation which uses FFI via autocxx rather than gRPC. 
