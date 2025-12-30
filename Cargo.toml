@@ -8,6 +8,7 @@ members = [
 name = "mavsdk-rust-ffi"
 version = "0.1.0"
 edition = "2024"
+license = "BSD-3-Clause"
 
 [dependencies]
 autocxx = "0.30.0"
