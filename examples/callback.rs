@@ -25,7 +25,11 @@ pub extern "C" fn message_callback_ffi(msg: *const core::mavsdk::Mavsdk_MavlinkM
 }
 
 fn main() {
-    let config = core::mavsdk::Mavsdk_Configuration::new(1, 1, true).within_unique_ptr();
+    let config = core::mavsdk::Mavsdk_Configuration::new(
+        1, // System ID
+        1, // Component ID
+        true // Always send heartbeats
+    ).within_unique_ptr();
     let mut mavsdk_instance = core::mavsdk::Mavsdk::new1(&config).within_unique_ptr();
     cxx::let_cxx_string!(conn_str = "serial:///dev/ttyACM0:115200");
     mavsdk_instance.pin_mut().add_any_connection(&conn_str, core::mavsdk::ForwardingOption::ForwardingOff);
