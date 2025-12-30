@@ -17,6 +17,7 @@ pub extern "C" fn message_callback_ffi(msg: *const core::mavsdk::Mavsdk_MavlinkM
         let msg_ref = &*msg;
         
         // Print msg_ref.message_name
+        //let message_name = core::MavsdkGetters::MavlinkMessage::get_message_name(msg_ref);
         let message_name = msg_ref.message_name();
         println!("Message Name: {}", message_name);
     }
