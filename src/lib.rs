@@ -41,9 +41,9 @@ pub mod core {
 
         generate!("mavsdk::Mavsdk")
         generate!("mavsdk::Mavsdk_ConnectionError")
-        generate!("MavsdkGetters::ConnectionError")
+        generate!("CoreGetters::ConnectionError")
         generate!("mavsdk::Mavsdk_MavlinkMessage")
-        generate!("MavsdkGetters::MavlinkMessage")
+        generate!("CoreGetters::MavlinkMessage")
         generate_pod!("mavsdk::ForwardingOption")
         generate!("mavsdk::Mavsdk_Configuration")
         generate!("mavsdk::PluginBase")
@@ -953,4 +953,29 @@ pub mod winch {
     pub use winch::*;
 }
 
-include!("../cxx/gen/core.rs");
+//include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/calibration_getters.rs"));
+include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/camera_getters.rs"));
+include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/camera_server_getters.rs"));
+include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/component_metadata_getters.rs"));
+include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/component_metadata_server_getters.rs"));
+include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/core_getters.rs"));
+include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/events_getters.rs"));
+include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/ftp_getters.rs"));
+include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/geofence_getters.rs"));
+include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/gimbal_getters.rs"));
+include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/info_getters.rs"));
+include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/log_files_getters.rs"));
+include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/log_streaming_getters.rs"));
+include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/mavlink_direct_getters.rs"));
+include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/mission_getters.rs"));
+include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/mission_raw_getters.rs"));
+include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/mission_raw_server_getters.rs"));
+include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/mocap_getters.rs"));
+include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/offboard_getters.rs"));
+include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/param_getters.rs"));
+include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/param_server_getters.rs"));
+include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/rtk_getters.rs"));
+include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/telemetry_getters.rs"));
+include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/telemetry_server_getters.rs"));
+include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/transponder_getters.rs"));
+include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/tune_getters.rs"));
