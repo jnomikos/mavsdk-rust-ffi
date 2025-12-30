@@ -1,5 +1,6 @@
-Experimental MAVSDK Rust implementation which uses FFI via autocxx rather than gRPC. 
+## mavsdk-rust-ffi
 
+Experimental MAVSDK Rust implementation which uses FFI via [autocxx](https://github.com/google/autocxx) rather than gRPC. 
 
 ## License
 
