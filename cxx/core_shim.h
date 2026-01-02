@@ -17,6 +17,11 @@ namespace core_subscriptions {
 
     DECLARE_SUBSCRIBE_SHIM_WITH_HANDLE(mavsdk::Mavsdk*, subscribe_incoming_messages_json, mavsdk::Mavsdk::InterceptJsonCallback, mavsdk::Mavsdk::InterceptJsonHandle)
 
+    DECLARE_SUBSCRIBE_SHIM_WITH_HANDLE(mavsdk::Mavsdk*,
+    subscribe_raw_bytes_to_be_sent,
+    mavsdk::Mavsdk::RawBytesCallback,
+    mavsdk::Mavsdk::RawBytesHandle)
+
     DECLARE_SUBSCRIBE_SHIM_WITH_HANDLE(mavsdk::Mavsdk*, subscribe_outgoing_messages_json, mavsdk::Mavsdk::InterceptJsonCallback, mavsdk::Mavsdk::InterceptJsonHandle)
 
     DECLARE_SUBSCRIBE_SHIM(mavsdk::System*, subscribe_is_connected, mavsdk::System::IsConnectedCallback)
