@@ -13,6 +13,21 @@ struct function_traits<std::function<ReturnType(Args...)>> {
     using type = ReturnType(*)(Args...);
 };
 
+/*
+    Use DECLARE_SUBSCRIBE_SHIM only for callbacks where function_traits 
+    can unambiguously map to a handle type.
+
+    Use DECLARE_SUBSCRIBE_SHIM_WITH_HANDLE when:
+
+    1. The callback has arguments
+
+    2. Or it returns a non-void type
+
+    3. Or the handle type is non-standard
+
+*/
+
+// Automatically determines handle type from callback function type
 #define DECLARE_SUBSCRIBE_SHIM(INSTANCE_TYPE, SUBSCRIBE_FN, CALLBACK_FUNCTION) \
     DECLARE_SUBSCRIBE_SHIM_WITH_HANDLE(INSTANCE_TYPE, SUBSCRIBE_FN, CALLBACK_FUNCTION, typename function_traits<CALLBACK_FUNCTION>::as_handle) \
 
