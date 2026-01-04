@@ -112,7 +112,7 @@ pub mod arm_authorizer_server {
     pub use arm_authorizer_server::*;
 }
 
-/*pub mod calibration {
+pub mod calibration {
     autocxx::include_cpp! {
         #include "calibration.h"
         #include "calibration_getters.h"
@@ -122,14 +122,19 @@ pub mod arm_authorizer_server {
         generate!("mavsdk::Calibration")
         generate_pod!("mavsdk::Calibration_Result")
         generate!("mavsdk::Calibration_ProgressData")
+        generate!("CalibrationGetters::ProgressData")
 
-        // Shims
-        generate_ns!("ProgressData")
+        // These callbacks cause build failure
+        block!("mavsdk::Calibration_CalibrateGyroCallback")
+        block!("mavsdk::Calibration_CalibrateAccelerometerCallback")
+        block!("mavsdk::Calibration_CalibrateMagnetometerCallback")
+        block!("mavsdk::Calibration_CalibrateLevelHorizonCallback")
+        block!("mavsdk::Calibration_CalibrateGimbalAccelerometerCallback")
 
         extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
     }
     pub use calibration::*;
-}*/
+}
 
 pub mod camera {
     autocxx::include_cpp! {
@@ -953,7 +958,7 @@ pub mod winch {
     pub use winch::*;
 }
 
-//include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/calibration_getters.rs"));
+include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/calibration_getters.rs"));
 include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/camera_getters.rs"));
 include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/camera_server_getters.rs"));
 include!(concat!(env!("CARGO_MANIFEST_DIR"), "/cxx/gen/component_metadata_getters.rs"));
