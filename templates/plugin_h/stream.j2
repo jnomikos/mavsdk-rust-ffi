@@ -1,0 +1,55 @@
+{% if is_async %}
+    {% if is_finite %}
+/**
+ * @brief Callback type for {{ name.lower_snake_case }}_async.
+ */
+using {{ name.upper_camel_case }}Callback = std::function<void({% if has_result %}Result, {% endif %}{{ return_type.name }})>;
+
+/**
+ * @brief {{ method_description | replace('\n', '\n *')}}
+ */
+void {{ name.lower_snake_case }}_async({% for param in params %}{{ param.type_info.name }} {{ param.name.lower_snake_case }}, {% endfor %}const {{ name.upper_camel_case }}Callback& callback);
+
+    {% else %}
+
+/**
+ * @brief Callback type for subscribe_{{ name.lower_snake_case }}.
+ */
+using {{ name.upper_camel_case }}Callback = std::function<void({% if has_result %}Result, {% endif %}{{ return_type.name }})>;
+
+/**
+ * @brief Handle type for subscribe_{{ name.lower_snake_case }}.
+ */
+using {{ name.upper_camel_case }}Handle = Handle<{% if has_result %}Result, {% endif %}{{ return_type.name }}>;
+
+/**
+ * @brief {{ method_description | replace('\n', '\n *')}}
+ */
+uintptr_t subscribe_{{ name.lower_snake_case }}({% for param in params %}{{ param.type_info.name }} {{ param.name.lower_snake_case }}, {% endfor %}uintptr_t cb_ptr);
+
+/**
+ * @brief Unsubscribe from subscribe_{{ name.lower_snake_case }}
+ */
+void unsubscribe_{{ name.lower_snake_case }}(uintptr_t handle_ptr);
+
+/**
+ * @brief {{ method_description | replace('\n', '\n *')}}
+ */
+{{ name.upper_camel_case }}Handle subscribe_{{ name.lower_snake_case }}({% for param in params %}{{ param.type_info.name }} {{ param.name.lower_snake_case }}, {% endfor %}const {{ name.upper_camel_case }}Callback& callback);
+
+/**
+ * @brief Unsubscribe from subscribe_{{ name.lower_snake_case }}
+ */
+void unsubscribe_{{ name.lower_snake_case }}({{ name.upper_camel_case }}Handle handle);
+
+    {% endif %}
+{% endif %}
+
+{% if is_sync %}
+/**
+ * @brief Poll for '{{ return_type.name }}' (blocking).
+ *
+ * @return One {{ return_type.name }} update.
+ */
+{{ return_type.name }} {{ name.lower_snake_case }}({% for param in params %}{{ param.type_info.name }} {{ param.name.lower_snake_case }}{% if not loop.last %}, {% endif %}{% endfor %}) const;
+{% endif %}

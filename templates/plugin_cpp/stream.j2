@@ -1,0 +1,56 @@
+{% if is_async %}
+    {% if is_finite %}
+void {{ plugin_name.upper_camel_case }}::{{ name.lower_snake_case }}_async({% for param in params %}{{ param.type_info.name }} {{ param.name.lower_snake_case }}, {% endfor %}const {{ name.upper_camel_case }}Callback& callback)
+{
+    _impl->{{ name.lower_snake_case }}_async({% for param in params %}{{ param.name.lower_snake_case }}, {% endfor %}callback);
+}
+    {% else %}
+uintptr_t {{ plugin_name.upper_camel_case }}::subscribe_{{ name.lower_snake_case }}({% for param in params %}{{ param.type_info.name }} {{ param.name.lower_snake_case }}, {% endfor %}uintptr_t cb_ptr)
+{
+
+    auto callback = reinterpret_cast<{{ name.upper_camel_case }}Callback*>(cb_ptr);
+    if (!callback) {
+        return 0;
+    }
+
+    {{ plugin_name.upper_camel_case }}::{{ name.upper_camel_case }}Handle handle = _impl->subscribe_{{ name.lower_snake_case }}({% for param in params %}{{ param.name.lower_snake_case }}, {% endfor %}
+        [callback](auto&&... args) {
+            return (*callback)(std::forward<decltype(args)>(args)...);
+        }
+    );
+    auto* handle_ptr = new {{ plugin_name.upper_camel_case }}::{{ name.upper_camel_case }}Handle(handle);
+    return reinterpret_cast<uintptr_t>(handle_ptr);
+}
+
+void {{ plugin_name.upper_camel_case }}::unsubscribe_{{ name.lower_snake_case }}(uintptr_t handle_ptr)
+{
+    if (!handle_ptr) {
+        return;
+    }
+    auto handle = reinterpret_cast<{{ name.upper_camel_case }}Handle*>(handle_ptr);
+    _impl->unsubscribe_{{ name.lower_snake_case }}(*handle);
+    delete handle;
+}
+
+{{ plugin_name.upper_camel_case }}::{{ name.upper_camel_case }}Handle {{ plugin_name.upper_camel_case }}::subscribe_{{ name.lower_snake_case }}({% for param in params %}{{ param.type_info.name }} {{ param.name.lower_snake_case }}, {% endfor %}const {{ name.upper_camel_case }}Callback& callback)
+{
+    return _impl->subscribe_{{ name.lower_snake_case }}({% for param in params %}{{ param.name.lower_snake_case }}, {% endfor %}callback);
+}
+
+void {{ plugin_name.upper_camel_case }}::unsubscribe_{{ name.lower_snake_case }}({{ name.upper_camel_case }}Handle handle)
+{
+    _impl->unsubscribe_{{ name.lower_snake_case }}(handle);
+}
+    {% endif %}
+{% endif %}
+
+{% if is_sync %}
+{% if return_type.is_repeated %}
+std::vector<{% if not return_type.is_primitive %}{{ plugin_name.upper_camel_case }}::{% endif %}{{ return_type.inner_name }}>
+{% else %}
+{% if not return_type.is_primitive %}{{ plugin_name.upper_camel_case }}::{% endif %}{{ return_type.name }}
+{%endif -%} {{ plugin_name.upper_camel_case }}::{{ name.lower_snake_case }}({% for param in params %}{{ param.type_info.name }} {{ param.name.lower_snake_case }}{% if not loop.last %}, {% endif %}{% endfor %}) const
+{
+    return _impl->{{ name.lower_snake_case }}({% for param in params %}{{ param.name.lower_snake_case }}{% if not loop.last %}, {% endif %}{% endfor %});
+}
+{% endif %}

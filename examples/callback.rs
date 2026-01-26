@@ -1,9 +1,6 @@
 use mavsdk_rust_ffi::core;
+use mavsdk_rust_ffi::mavlink_direct;
 use autocxx::prelude::*;
-
-fn system_callback() {
-    println!("New system detected");
-}
 
 #[unsafe(no_mangle)]
 pub extern "C" fn message_callback_ffi(msg: *const core::mavsdk::Mavsdk_MavlinkMessage) -> bool {
@@ -12,15 +9,6 @@ pub extern "C" fn message_callback_ffi(msg: *const core::mavsdk::Mavsdk_MavlinkM
         return false;
     }
     println!("Incoming JSON message received");
-    // Print out the message as JSON
-    unsafe {
-        let msg_ref = &*msg;
-        
-        // Print msg_ref.message_name
-        //let message_name = core::MavsdkGetters::MavlinkMessage::get_message_name(msg_ref);
-        let message_name = msg_ref.message_name();
-        println!("Message Name: {}", message_name);
-    }
     true
 }
 
@@ -34,19 +22,26 @@ fn main() {
     cxx::let_cxx_string!(conn_str = "serial:///dev/ttyACM0:115200");
     mavsdk_instance.pin_mut().add_any_connection(&conn_str, core::mavsdk::ForwardingOption::ForwardingOff);
 
-    let sys_cb_ptr = system_callback as usize;
+    let msg_cb_ptr = message_callback_ffi as usize;
     unsafe {
-        let system_handle = core::core_subscriptions::subscribe_on_new_system(mavsdk_instance.as_mut_ptr(), sys_cb_ptr as libc::uintptr_t);
-
-        let msg_cb_ptr = message_callback_ffi as usize;
         let msg_handle = core::core_subscriptions::subscribe_incoming_messages_json(
             mavsdk_instance.as_mut_ptr(),
             msg_cb_ptr as libc::uintptr_t,
         );
 
         // Await until we get system
-        std::thread::sleep(std::time::Duration::from_secs(10));
-        core::core_subscriptions::unsubscribe_on_new_system(mavsdk_instance.as_mut_ptr(),system_handle);
+        let system = core::Mavsdk_first_autopilot(
+            mavsdk_instance.as_mut_ptr(),
+            10.0, // Timeout in s
+        );
+        if system.is_null() {
+            println!("No system found, exiting");
+            return;
+        }
+        
+        let mavlink_direct_plugin = mavlink_direct::mavsdk::MavlinkDirect::new(system).within_unique_ptr();
+
+
         core::core_subscriptions::unsubscribe_incoming_messages_json(
             mavsdk_instance.as_mut_ptr(),
             msg_handle,

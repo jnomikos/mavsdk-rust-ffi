@@ -1,14 +1,8 @@
-// TODO: Compile shim code so linker can find it
 #pragma once
 
 #include "mavsdk.h"
 #include "system.h"
 #include "shim_macros.h"
-
-namespace mavsdk {
-    // This makes the nested typedef usable as a proper FFI target
-    using Mavsdk_ConnectionHandle = Mavsdk::ConnectionHandle;
-}
 
 namespace core_subscriptions {
     DECLARE_SUBSCRIBE_SHIM(mavsdk::Mavsdk*, subscribe_connection_errors, mavsdk::Mavsdk::ConnectionErrorCallback)
@@ -29,4 +23,22 @@ namespace core_subscriptions {
     DECLARE_SUBSCRIBE_SHIM(mavsdk::System*, subscribe_component_discovered, mavsdk::System::ComponentDiscoveredCallback)
 
     DECLARE_SUBSCRIBE_SHIM(mavsdk::System*, subscribe_component_discovered_id, mavsdk::System::ComponentDiscoveredIdCallback)
+}
+
+// Modify mavsdk class std::optional<std::shared_ptr<System>> first_autopilot(double timeout_s) const; to not use std::optional, and just return nullptr if no system found
+
+/*
+std::optional<std::shared_ptr<System>> Mavsdk::first_autopilot(double timeout_s) const
+{
+    return _impl->first_autopilot(timeout_s);
+}
+
+*/
+
+std::shared_ptr<mavsdk::System> Mavsdk_first_autopilot(mavsdk::Mavsdk* mavsdk_instance, double timeout_s) {
+    auto result = mavsdk_instance->first_autopilot(timeout_s);
+    if (result.has_value()) {
+        return result.value();
+    }
+    return nullptr;
 }

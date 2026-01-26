@@ -1,17 +1,46 @@
 use std::env;
 use std::process::Command;
-use std::path::Path;
+use std::path::{Path, PathBuf};
+use std::fs;
+use std::io;
 
-fn main() -> miette::Result<()> {
-    let dst = cmake::Config::new("MAVSDK")
+fn copy_recursively(source: impl AsRef<Path>, destination: impl AsRef<Path>) -> io::Result<()> {
+    fs::create_dir_all(&destination)?;
+    for entry in fs::read_dir(source)? {
+        let entry = entry?;
+        let entry_type = entry.file_type()?;
+        if entry_type.is_dir() {
+            copy_recursively(entry.path(), destination.as_ref().join(entry.file_name()))?;
+        } else {
+            fs::copy(entry.path(), destination.as_ref().join(entry.file_name()))?;
+        }
+    }
+    Ok(())
+}
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let out_dir = PathBuf::from(env::var("OUT_DIR")?);
+    let src_include = "MAVSDK/src/mavsdk/core/include/mavsdk";
+    let generated_src = Path::new("generated-mavsdk/mavsdk");
+
+    if generated_src.exists() {
+        copy_recursively("MAVSDK", &out_dir.join("MAVSDK"))?;
+        copy_recursively(generated_src, &out_dir.join("MAVSDK/src/mavsdk"))?;
+    } else {
+        eprintln!("cargo:warning=Generated MAVSDK source not found; please run the code generator first.");
+        std::process::exit(1);
+    }
+
+    let mavsdk_src_path = out_dir.join("MAVSDK/src");
+
+    let dst = cmake::Config::new(&out_dir.join("MAVSDK"))
         .profile("Release")
+        .define("BUILD_TESTING", "OFF") // The testing is incompatible with our modifications
         .build();
 
-    let src_include = "MAVSDK/src/mavsdk/core/include/mavsdk";
     let generated_include = dst.join("build/src/mavsdk/core/include/mavsdk");
     let mavlink_include = dst.join("build/third_party/mavlink/mavlink/src/mavlink-build/include");
     let lib_dir = dst.join("lib");
-    let path = std::path::PathBuf::from("MAVSDK/src");
 
     let plugin_includes = vec![
         "action",
@@ -83,7 +112,7 @@ fn main() -> miette::Result<()> {
 
     let extra_clang_args_refs: Vec<&str> = extra_clang_args.iter().map(|s| s.as_str()).collect();
 
-    let mut b = autocxx_build::Builder::new("src/lib.rs", &["cxx", "cxx/gen", path.to_str().unwrap()])
+    let mut b = autocxx_build::Builder::new("src/lib.rs", &["cxx", mavsdk_src_path.to_str().unwrap()])
         .extra_clang_args(&extra_clang_args_refs)
         .build()?;
 
@@ -93,12 +122,10 @@ fn main() -> miette::Result<()> {
 
     b.flag_if_supported("-std=c++17")
         .flag_if_supported("-Wno-address-of-packed-member")
-        .include("MAVSDK/src/mavsdk/core/include/mavsdk")
-        .include("MAVSDK/src/mavsdk/plugins")
         .include(src_include)
         .include(&generated_include)
         .include(&mavlink_include)
-        .compile("autocxx-mavssdk-example");
+        .compile("autocxx-mavsdk");
     println!("cargo:rerun-if-changed=src/lib.rs");
     println!("cargo:rustc-link-search=native={}", lib_dir.display());
     println!("cargo:rustc-link-lib=dylib=mavsdk");
