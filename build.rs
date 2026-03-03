@@ -4,15 +4,29 @@ use std::path::{Path, PathBuf};
 use std::fs;
 use std::io;
 
-fn copy_recursively(source: impl AsRef<Path>, destination: impl AsRef<Path>) -> io::Result<()> {
+fn copy_recursively_if_changed(source: impl AsRef<Path>, destination: impl AsRef<Path>) -> io::Result<()> {
     fs::create_dir_all(&destination)?;
     for entry in fs::read_dir(source)? {
         let entry = entry?;
         let entry_type = entry.file_type()?;
+        let dest_path = destination.as_ref().join(entry.file_name());
+
         if entry_type.is_dir() {
-            copy_recursively(entry.path(), destination.as_ref().join(entry.file_name()))?;
+            copy_recursively_if_changed(entry.path(), dest_path)?;
         } else {
-            fs::copy(entry.path(), destination.as_ref().join(entry.file_name()))?;
+            // Check if we need to copy to avoid touching timestamps unnecessarily
+            let should_copy = match fs::metadata(&dest_path) {
+                Ok(dest_meta) => {
+                    let src_meta = entry.metadata()?;
+                    // Only copy if the source file is newer than the destination file
+                    src_meta.modified()? > dest_meta.modified()?
+                }
+                Err(_) => true, // Destination doesn't exist, so we must copy
+            };
+
+            if should_copy {
+                fs::copy(entry.path(), dest_path)?;
+            }
         }
     }
     Ok(())
@@ -24,8 +38,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let generated_src = Path::new("generated-mavsdk/mavsdk");
 
     if generated_src.exists() {
-        copy_recursively("MAVSDK", &out_dir.join("MAVSDK"))?;
-        copy_recursively(generated_src, &out_dir.join("MAVSDK/src/mavsdk"))?;
+        copy_recursively_if_changed("MAVSDK", &out_dir.join("MAVSDK"))?;
+        copy_recursively_if_changed(generated_src, &out_dir.join("MAVSDK/src/mavsdk"))?;
     } else {
         eprintln!("cargo:warning=Generated MAVSDK source not found; please run the code generator first.");
         std::process::exit(1);
@@ -126,7 +140,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .include(&generated_include)
         .include(&mavlink_include)
         .compile("autocxx-mavsdk");
+
+    // Watch rust source files for changes
     println!("cargo:rerun-if-changed=src/lib.rs");
+    // Watch the original C++ source files
+    println!("cargo:rerun-if-changed=MAVSDK");
+    println!("cargo:rerun-if-changed=generated-mavsdk/mavsdk");
+
     println!("cargo:rustc-link-search=native={}", lib_dir.display());
     println!("cargo:rustc-link-lib=dylib=mavsdk");
     Ok(())
