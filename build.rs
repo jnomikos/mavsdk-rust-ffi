@@ -34,7 +34,6 @@ fn copy_recursively_if_changed(source: impl AsRef<Path>, destination: impl AsRef
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let out_dir = PathBuf::from(env::var("OUT_DIR")?);
-    let src_include = "MAVSDK/src/mavsdk/core/include/mavsdk";
     let generated_src = Path::new("generated-mavsdk/mavsdk");
 
     if generated_src.exists() {
@@ -46,6 +45,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     let mavsdk_src_path = out_dir.join("MAVSDK/src");
+    let src_include = mavsdk_src_path.join("mavsdk/core/include/mavsdk");
 
     let dst = cmake::Config::new(&out_dir.join("MAVSDK"))
         .profile("Release")
@@ -97,7 +97,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut extra_clang_args = vec![
         "-std=c++17".to_string(),
-        format!("-I{}", src_include),
+        format!("-I{}", src_include.display()),
         format!("-I{}", generated_include.display()),
         format!("-I{}", mavlink_include.display()),
     ];
@@ -118,20 +118,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     }
 
-    // Windows: usually MSVC/Clang auto-detects
-
     for plugin in &plugin_includes {
-        extra_clang_args.push(format!("-IMAVSDK/src/mavsdk/plugins/{plugin}/include/plugins/{plugin}"));
+        extra_clang_args.push(format!("-I{}", mavsdk_src_path.join(format!("mavsdk/plugins/{plugin}/include/plugins/{plugin}")).display()));
     }
 
     let extra_clang_args_refs: Vec<&str> = extra_clang_args.iter().map(|s| s.as_str()).collect();
 
-    let mut b = autocxx_build::Builder::new("src/lib.rs", &["cxx", mavsdk_src_path.to_str().unwrap()])
+    let mut b = autocxx_build::Builder::new("src/lib.rs", &["cxx"])
         .extra_clang_args(&extra_clang_args_refs)
         .build()?;
 
     for plugin in plugin_includes {
-        b.include(format!("MAVSDK/src/mavsdk/plugins/{plugin}/include/plugins/{plugin}"));
+        b.include(mavsdk_src_path.join(format!("mavsdk/plugins/{plugin}/include/plugins/{plugin}")));
     }
 
     b.flag_if_supported("-std=c++17")
