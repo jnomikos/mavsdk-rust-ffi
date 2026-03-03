@@ -1,3 +1,15 @@
+{%- macro rust_primitive_type(name) -%}
+    {%- set mapping = {
+        'bool': 'bool',
+        'int32_t': 'i32', 'uint32_t': 'u32',
+        'int64_t': 'i64', 'uint64_t': 'u64',
+        'int8_t': 'i8', 'uint8_t': 'u8',
+        'int16_t': 'i16', 'uint16_t': 'u16',
+        'float': 'f32', 'double': 'f64'
+    } -%}
+    {{ mapping.get(name, '') }}
+{%- endmacro -%}
+
 {% macro convert_default_value_str(type, default_value_str) -%}
     {%- if default_value_str == "NaN" -%}
 {{ type }}(NAN)
@@ -28,17 +40,16 @@ struct {{ name.upper_camel_case }} {
     {%- endfor %}
 
     {%- for field in fields %}
+    {%- set primitive = rust_primitive_type(field.type_info.name) -%}
     {{ field.type_info.name }} {{ field.name.lower_snake_case }}{% if field.default_value %}{{ '{' }}{{ convert_default_value_str(field.type_info.name, field.default_value) }}{{ '}' }}{% else %}{% endif %}; /**< @brief{{ field.description.rstrip() }} */
 
-    {%- if not ns.struct_is_simple -%}
-    {% if field.type_info.is_repeated or field.type_info.is_string  %}
-    const {{ field.type_info.name }}& get_{{ field.name.lower_snake_case }}() const 
+    {% if primitive %}
+    {{ field.type_info.name }} {{ plugin_name.lower_snake_case }}_get_{{ field.name.lower_snake_case }}() const 
     {% else %}
-    {{ field.type_info.name }} get_{{ field.name.lower_snake_case }}() const 
+    const {{ field.type_info.name }}& {{ plugin_name.lower_snake_case }}_get_{{ field.name.lower_snake_case }}() const 
     {% endif %}{{ '{' }}
         return {{ field.name.lower_snake_case }};
     {{ '}' }}
-    {%- endif -%}
     {%- endfor %}
 };
 {% endif %}

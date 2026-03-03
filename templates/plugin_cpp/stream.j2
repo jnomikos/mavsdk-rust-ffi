@@ -5,17 +5,17 @@ void {{ plugin_name.upper_camel_case }}::{{ name.lower_snake_case }}_async({% fo
     _impl->{{ name.lower_snake_case }}_async({% for param in params %}{{ param.name.lower_snake_case }}, {% endfor %}callback);
 }
     {% else %}
-uintptr_t {{ plugin_name.upper_camel_case }}::subscribe_{{ name.lower_snake_case }}({% for param in params %}{{ param.type_info.name }} {{ param.name.lower_snake_case }}, {% endfor %}uintptr_t cb_ptr)
+uintptr_t {{ plugin_name.upper_camel_case }}::subscribe_{{ name.lower_snake_case }}({% for param in params %}{{ param.type_info.name }} {{ param.name.lower_snake_case }}, {% endfor %}uintptr_t cb_ptr, uintptr_t user_data)
 {
-
-    auto callback = reinterpret_cast<{{ name.upper_camel_case }}Callback*>(cb_ptr);
+    using RawCallbackType = void(*)(uintptr_t, {% if has_result %}Result, {% endif %}{{ return_type.name }});
+    auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
     if (!callback) {
         return 0;
     }
 
     {{ plugin_name.upper_camel_case }}::{{ name.upper_camel_case }}Handle handle = _impl->subscribe_{{ name.lower_snake_case }}({% for param in params %}{{ param.name.lower_snake_case }}, {% endfor %}
-        [callback](auto&&... args) {
-            return (*callback)(std::forward<decltype(args)>(args)...);
+        [callback, user_data](auto&&... args) {
+            callback(user_data, std::forward<decltype(args)>(args)...);
         }
     );
     auto* handle_ptr = new {{ plugin_name.upper_camel_case }}::{{ name.upper_camel_case }}Handle(handle);

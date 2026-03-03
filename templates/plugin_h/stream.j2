@@ -25,7 +25,10 @@ using {{ name.upper_camel_case }}Handle = Handle<{% if has_result %}Result, {% e
 /**
  * @brief {{ method_description | replace('\n', '\n *')}}
  */
-uintptr_t subscribe_{{ name.lower_snake_case }}({% for param in params %}{{ param.type_info.name }} {{ param.name.lower_snake_case }}, {% endfor %}uintptr_t cb_ptr);
+uintptr_t subscribe_{{ name.lower_snake_case }}({% for param in params %}{{ param.type_info.name }} {{ param.name.lower_snake_case }}, {% endfor %}
+    uintptr_t cb_ptr, 
+    uintptr_t user_data
+);
 
 /**
  * @brief Unsubscribe from subscribe_{{ name.lower_snake_case }}
