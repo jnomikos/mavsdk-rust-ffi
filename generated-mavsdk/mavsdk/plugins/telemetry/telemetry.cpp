@@ -47,16 +47,16 @@ Telemetry::Telemetry(std::shared_ptr<System> system)
 
 Telemetry::~Telemetry() {}
 
-uintptr_t Telemetry::subscribe_position(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<PositionCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_position(uintptr_t cb_ptr, uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Position);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::PositionHandle handle =
-      _impl->subscribe_position([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_position([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Telemetry::PositionHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -82,16 +82,16 @@ void Telemetry::unsubscribe_position(PositionHandle handle) {
 
 Telemetry::Position Telemetry::position() const { return _impl->position(); }
 
-uintptr_t Telemetry::subscribe_home(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<HomeCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_home(uintptr_t cb_ptr, uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Position);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::HomeHandle handle =
-      _impl->subscribe_home([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_home([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Telemetry::HomeHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -116,16 +116,16 @@ void Telemetry::unsubscribe_home(HomeHandle handle) {
 
 Telemetry::Position Telemetry::home() const { return _impl->home(); }
 
-uintptr_t Telemetry::subscribe_in_air(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<InAirCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_in_air(uintptr_t cb_ptr, uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, bool);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::InAirHandle handle =
-      _impl->subscribe_in_air([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_in_air([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Telemetry::InAirHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -151,16 +151,17 @@ void Telemetry::unsubscribe_in_air(InAirHandle handle) {
 
 bool Telemetry::in_air() const { return _impl->in_air(); }
 
-uintptr_t Telemetry::subscribe_landed_state(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<LandedStateCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_landed_state(uintptr_t cb_ptr,
+                                            uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, LandedState);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::LandedStateHandle handle =
-      _impl->subscribe_landed_state([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_landed_state([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Telemetry::LandedStateHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -188,16 +189,16 @@ Telemetry::LandedState Telemetry::landed_state() const {
   return _impl->landed_state();
 }
 
-uintptr_t Telemetry::subscribe_armed(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<ArmedCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_armed(uintptr_t cb_ptr, uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, bool);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::ArmedHandle handle =
-      _impl->subscribe_armed([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_armed([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Telemetry::ArmedHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -223,16 +224,17 @@ void Telemetry::unsubscribe_armed(ArmedHandle handle) {
 
 bool Telemetry::armed() const { return _impl->armed(); }
 
-uintptr_t Telemetry::subscribe_vtol_state(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<VtolStateCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_vtol_state(uintptr_t cb_ptr,
+                                          uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, VtolState);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::VtolStateHandle handle =
-      _impl->subscribe_vtol_state([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_vtol_state([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Telemetry::VtolStateHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -260,17 +262,19 @@ Telemetry::VtolState Telemetry::vtol_state() const {
   return _impl->vtol_state();
 }
 
-uintptr_t Telemetry::subscribe_attitude_quaternion(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<AttitudeQuaternionCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_attitude_quaternion(uintptr_t cb_ptr,
+                                                   uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Quaternion);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::AttitudeQuaternionHandle handle =
-      _impl->subscribe_attitude_quaternion([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
-      });
+      _impl->subscribe_attitude_quaternion(
+          [callback, user_data](auto &&...args) {
+            callback(user_data, std::forward<decltype(args)>(args)...);
+          });
   auto *handle_ptr = new Telemetry::AttitudeQuaternionHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
 }
@@ -298,16 +302,17 @@ Telemetry::Quaternion Telemetry::attitude_quaternion() const {
   return _impl->attitude_quaternion();
 }
 
-uintptr_t Telemetry::subscribe_attitude_euler(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<AttitudeEulerCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_attitude_euler(uintptr_t cb_ptr,
+                                              uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, EulerAngle);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::AttitudeEulerHandle handle =
-      _impl->subscribe_attitude_euler([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_attitude_euler([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Telemetry::AttitudeEulerHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -336,18 +341,18 @@ Telemetry::EulerAngle Telemetry::attitude_euler() const {
 }
 
 uintptr_t
-Telemetry::subscribe_attitude_angular_velocity_body(uintptr_t cb_ptr) {
-
-  auto callback =
-      reinterpret_cast<AttitudeAngularVelocityBodyCallback *>(cb_ptr);
+Telemetry::subscribe_attitude_angular_velocity_body(uintptr_t cb_ptr,
+                                                    uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, AngularVelocityBody);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::AttitudeAngularVelocityBodyHandle handle =
       _impl->subscribe_attitude_angular_velocity_body(
-          [callback](auto &&...args) {
-            return (*callback)(std::forward<decltype(args)>(args)...);
+          [callback, user_data](auto &&...args) {
+            callback(user_data, std::forward<decltype(args)>(args)...);
           });
   auto *handle_ptr = new Telemetry::AttitudeAngularVelocityBodyHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -380,16 +385,17 @@ Telemetry::attitude_angular_velocity_body() const {
   return _impl->attitude_angular_velocity_body();
 }
 
-uintptr_t Telemetry::subscribe_velocity_ned(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<VelocityNedCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_velocity_ned(uintptr_t cb_ptr,
+                                            uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, VelocityNed);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::VelocityNedHandle handle =
-      _impl->subscribe_velocity_ned([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_velocity_ned([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Telemetry::VelocityNedHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -417,16 +423,16 @@ Telemetry::VelocityNed Telemetry::velocity_ned() const {
   return _impl->velocity_ned();
 }
 
-uintptr_t Telemetry::subscribe_gps_info(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<GpsInfoCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_gps_info(uintptr_t cb_ptr, uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, GpsInfo);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::GpsInfoHandle handle =
-      _impl->subscribe_gps_info([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_gps_info([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Telemetry::GpsInfoHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -452,16 +458,16 @@ void Telemetry::unsubscribe_gps_info(GpsInfoHandle handle) {
 
 Telemetry::GpsInfo Telemetry::gps_info() const { return _impl->gps_info(); }
 
-uintptr_t Telemetry::subscribe_raw_gps(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<RawGpsCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_raw_gps(uintptr_t cb_ptr, uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, RawGps);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::RawGpsHandle handle =
-      _impl->subscribe_raw_gps([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_raw_gps([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Telemetry::RawGpsHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -487,16 +493,16 @@ void Telemetry::unsubscribe_raw_gps(RawGpsHandle handle) {
 
 Telemetry::RawGps Telemetry::raw_gps() const { return _impl->raw_gps(); }
 
-uintptr_t Telemetry::subscribe_battery(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<BatteryCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_battery(uintptr_t cb_ptr, uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Battery);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::BatteryHandle handle =
-      _impl->subscribe_battery([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_battery([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Telemetry::BatteryHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -522,16 +528,17 @@ void Telemetry::unsubscribe_battery(BatteryHandle handle) {
 
 Telemetry::Battery Telemetry::battery() const { return _impl->battery(); }
 
-uintptr_t Telemetry::subscribe_flight_mode(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<FlightModeCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_flight_mode(uintptr_t cb_ptr,
+                                           uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, FlightMode);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::FlightModeHandle handle =
-      _impl->subscribe_flight_mode([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_flight_mode([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Telemetry::FlightModeHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -559,16 +566,16 @@ Telemetry::FlightMode Telemetry::flight_mode() const {
   return _impl->flight_mode();
 }
 
-uintptr_t Telemetry::subscribe_health(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<HealthCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_health(uintptr_t cb_ptr, uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Health);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::HealthHandle handle =
-      _impl->subscribe_health([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_health([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Telemetry::HealthHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -594,16 +601,17 @@ void Telemetry::unsubscribe_health(HealthHandle handle) {
 
 Telemetry::Health Telemetry::health() const { return _impl->health(); }
 
-uintptr_t Telemetry::subscribe_rc_status(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<RcStatusCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_rc_status(uintptr_t cb_ptr,
+                                         uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, RcStatus);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::RcStatusHandle handle =
-      _impl->subscribe_rc_status([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_rc_status([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Telemetry::RcStatusHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -629,16 +637,17 @@ void Telemetry::unsubscribe_rc_status(RcStatusHandle handle) {
 
 Telemetry::RcStatus Telemetry::rc_status() const { return _impl->rc_status(); }
 
-uintptr_t Telemetry::subscribe_status_text(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<StatusTextCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_status_text(uintptr_t cb_ptr,
+                                           uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, StatusText);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::StatusTextHandle handle =
-      _impl->subscribe_status_text([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_status_text([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Telemetry::StatusTextHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -666,17 +675,19 @@ Telemetry::StatusText Telemetry::status_text() const {
   return _impl->status_text();
 }
 
-uintptr_t Telemetry::subscribe_actuator_control_target(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<ActuatorControlTargetCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_actuator_control_target(uintptr_t cb_ptr,
+                                                       uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, ActuatorControlTarget);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::ActuatorControlTargetHandle handle =
-      _impl->subscribe_actuator_control_target([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
-      });
+      _impl->subscribe_actuator_control_target(
+          [callback, user_data](auto &&...args) {
+            callback(user_data, std::forward<decltype(args)>(args)...);
+          });
   auto *handle_ptr = new Telemetry::ActuatorControlTargetHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
 }
@@ -705,17 +716,19 @@ Telemetry::ActuatorControlTarget Telemetry::actuator_control_target() const {
   return _impl->actuator_control_target();
 }
 
-uintptr_t Telemetry::subscribe_actuator_output_status(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<ActuatorOutputStatusCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_actuator_output_status(uintptr_t cb_ptr,
+                                                      uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, ActuatorOutputStatus);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::ActuatorOutputStatusHandle handle =
-      _impl->subscribe_actuator_output_status([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
-      });
+      _impl->subscribe_actuator_output_status(
+          [callback, user_data](auto &&...args) {
+            callback(user_data, std::forward<decltype(args)>(args)...);
+          });
   auto *handle_ptr = new Telemetry::ActuatorOutputStatusHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
 }
@@ -744,16 +757,16 @@ Telemetry::ActuatorOutputStatus Telemetry::actuator_output_status() const {
   return _impl->actuator_output_status();
 }
 
-uintptr_t Telemetry::subscribe_odometry(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<OdometryCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_odometry(uintptr_t cb_ptr, uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Odometry);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::OdometryHandle handle =
-      _impl->subscribe_odometry([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_odometry([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Telemetry::OdometryHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -779,17 +792,19 @@ void Telemetry::unsubscribe_odometry(OdometryHandle handle) {
 
 Telemetry::Odometry Telemetry::odometry() const { return _impl->odometry(); }
 
-uintptr_t Telemetry::subscribe_position_velocity_ned(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<PositionVelocityNedCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_position_velocity_ned(uintptr_t cb_ptr,
+                                                     uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, PositionVelocityNed);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::PositionVelocityNedHandle handle =
-      _impl->subscribe_position_velocity_ned([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
-      });
+      _impl->subscribe_position_velocity_ned(
+          [callback, user_data](auto &&...args) {
+            callback(user_data, std::forward<decltype(args)>(args)...);
+          });
   auto *handle_ptr = new Telemetry::PositionVelocityNedHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
 }
@@ -817,16 +832,17 @@ Telemetry::PositionVelocityNed Telemetry::position_velocity_ned() const {
   return _impl->position_velocity_ned();
 }
 
-uintptr_t Telemetry::subscribe_ground_truth(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<GroundTruthCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_ground_truth(uintptr_t cb_ptr,
+                                            uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, GroundTruth);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::GroundTruthHandle handle =
-      _impl->subscribe_ground_truth([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_ground_truth([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Telemetry::GroundTruthHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -854,16 +870,17 @@ Telemetry::GroundTruth Telemetry::ground_truth() const {
   return _impl->ground_truth();
 }
 
-uintptr_t Telemetry::subscribe_fixedwing_metrics(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<FixedwingMetricsCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_fixedwing_metrics(uintptr_t cb_ptr,
+                                                 uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, FixedwingMetrics);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::FixedwingMetricsHandle handle =
-      _impl->subscribe_fixedwing_metrics([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_fixedwing_metrics([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Telemetry::FixedwingMetricsHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -891,16 +908,16 @@ Telemetry::FixedwingMetrics Telemetry::fixedwing_metrics() const {
   return _impl->fixedwing_metrics();
 }
 
-uintptr_t Telemetry::subscribe_imu(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<ImuCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_imu(uintptr_t cb_ptr, uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Imu);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::ImuHandle handle =
-      _impl->subscribe_imu([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_imu([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Telemetry::ImuHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -925,16 +942,17 @@ void Telemetry::unsubscribe_imu(ImuHandle handle) {
 
 Telemetry::Imu Telemetry::imu() const { return _impl->imu(); }
 
-uintptr_t Telemetry::subscribe_scaled_imu(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<ScaledImuCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_scaled_imu(uintptr_t cb_ptr,
+                                          uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Imu);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::ScaledImuHandle handle =
-      _impl->subscribe_scaled_imu([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_scaled_imu([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Telemetry::ScaledImuHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -960,16 +978,16 @@ void Telemetry::unsubscribe_scaled_imu(ScaledImuHandle handle) {
 
 Telemetry::Imu Telemetry::scaled_imu() const { return _impl->scaled_imu(); }
 
-uintptr_t Telemetry::subscribe_raw_imu(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<RawImuCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_raw_imu(uintptr_t cb_ptr, uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Imu);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::RawImuHandle handle =
-      _impl->subscribe_raw_imu([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_raw_imu([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Telemetry::RawImuHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -995,16 +1013,17 @@ void Telemetry::unsubscribe_raw_imu(RawImuHandle handle) {
 
 Telemetry::Imu Telemetry::raw_imu() const { return _impl->raw_imu(); }
 
-uintptr_t Telemetry::subscribe_health_all_ok(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<HealthAllOkCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_health_all_ok(uintptr_t cb_ptr,
+                                             uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, bool);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::HealthAllOkHandle handle =
-      _impl->subscribe_health_all_ok([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_health_all_ok([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Telemetry::HealthAllOkHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -1030,16 +1049,17 @@ void Telemetry::unsubscribe_health_all_ok(HealthAllOkHandle handle) {
 
 bool Telemetry::health_all_ok() const { return _impl->health_all_ok(); }
 
-uintptr_t Telemetry::subscribe_unix_epoch_time(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<UnixEpochTimeCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_unix_epoch_time(uintptr_t cb_ptr,
+                                               uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, uint64_t);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::UnixEpochTimeHandle handle =
-      _impl->subscribe_unix_epoch_time([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_unix_epoch_time([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Telemetry::UnixEpochTimeHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -1065,16 +1085,17 @@ void Telemetry::unsubscribe_unix_epoch_time(UnixEpochTimeHandle handle) {
 
 uint64_t Telemetry::unix_epoch_time() const { return _impl->unix_epoch_time(); }
 
-uintptr_t Telemetry::subscribe_distance_sensor(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<DistanceSensorCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_distance_sensor(uintptr_t cb_ptr,
+                                               uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, DistanceSensor);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::DistanceSensorHandle handle =
-      _impl->subscribe_distance_sensor([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_distance_sensor([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Telemetry::DistanceSensorHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -1102,16 +1123,17 @@ Telemetry::DistanceSensor Telemetry::distance_sensor() const {
   return _impl->distance_sensor();
 }
 
-uintptr_t Telemetry::subscribe_scaled_pressure(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<ScaledPressureCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_scaled_pressure(uintptr_t cb_ptr,
+                                               uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, ScaledPressure);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::ScaledPressureHandle handle =
-      _impl->subscribe_scaled_pressure([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_scaled_pressure([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Telemetry::ScaledPressureHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -1139,16 +1161,16 @@ Telemetry::ScaledPressure Telemetry::scaled_pressure() const {
   return _impl->scaled_pressure();
 }
 
-uintptr_t Telemetry::subscribe_heading(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<HeadingCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_heading(uintptr_t cb_ptr, uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Heading);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::HeadingHandle handle =
-      _impl->subscribe_heading([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_heading([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Telemetry::HeadingHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -1174,16 +1196,16 @@ void Telemetry::unsubscribe_heading(HeadingHandle handle) {
 
 Telemetry::Heading Telemetry::heading() const { return _impl->heading(); }
 
-uintptr_t Telemetry::subscribe_altitude(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<AltitudeCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_altitude(uintptr_t cb_ptr, uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Altitude);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::AltitudeHandle handle =
-      _impl->subscribe_altitude([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_altitude([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Telemetry::AltitudeHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -1209,16 +1231,16 @@ void Telemetry::unsubscribe_altitude(AltitudeHandle handle) {
 
 Telemetry::Altitude Telemetry::altitude() const { return _impl->altitude(); }
 
-uintptr_t Telemetry::subscribe_wind(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<WindCallback *>(cb_ptr);
+uintptr_t Telemetry::subscribe_wind(uintptr_t cb_ptr, uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Wind);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Telemetry::WindHandle handle =
-      _impl->subscribe_wind([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_wind([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Telemetry::WindHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);

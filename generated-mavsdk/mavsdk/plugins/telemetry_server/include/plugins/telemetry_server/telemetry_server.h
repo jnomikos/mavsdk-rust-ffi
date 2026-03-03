@@ -142,12 +142,24 @@ public:
   struct Position {
     double latitude_deg{
         double(NAN)}; /**< @brief Latitude in degrees (range: -90 to +90) */
+
+    double telemetry_server_get_latitude_deg() const { return latitude_deg; }
     double longitude_deg{
         double(NAN)}; /**< @brief Longitude in degrees (range: -180 to +180) */
+
+    double telemetry_server_get_longitude_deg() const { return longitude_deg; }
     float absolute_altitude_m{float(
         NAN)}; /**< @brief Altitude AMSL (above mean sea level) in metres */
+
+    float telemetry_server_get_absolute_altitude_m() const {
+      return absolute_altitude_m;
+    }
     float relative_altitude_m{float(
         NAN)}; /**< @brief Altitude relative to takeoff altitude in metres */
+
+    float telemetry_server_get_relative_altitude_m() const {
+      return relative_altitude_m;
+    }
   };
 
   /**
@@ -173,6 +185,8 @@ public:
   struct Heading {
     double heading_deg{
         double(NAN)}; /**< @brief Heading in degrees (range: 0 to +360) */
+
+    double telemetry_server_get_heading_deg() const { return heading_deg; }
   };
 
   /**
@@ -203,11 +217,21 @@ public:
    * For more info see: https://en.wikipedia.org/wiki/Quaternion
    */
   struct Quaternion {
-    float w{float(NAN)};   /**< @brief Quaternion entry 0, also denoted as a */
-    float x{float(NAN)};   /**< @brief Quaternion entry 1, also denoted as b */
-    float y{float(NAN)};   /**< @brief Quaternion entry 2, also denoted as c */
-    float z{float(NAN)};   /**< @brief Quaternion entry 3, also denoted as d */
+    float w{float(NAN)}; /**< @brief Quaternion entry 0, also denoted as a */
+
+    float telemetry_server_get_w() const { return w; }
+    float x{float(NAN)}; /**< @brief Quaternion entry 1, also denoted as b */
+
+    float telemetry_server_get_x() const { return x; }
+    float y{float(NAN)}; /**< @brief Quaternion entry 2, also denoted as c */
+
+    float telemetry_server_get_y() const { return y; }
+    float z{float(NAN)}; /**< @brief Quaternion entry 3, also denoted as d */
+
+    float telemetry_server_get_z() const { return z; }
     uint64_t timestamp_us; /**< @brief Timestamp in microseconds */
+
+    uint64_t telemetry_server_get_timestamp_us() const { return timestamp_us; }
   };
 
   /**
@@ -237,13 +261,21 @@ public:
    * For more info see https://en.wikipedia.org/wiki/Euler_angles
    */
   struct EulerAngle {
-    float roll_deg{float(NAN)};  /**< @brief Roll angle in degrees, positive is
-                                    banking to the right */
+    float roll_deg{float(NAN)}; /**< @brief Roll angle in degrees, positive is
+                                   banking to the right */
+
+    float telemetry_server_get_roll_deg() const { return roll_deg; }
     float pitch_deg{float(NAN)}; /**< @brief Pitch angle in degrees, positive is
                                     pitching nose up */
-    float yaw_deg{float(NAN)};   /**< @brief Yaw angle in degrees, positive is
-                                    clock-wise seen from above */
-    uint64_t timestamp_us;       /**< @brief Timestamp in microseconds */
+
+    float telemetry_server_get_pitch_deg() const { return pitch_deg; }
+    float yaw_deg{float(NAN)}; /**< @brief Yaw angle in degrees, positive is
+                                  clock-wise seen from above */
+
+    float telemetry_server_get_yaw_deg() const { return yaw_deg; }
+    uint64_t timestamp_us; /**< @brief Timestamp in microseconds */
+
+    uint64_t telemetry_server_get_timestamp_us() const { return timestamp_us; }
   };
 
   /**
@@ -267,9 +299,15 @@ public:
    * @brief Angular velocity type.
    */
   struct AngularVelocityBody {
-    float roll_rad_s{float(NAN)};  /**< @brief Roll angular velocity */
+    float roll_rad_s{float(NAN)}; /**< @brief Roll angular velocity */
+
+    float telemetry_server_get_roll_rad_s() const { return roll_rad_s; }
     float pitch_rad_s{float(NAN)}; /**< @brief Pitch angular velocity */
-    float yaw_rad_s{float(NAN)};   /**< @brief Yaw angular velocity */
+
+    float telemetry_server_get_pitch_rad_s() const { return pitch_rad_s; }
+    float yaw_rad_s{float(NAN)}; /**< @brief Yaw angular velocity */
+
+    float telemetry_server_get_yaw_rad_s() const { return yaw_rad_s; }
   };
 
   /**
@@ -296,8 +334,14 @@ public:
    */
   struct GpsInfo {
     int32_t num_satellites{
-        0};           /**< @brief Number of visible satellites in use */
+        0}; /**< @brief Number of visible satellites in use */
+
+    int32_t telemetry_server_get_num_satellites() const {
+      return num_satellites;
+    }
     FixType fix_type; /**< @brief Fix type */
+
+    const FixType &telemetry_server_get_fix_type() const { return fix_type; }
   };
 
   /**
@@ -325,30 +369,70 @@ public:
    * sensor.
    */
   struct RawGps {
-    uint64_t timestamp_us;     /**< @brief Timestamp in microseconds (UNIX Epoch
-                                  time or time since system boot, to be inferred) */
-    double latitude_deg;       /**< @brief Latitude in degrees (WGS84, EGM96
-                                  ellipsoid) */
-    double longitude_deg;      /**< @brief Longitude in degrees (WGS84, EGM96
-                                  ellipsoid) */
+    uint64_t timestamp_us; /**< @brief Timestamp in microseconds (UNIX Epoch
+                              time or time since system boot, to be inferred) */
+
+    uint64_t telemetry_server_get_timestamp_us() const { return timestamp_us; }
+    double latitude_deg; /**< @brief Latitude in degrees (WGS84, EGM96
+                            ellipsoid) */
+
+    double telemetry_server_get_latitude_deg() const { return latitude_deg; }
+    double longitude_deg; /**< @brief Longitude in degrees (WGS84, EGM96
+                             ellipsoid) */
+
+    double telemetry_server_get_longitude_deg() const { return longitude_deg; }
     float absolute_altitude_m; /**< @brief Altitude AMSL (above mean sea level)
                                   in metres */
+
+    float telemetry_server_get_absolute_altitude_m() const {
+      return absolute_altitude_m;
+    }
     float hdop; /**< @brief GPS HDOP horizontal dilution of position (unitless).
                    If unknown, set to NaN */
+
+    float telemetry_server_get_hdop() const { return hdop; }
     float vdop; /**< @brief GPS VDOP vertical dilution of position (unitless).
                    If unknown, set to NaN */
+
+    float telemetry_server_get_vdop() const { return vdop; }
     float velocity_m_s; /**< @brief Ground velocity in metres per second */
+
+    float telemetry_server_get_velocity_m_s() const { return velocity_m_s; }
     float cog_deg; /**< @brief Course over ground (NOT heading, but direction of
                       movement) in degrees. If unknown, set to NaN */
+
+    float telemetry_server_get_cog_deg() const { return cog_deg; }
     float altitude_ellipsoid_m; /**< @brief Altitude in metres (above WGS84,
                                    EGM96 ellipsoid) */
+
+    float telemetry_server_get_altitude_ellipsoid_m() const {
+      return altitude_ellipsoid_m;
+    }
     float
         horizontal_uncertainty_m; /**< @brief Position uncertainty in metres */
+
+    float telemetry_server_get_horizontal_uncertainty_m() const {
+      return horizontal_uncertainty_m;
+    }
     float vertical_uncertainty_m; /**< @brief Altitude uncertainty in metres */
+
+    float telemetry_server_get_vertical_uncertainty_m() const {
+      return vertical_uncertainty_m;
+    }
     float velocity_uncertainty_m_s; /**< @brief Velocity uncertainty in metres
                                        per second */
+
+    float telemetry_server_get_velocity_uncertainty_m_s() const {
+      return velocity_uncertainty_m_s;
+    }
     float heading_uncertainty_deg; /**< @brief Heading uncertainty in degrees */
-    float yaw_deg;                 /**< @brief Yaw in earth frame from north. */
+
+    float telemetry_server_get_heading_uncertainty_deg() const {
+      return heading_uncertainty_deg;
+    }
+    float yaw_deg; /**< @brief Yaw in earth frame from north. */
+
+    float telemetry_server_get_yaw_deg() const { return yaw_deg; }
   };
 
   /**
@@ -373,8 +457,14 @@ public:
    */
   struct Battery {
     float voltage_v{float(NAN)}; /**< @brief Voltage in volts */
+
+    float telemetry_server_get_voltage_v() const { return voltage_v; }
     float remaining_percent{float(
         NAN)}; /**< @brief Estimated battery remaining (range: 0.0 to 1.0) */
+
+    float telemetry_server_get_remaining_percent() const {
+      return remaining_percent;
+    }
   };
 
   /**
@@ -400,10 +490,20 @@ public:
   struct RcStatus {
     bool was_available_once{
         false}; /**< @brief True if an RC signal has been available once */
+
+    bool telemetry_server_get_was_available_once() const {
+      return was_available_once;
+    }
     bool is_available{
         false}; /**< @brief True if the RC signal is available now */
+
+    bool telemetry_server_get_is_available() const { return is_available; }
     float signal_strength_percent{float(
         NAN)}; /**< @brief Signal strength (range: 0 to 100, NaN if unknown) */
+
+    float telemetry_server_get_signal_strength_percent() const {
+      return signal_strength_percent;
+    }
   };
 
   /**
@@ -428,9 +528,11 @@ public:
    */
   struct StatusText {
     StatusTextType type; /**< @brief Message type */
-    StatusTextType get_type() const { return type; }
+
+    const StatusTextType &telemetry_server_get_type() const { return type; }
     std::string text; /**< @brief MAVLink status message */
-    const std::string &get_text() const { return text; }
+
+    const std::string &telemetry_server_get_text() const { return text; }
   };
 
   /**
@@ -457,10 +559,14 @@ public:
     int32_t group{
         0}; /**< @brief An actuator control group is e.g. 'attitude' for the
                core flight controls, or 'gimbal' for a payload. */
-    int32_t get_group() const { return group; }
+
+    int32_t telemetry_server_get_group() const { return group; }
     std::vector<float> controls; /**< @brief Controls normed from -1 to 1, where
                                     0 is neutral position. */
-    const std::vector<float> &get_controls() const { return controls; }
+
+    const std::vector<float> &telemetry_server_get_controls() const {
+      return controls;
+    }
   };
 
   /**
@@ -487,9 +593,13 @@ public:
    */
   struct ActuatorOutputStatus {
     uint32_t active{0}; /**< @brief Active outputs */
-    uint32_t get_active() const { return active; }
+
+    uint32_t telemetry_server_get_active() const { return active; }
     std::vector<float> actuator; /**< @brief Servo/motor output values */
-    const std::vector<float> &get_actuator() const { return actuator; }
+
+    const std::vector<float> &telemetry_server_get_actuator() const {
+      return actuator;
+    }
   };
 
   /**
@@ -521,7 +631,8 @@ public:
   struct Covariance {
     std::vector<float>
         covariance_matrix; /**< @brief Representation of a covariance matrix. */
-    const std::vector<float> &get_covariance_matrix() const {
+
+    const std::vector<float> &telemetry_server_get_covariance_matrix() const {
       return covariance_matrix;
     }
   };
@@ -549,8 +660,14 @@ public:
    */
   struct VelocityBody {
     float x_m_s; /**< @brief Velocity in X in metres/second */
+
+    float telemetry_server_get_x_m_s() const { return x_m_s; }
     float y_m_s; /**< @brief Velocity in Y in metres/second */
+
+    float telemetry_server_get_y_m_s() const { return y_m_s; }
     float z_m_s; /**< @brief Velocity in Z in metres/second */
+
+    float telemetry_server_get_z_m_s() const { return z_m_s; }
   };
 
   /**
@@ -577,8 +694,14 @@ public:
    */
   struct PositionBody {
     float x_m; /**< @brief X Position in metres. */
+
+    float telemetry_server_get_x_m() const { return x_m; }
     float y_m; /**< @brief Y Position in metres. */
+
+    float telemetry_server_get_y_m() const { return y_m; }
     float z_m; /**< @brief Z Position in metres. */
+
+    float telemetry_server_get_z_m() const { return z_m; }
   };
 
   /**
@@ -629,19 +752,50 @@ public:
     operator<<(std::ostream &str,
                TelemetryServer::Odometry::MavFrame const &mav_frame);
     uint64_t time_usec; /**< @brief Timestamp (0 to use Backend timestamp). */
-    MavFrame frame_id;  /**< @brief Coordinate frame of reference for the pose
-                           data. */
+
+    uint64_t telemetry_server_get_time_usec() const { return time_usec; }
+    MavFrame frame_id; /**< @brief Coordinate frame of reference for the pose
+                          data. */
+
+    const MavFrame &telemetry_server_get_frame_id() const { return frame_id; }
     MavFrame child_frame_id; /**< @brief Coordinate frame of reference for the
                                 velocity in free space (twist) data. */
+
+    const MavFrame &telemetry_server_get_child_frame_id() const {
+      return child_frame_id;
+    }
     PositionBody position_body; /**< @brief Position. */
+
+    const PositionBody &telemetry_server_get_position_body() const {
+      return position_body;
+    }
     Quaternion q; /**< @brief Quaternion components, w, x, y, z (1 0 0 0 is the
                      null-rotation). */
+
+    const Quaternion &telemetry_server_get_q() const { return q; }
     VelocityBody velocity_body; /**< @brief Linear velocity (m/s). */
+
+    const VelocityBody &telemetry_server_get_velocity_body() const {
+      return velocity_body;
+    }
     AngularVelocityBody
-        angular_velocity_body;  /**< @brief Angular velocity (rad/s). */
+        angular_velocity_body; /**< @brief Angular velocity (rad/s). */
+
+    const AngularVelocityBody &
+    telemetry_server_get_angular_velocity_body() const {
+      return angular_velocity_body;
+    }
     Covariance pose_covariance; /**< @brief Pose cross-covariance matrix. */
+
+    const Covariance &telemetry_server_get_pose_covariance() const {
+      return pose_covariance;
+    }
     Covariance
         velocity_covariance; /**< @brief Velocity cross-covariance matrix. */
+
+    const Covariance &telemetry_server_get_velocity_covariance() const {
+      return velocity_covariance;
+    }
   };
 
   /**
@@ -668,11 +822,23 @@ public:
     float minimum_distance_m{
         float(NAN)}; /**< @brief Minimum distance the sensor can measure, NaN if
                         unknown. */
+
+    float telemetry_server_get_minimum_distance_m() const {
+      return minimum_distance_m;
+    }
     float maximum_distance_m{
         float(NAN)}; /**< @brief Maximum distance the sensor can measure, NaN if
                         unknown. */
+
+    float telemetry_server_get_maximum_distance_m() const {
+      return maximum_distance_m;
+    }
     float current_distance_m{
         float(NAN)}; /**< @brief Current distance reading, NaN if unknown. */
+
+    float telemetry_server_get_current_distance_m() const {
+      return current_distance_m;
+    }
   };
 
   /**
@@ -699,15 +865,33 @@ public:
    */
   struct ScaledPressure {
     uint64_t timestamp_us; /**< @brief Timestamp (time since system boot) */
+
+    uint64_t telemetry_server_get_timestamp_us() const { return timestamp_us; }
     float absolute_pressure_hpa; /**< @brief Absolute pressure in hPa */
+
+    float telemetry_server_get_absolute_pressure_hpa() const {
+      return absolute_pressure_hpa;
+    }
     float
         differential_pressure_hpa; /**< @brief Differential pressure 1 in hPa */
-    float temperature_deg;         /**< @brief Absolute pressure temperature (in
-                                      celsius) */
+
+    float telemetry_server_get_differential_pressure_hpa() const {
+      return differential_pressure_hpa;
+    }
+    float temperature_deg; /**< @brief Absolute pressure temperature (in
+                              celsius) */
+
+    float telemetry_server_get_temperature_deg() const {
+      return temperature_deg;
+    }
     float
         differential_pressure_temperature_deg; /**< @brief Differential pressure
                                                   temperature (in celsius, 0 if
                                                   not available) */
+
+    float telemetry_server_get_differential_pressure_temperature_deg() const {
+      return differential_pressure_temperature_deg;
+    }
   };
 
   /**
@@ -735,10 +919,16 @@ public:
   struct PositionNed {
     float north_m{
         float(NAN)}; /**< @brief Position along north direction in metres */
+
+    float telemetry_server_get_north_m() const { return north_m; }
     float east_m{
         float(NAN)}; /**< @brief Position along east direction in metres */
+
+    float telemetry_server_get_east_m() const { return east_m; }
     float down_m{
         float(NAN)}; /**< @brief Position along down direction in metres */
+
+    float telemetry_server_get_down_m() const { return down_m; }
   };
 
   /**
@@ -766,10 +956,16 @@ public:
   struct VelocityNed {
     float north_m_s; /**< @brief Velocity along north direction in metres per
                         second */
-    float east_m_s;  /**< @brief Velocity along east direction in metres per
-                        second */
-    float down_m_s;  /**< @brief Velocity along down direction in metres per
-                        second */
+
+    float telemetry_server_get_north_m_s() const { return north_m_s; }
+    float east_m_s; /**< @brief Velocity along east direction in metres per
+                       second */
+
+    float telemetry_server_get_east_m_s() const { return east_m_s; }
+    float down_m_s; /**< @brief Velocity along down direction in metres per
+                       second */
+
+    float telemetry_server_get_down_m_s() const { return down_m_s; }
   };
 
   /**
@@ -796,7 +992,15 @@ public:
    */
   struct PositionVelocityNed {
     PositionNed position; /**< @brief Position (NED) */
+
+    const PositionNed &telemetry_server_get_position() const {
+      return position;
+    }
     VelocityNed velocity; /**< @brief Velocity (NED) */
+
+    const VelocityNed &telemetry_server_get_velocity() const {
+      return velocity;
+    }
   };
 
   /**
@@ -824,10 +1028,18 @@ public:
   struct GroundTruth {
     double latitude_deg{
         double(NAN)}; /**< @brief Latitude in degrees (range: -90 to +90) */
+
+    double telemetry_server_get_latitude_deg() const { return latitude_deg; }
     double longitude_deg{
         double(NAN)}; /**< @brief Longitude in degrees (range: -180 to 180) */
+
+    double telemetry_server_get_longitude_deg() const { return longitude_deg; }
     float absolute_altitude_m{float(
         NAN)}; /**< @brief Altitude AMSL (above mean sea level) in metres */
+
+    float telemetry_server_get_absolute_altitude_m() const {
+      return absolute_altitude_m;
+    }
   };
 
   /**
@@ -855,16 +1067,34 @@ public:
   struct FixedwingMetrics {
     float airspeed_m_s{float(NAN)}; /**< @brief Current indicated airspeed (IAS)
                                        in metres per second */
+
+    float telemetry_server_get_airspeed_m_s() const { return airspeed_m_s; }
     float throttle_percentage{
         float(NAN)}; /**< @brief Current throttle setting (0 to 100) */
+
+    float telemetry_server_get_throttle_percentage() const {
+      return throttle_percentage;
+    }
     float climb_rate_m_s{
         float(NAN)}; /**< @brief Current climb rate in metres per second */
+
+    float telemetry_server_get_climb_rate_m_s() const { return climb_rate_m_s; }
     float groundspeed_m_s{
         float(NAN)}; /**< @brief Current groundspeed metres per second */
+
+    float telemetry_server_get_groundspeed_m_s() const {
+      return groundspeed_m_s;
+    }
     float heading_deg{float(
         NAN)}; /**< @brief Current heading in compass units (0-360, 0=north) */
+
+    float telemetry_server_get_heading_deg() const { return heading_deg; }
     float absolute_altitude_m{
         float(NAN)}; /**< @brief Current altitude in metres (MSL) */
+
+    float telemetry_server_get_absolute_altitude_m() const {
+      return absolute_altitude_m;
+    }
   };
 
   /**
@@ -892,10 +1122,16 @@ public:
   struct AccelerationFrd {
     float forward_m_s2{float(NAN)}; /**< @brief Acceleration in forward
                                        direction in metres per second^2 */
+
+    float telemetry_server_get_forward_m_s2() const { return forward_m_s2; }
     float right_m_s2{float(NAN)}; /**< @brief Acceleration in right direction in
                                      metres per second^2 */
-    float down_m_s2{float(NAN)};  /**< @brief Acceleration in down direction in
-                                     metres per second^2 */
+
+    float telemetry_server_get_right_m_s2() const { return right_m_s2; }
+    float down_m_s2{float(NAN)}; /**< @brief Acceleration in down direction in
+                                    metres per second^2 */
+
+    float telemetry_server_get_down_m_s2() const { return down_m_s2; }
   };
 
   /**
@@ -923,10 +1159,16 @@ public:
   struct AngularVelocityFrd {
     float forward_rad_s{float(NAN)}; /**< @brief Angular velocity in forward
                                         direction in radians per second */
-    float right_rad_s{float(NAN)};   /**< @brief Angular velocity in right
-                                        direction in radians per second */
+
+    float telemetry_server_get_forward_rad_s() const { return forward_rad_s; }
+    float right_rad_s{float(NAN)}; /**< @brief Angular velocity in right
+                                      direction in radians per second */
+
+    float telemetry_server_get_right_rad_s() const { return right_rad_s; }
     float down_rad_s{float(NAN)}; /**< @brief Angular velocity in Down direction
                                      in radians per second */
+
+    float telemetry_server_get_down_rad_s() const { return down_rad_s; }
   };
 
   /**
@@ -954,10 +1196,16 @@ public:
   struct MagneticFieldFrd {
     float forward_gauss{float(NAN)}; /**< @brief Magnetic field in forward
                                         direction measured in Gauss */
+
+    float telemetry_server_get_forward_gauss() const { return forward_gauss; }
     float right_gauss{float(
         NAN)}; /**< @brief Magnetic field in East direction measured in Gauss */
+
+    float telemetry_server_get_right_gauss() const { return right_gauss; }
     float down_gauss{float(
         NAN)}; /**< @brief Magnetic field in Down direction measured in Gauss */
+
+    float telemetry_server_get_down_gauss() const { return down_gauss; }
   };
 
   /**
@@ -983,11 +1231,30 @@ public:
    * @brief Imu message type.
    */
   struct Imu {
-    AccelerationFrd acceleration_frd;        /**< @brief Acceleration */
+    AccelerationFrd acceleration_frd; /**< @brief Acceleration */
+
+    const AccelerationFrd &telemetry_server_get_acceleration_frd() const {
+      return acceleration_frd;
+    }
     AngularVelocityFrd angular_velocity_frd; /**< @brief Angular velocity */
-    MagneticFieldFrd magnetic_field_frd;     /**< @brief Magnetic field */
-    float temperature_degc{float(NAN)};      /**< @brief Temperature */
+
+    const AngularVelocityFrd &
+    telemetry_server_get_angular_velocity_frd() const {
+      return angular_velocity_frd;
+    }
+    MagneticFieldFrd magnetic_field_frd; /**< @brief Magnetic field */
+
+    const MagneticFieldFrd &telemetry_server_get_magnetic_field_frd() const {
+      return magnetic_field_frd;
+    }
+    float temperature_degc{float(NAN)}; /**< @brief Temperature */
+
+    float telemetry_server_get_temperature_degc() const {
+      return temperature_degc;
+    }
     uint64_t timestamp_us; /**< @brief Timestamp in microseconds */
+
+    uint64_t telemetry_server_get_timestamp_us() const { return timestamp_us; }
   };
 
   /**

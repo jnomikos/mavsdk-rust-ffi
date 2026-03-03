@@ -40,16 +40,17 @@ std::pair<Info::Result, double> Info::get_speed_factor() const {
   return _impl->get_speed_factor();
 }
 
-uintptr_t Info::subscribe_flight_information(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<FlightInformationCallback *>(cb_ptr);
+uintptr_t Info::subscribe_flight_information(uintptr_t cb_ptr,
+                                             uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, FlightInfo);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
-  Info::FlightInformationHandle handle =
-      _impl->subscribe_flight_information([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+  Info::FlightInformationHandle handle = _impl->subscribe_flight_information(
+      [callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Info::FlightInformationHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);

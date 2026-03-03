@@ -52,22 +52,36 @@ public:
   struct MavlinkMessage {
     std::string message_name; /**< @brief MAVLink message name (e.g.,
                                  "HEARTBEAT", "GLOBAL_POSITION_INT") */
-    const std::string &get_message_name() const { return message_name; }
+
+    const std::string &mavlink_direct_get_message_name() const {
+      return message_name;
+    }
     uint32_t system_id; /**< @brief System ID of the sender (for received
                            messages) */
-    uint32_t get_system_id() const { return system_id; }
+
+    uint32_t mavlink_direct_get_system_id() const { return system_id; }
     uint32_t component_id; /**< @brief Component ID of the sender (for received
                               messages) */
-    uint32_t get_component_id() const { return component_id; }
+
+    uint32_t mavlink_direct_get_component_id() const { return component_id; }
     uint32_t target_system_id; /**< @brief Target system ID (for sending, 0 for
                                   broadcast) */
-    uint32_t get_target_system_id() const { return target_system_id; }
+
+    uint32_t mavlink_direct_get_target_system_id() const {
+      return target_system_id;
+    }
     uint32_t target_component_id; /**< @brief Target component ID (for sending,
                                      0 for broadcast) */
-    uint32_t get_target_component_id() const { return target_component_id; }
+
+    uint32_t mavlink_direct_get_target_component_id() const {
+      return target_component_id;
+    }
     std::string
         fields_json; /**< @brief All message fields as single JSON object */
-    const std::string &get_fields_json() const { return fields_json; }
+
+    const std::string &mavlink_direct_get_fields_json() const {
+      return fields_json;
+    }
   };
 
   /**
@@ -148,7 +162,8 @@ public:
    * string in message_name to subscribe to all messages, or specify a message
    * name (e.g., "HEARTBEAT") to filter for specific message types.
    */
-  uintptr_t subscribe_message(std::string message_name, uintptr_t cb_ptr);
+  uintptr_t subscribe_message(std::string message_name, uintptr_t cb_ptr,
+                              uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_message

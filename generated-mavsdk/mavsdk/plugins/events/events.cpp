@@ -21,16 +21,16 @@ Events::Events(std::shared_ptr<System> system)
 
 Events::~Events() {}
 
-uintptr_t Events::subscribe_events(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<EventsCallback *>(cb_ptr);
+uintptr_t Events::subscribe_events(uintptr_t cb_ptr, uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Event);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Events::EventsHandle handle =
-      _impl->subscribe_events([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_events([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Events::EventsHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -53,17 +53,19 @@ void Events::unsubscribe_events(EventsHandle handle) {
   _impl->unsubscribe_events(handle);
 }
 
-uintptr_t Events::subscribe_health_and_arming_checks(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<HealthAndArmingChecksCallback *>(cb_ptr);
+uintptr_t Events::subscribe_health_and_arming_checks(uintptr_t cb_ptr,
+                                                     uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, HealthAndArmingCheckReport);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Events::HealthAndArmingChecksHandle handle =
-      _impl->subscribe_health_and_arming_checks([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
-      });
+      _impl->subscribe_health_and_arming_checks(
+          [callback, user_data](auto &&...args) {
+            callback(user_data, std::forward<decltype(args)>(args)...);
+          });
   auto *handle_ptr = new Events::HealthAndArmingChecksHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
 }

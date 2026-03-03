@@ -52,9 +52,11 @@ public:
    */
   struct IntParam {
     std::string name; /**< @brief Name of the parameter */
-    const std::string &get_name() const { return name; }
+
+    const std::string &param_server_get_name() const { return name; }
     int32_t value; /**< @brief Value of the parameter */
-    int32_t get_value() const { return value; }
+
+    int32_t param_server_get_value() const { return value; }
   };
 
   /**
@@ -79,9 +81,11 @@ public:
    */
   struct FloatParam {
     std::string name; /**< @brief Name of the parameter */
-    const std::string &get_name() const { return name; }
+
+    const std::string &param_server_get_name() const { return name; }
     float value; /**< @brief Value of the parameter */
-    float get_value() const { return value; }
+
+    float param_server_get_value() const { return value; }
   };
 
   /**
@@ -106,9 +110,11 @@ public:
    */
   struct CustomParam {
     std::string name; /**< @brief Name of the parameter */
-    const std::string &get_name() const { return name; }
+
+    const std::string &param_server_get_name() const { return name; }
     std::string value; /**< @brief Value of the parameter */
-    const std::string &get_value() const { return value; }
+
+    const std::string &param_server_get_value() const { return value; }
   };
 
   /**
@@ -134,17 +140,22 @@ public:
   struct AllParams {
     std::vector<IntParam> int_params; /**< @brief Collection of all parameter
                                          names and values of type int */
-    const std::vector<IntParam> &get_int_params() const { return int_params; }
+
+    const std::vector<IntParam> &param_server_get_int_params() const {
+      return int_params;
+    }
     std::vector<FloatParam>
         float_params; /**< @brief Collection of all parameter names and values
                          of type float */
-    const std::vector<FloatParam> &get_float_params() const {
+
+    const std::vector<FloatParam> &param_server_get_float_params() const {
       return float_params;
     }
     std::vector<CustomParam>
         custom_params; /**< @brief Collection of all parameter names and values
                           of type custom */
-    const std::vector<CustomParam> &get_custom_params() const {
+
+    const std::vector<CustomParam> &param_server_get_custom_params() const {
       return custom_params;
     }
   };
@@ -317,7 +328,7 @@ public:
   /**
    * @brief Subscribe to changed int param.
    */
-  uintptr_t subscribe_changed_param_int(uintptr_t cb_ptr);
+  uintptr_t subscribe_changed_param_int(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_changed_param_int
@@ -348,7 +359,8 @@ public:
   /**
    * @brief Subscribe to changed float param.
    */
-  uintptr_t subscribe_changed_param_float(uintptr_t cb_ptr);
+  uintptr_t subscribe_changed_param_float(uintptr_t cb_ptr,
+                                          uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_changed_param_float
@@ -379,7 +391,8 @@ public:
   /**
    * @brief Subscribe to changed custom param.
    */
-  uintptr_t subscribe_changed_param_custom(uintptr_t cb_ptr);
+  uintptr_t subscribe_changed_param_custom(uintptr_t cb_ptr,
+                                           uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_changed_param_custom

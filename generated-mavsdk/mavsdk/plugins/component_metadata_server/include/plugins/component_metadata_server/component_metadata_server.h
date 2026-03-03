@@ -73,9 +73,15 @@ public:
    */
   struct Metadata {
     MetadataType type; /**< @brief The metadata type */
-    MetadataType get_type() const { return type; }
+
+    const MetadataType &component_metadata_server_get_type() const {
+      return type;
+    }
     std::string json_metadata; /**< @brief The JSON metadata */
-    const std::string &get_json_metadata() const { return json_metadata; }
+
+    const std::string &component_metadata_server_get_json_metadata() const {
+      return json_metadata;
+    }
   };
 
   /**

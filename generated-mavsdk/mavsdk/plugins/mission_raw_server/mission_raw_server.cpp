@@ -21,16 +21,17 @@ MissionRawServer::MissionRawServer(
 
 MissionRawServer::~MissionRawServer() {}
 
-uintptr_t MissionRawServer::subscribe_incoming_mission(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<IncomingMissionCallback *>(cb_ptr);
+uintptr_t MissionRawServer::subscribe_incoming_mission(uintptr_t cb_ptr,
+                                                       uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Result, MissionPlan);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   MissionRawServer::IncomingMissionHandle handle =
-      _impl->subscribe_incoming_mission([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_incoming_mission([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new MissionRawServer::IncomingMissionHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -56,17 +57,20 @@ void MissionRawServer::unsubscribe_incoming_mission(
   _impl->unsubscribe_incoming_mission(handle);
 }
 
-uintptr_t MissionRawServer::subscribe_current_item_changed(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<CurrentItemChangedCallback *>(cb_ptr);
+uintptr_t
+MissionRawServer::subscribe_current_item_changed(uintptr_t cb_ptr,
+                                                 uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, MissionItem);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   MissionRawServer::CurrentItemChangedHandle handle =
-      _impl->subscribe_current_item_changed([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
-      });
+      _impl->subscribe_current_item_changed(
+          [callback, user_data](auto &&...args) {
+            callback(user_data, std::forward<decltype(args)>(args)...);
+          });
   auto *handle_ptr = new MissionRawServer::CurrentItemChangedHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
 }
@@ -95,16 +99,17 @@ void MissionRawServer::set_current_item_complete() const {
   _impl->set_current_item_complete();
 }
 
-uintptr_t MissionRawServer::subscribe_clear_all(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<ClearAllCallback *>(cb_ptr);
+uintptr_t MissionRawServer::subscribe_clear_all(uintptr_t cb_ptr,
+                                                uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, uint32_t);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   MissionRawServer::ClearAllHandle handle =
-      _impl->subscribe_clear_all([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_clear_all([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new MissionRawServer::ClearAllHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);

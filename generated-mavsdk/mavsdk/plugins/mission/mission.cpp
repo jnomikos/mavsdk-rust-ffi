@@ -96,16 +96,17 @@ std::pair<Mission::Result, bool> Mission::is_mission_finished() const {
   return _impl->is_mission_finished();
 }
 
-uintptr_t Mission::subscribe_mission_progress(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<MissionProgressCallback *>(cb_ptr);
+uintptr_t Mission::subscribe_mission_progress(uintptr_t cb_ptr,
+                                              uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, MissionProgress);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Mission::MissionProgressHandle handle =
-      _impl->subscribe_mission_progress([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_mission_progress([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Mission::MissionProgressHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);

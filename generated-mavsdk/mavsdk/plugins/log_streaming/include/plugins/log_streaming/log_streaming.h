@@ -52,7 +52,10 @@ public:
   struct LogStreamingRaw {
     std::string
         data_base64; /**< @brief Ulog file stream data encoded as base64 */
-    const std::string &get_data_base64() const { return data_base64; }
+
+    const std::string &log_streaming_get_data_base64() const {
+      return data_base64;
+    }
   };
 
   /**
@@ -154,7 +157,7 @@ public:
   /**
    * @brief Subscribe to logging messages
    */
-  uintptr_t subscribe_log_streaming_raw(uintptr_t cb_ptr);
+  uintptr_t subscribe_log_streaming_raw(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_log_streaming_raw

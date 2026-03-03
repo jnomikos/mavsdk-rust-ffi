@@ -50,9 +50,11 @@ public:
    */
   struct ListDirectoryData {
     std::vector<std::string> dirs; /**< @brief The found directories. */
-    const std::vector<std::string> &get_dirs() const { return dirs; }
+
+    const std::vector<std::string> &ftp_get_dirs() const { return dirs; }
     std::vector<std::string> files; /**< @brief The found files. */
-    const std::vector<std::string> &get_files() const { return files; }
+
+    const std::vector<std::string> &ftp_get_files() const { return files; }
   };
 
   /**
@@ -79,7 +81,11 @@ public:
   struct ProgressData {
     uint32_t bytes_transferred; /**< @brief The number of bytes already
                                    transferred. */
-    uint32_t total_bytes;       /**< @brief The total bytes to transfer. */
+
+    uint32_t ftp_get_bytes_transferred() const { return bytes_transferred; }
+    uint32_t total_bytes; /**< @brief The total bytes to transfer. */
+
+    uint32_t ftp_get_total_bytes() const { return total_bytes; }
   };
 
   /**

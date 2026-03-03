@@ -98,7 +98,7 @@ public:
    * This subscription needs to be made before a command line is sent,
    * otherwise, no response will be sent.
    */
-  uintptr_t subscribe_receive(uintptr_t cb_ptr);
+  uintptr_t subscribe_receive(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_receive

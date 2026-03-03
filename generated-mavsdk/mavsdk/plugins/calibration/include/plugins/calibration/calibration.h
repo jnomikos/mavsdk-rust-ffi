@@ -83,14 +83,20 @@ public:
   struct ProgressData {
     bool has_progress{false}; /**< @brief Whether this ProgressData contains a
                                  'progress' status or not */
-    bool get_has_progress() const { return has_progress; }
+
+    bool calibration_get_has_progress() const { return has_progress; }
     float progress{float(NAN)}; /**< @brief Progress (percentage) */
-    float get_progress() const { return progress; }
+
+    float calibration_get_progress() const { return progress; }
     bool has_status_text{false}; /**< @brief Whether this ProgressData contains
                                     a 'status_text' or not */
-    bool get_has_status_text() const { return has_status_text; }
+
+    bool calibration_get_has_status_text() const { return has_status_text; }
     std::string status_text; /**< @brief Instruction text */
-    const std::string &get_status_text() const { return status_text; }
+
+    const std::string &calibration_get_status_text() const {
+      return status_text;
+    }
   };
 
   /**

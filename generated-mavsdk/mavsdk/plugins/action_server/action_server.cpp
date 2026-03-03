@@ -19,16 +19,17 @@ ActionServer::ActionServer(std::shared_ptr<ServerComponent> server_component)
 
 ActionServer::~ActionServer() {}
 
-uintptr_t ActionServer::subscribe_arm_disarm(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<ArmDisarmCallback *>(cb_ptr);
+uintptr_t ActionServer::subscribe_arm_disarm(uintptr_t cb_ptr,
+                                             uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Result, ArmDisarm);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   ActionServer::ArmDisarmHandle handle =
-      _impl->subscribe_arm_disarm([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_arm_disarm([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new ActionServer::ArmDisarmHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -52,17 +53,19 @@ void ActionServer::unsubscribe_arm_disarm(ArmDisarmHandle handle) {
   _impl->unsubscribe_arm_disarm(handle);
 }
 
-uintptr_t ActionServer::subscribe_flight_mode_change(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<FlightModeChangeCallback *>(cb_ptr);
+uintptr_t ActionServer::subscribe_flight_mode_change(uintptr_t cb_ptr,
+                                                     uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Result, FlightMode);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   ActionServer::FlightModeChangeHandle handle =
-      _impl->subscribe_flight_mode_change([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
-      });
+      _impl->subscribe_flight_mode_change(
+          [callback, user_data](auto &&...args) {
+            callback(user_data, std::forward<decltype(args)>(args)...);
+          });
   auto *handle_ptr = new ActionServer::FlightModeChangeHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
 }
@@ -86,16 +89,17 @@ void ActionServer::unsubscribe_flight_mode_change(
   _impl->unsubscribe_flight_mode_change(handle);
 }
 
-uintptr_t ActionServer::subscribe_takeoff(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<TakeoffCallback *>(cb_ptr);
+uintptr_t ActionServer::subscribe_takeoff(uintptr_t cb_ptr,
+                                          uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Result, bool);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   ActionServer::TakeoffHandle handle =
-      _impl->subscribe_takeoff([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_takeoff([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new ActionServer::TakeoffHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -119,16 +123,16 @@ void ActionServer::unsubscribe_takeoff(TakeoffHandle handle) {
   _impl->unsubscribe_takeoff(handle);
 }
 
-uintptr_t ActionServer::subscribe_land(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<LandCallback *>(cb_ptr);
+uintptr_t ActionServer::subscribe_land(uintptr_t cb_ptr, uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Result, bool);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   ActionServer::LandHandle handle =
-      _impl->subscribe_land([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_land([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new ActionServer::LandHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -152,16 +156,17 @@ void ActionServer::unsubscribe_land(LandHandle handle) {
   _impl->unsubscribe_land(handle);
 }
 
-uintptr_t ActionServer::subscribe_reboot(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<RebootCallback *>(cb_ptr);
+uintptr_t ActionServer::subscribe_reboot(uintptr_t cb_ptr,
+                                         uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Result, bool);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   ActionServer::RebootHandle handle =
-      _impl->subscribe_reboot([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_reboot([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new ActionServer::RebootHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -185,16 +190,17 @@ void ActionServer::unsubscribe_reboot(RebootHandle handle) {
   _impl->unsubscribe_reboot(handle);
 }
 
-uintptr_t ActionServer::subscribe_shutdown(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<ShutdownCallback *>(cb_ptr);
+uintptr_t ActionServer::subscribe_shutdown(uintptr_t cb_ptr,
+                                           uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Result, bool);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   ActionServer::ShutdownHandle handle =
-      _impl->subscribe_shutdown([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_shutdown([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new ActionServer::ShutdownHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -218,16 +224,17 @@ void ActionServer::unsubscribe_shutdown(ShutdownHandle handle) {
   _impl->unsubscribe_shutdown(handle);
 }
 
-uintptr_t ActionServer::subscribe_terminate(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<TerminateCallback *>(cb_ptr);
+uintptr_t ActionServer::subscribe_terminate(uintptr_t cb_ptr,
+                                            uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Result, bool);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   ActionServer::TerminateHandle handle =
-      _impl->subscribe_terminate([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_terminate([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new ActionServer::TerminateHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);

@@ -90,16 +90,16 @@ Gimbal::Result Gimbal::release_control(int32_t gimbal_id) const {
   return _impl->release_control(gimbal_id);
 }
 
-uintptr_t Gimbal::subscribe_gimbal_list(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<GimbalListCallback *>(cb_ptr);
+uintptr_t Gimbal::subscribe_gimbal_list(uintptr_t cb_ptr, uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, GimbalList);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Gimbal::GimbalListHandle handle =
-      _impl->subscribe_gimbal_list([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_gimbal_list([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Gimbal::GimbalListHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -125,16 +125,17 @@ void Gimbal::unsubscribe_gimbal_list(GimbalListHandle handle) {
 
 Gimbal::GimbalList Gimbal::gimbal_list() const { return _impl->gimbal_list(); }
 
-uintptr_t Gimbal::subscribe_control_status(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<ControlStatusCallback *>(cb_ptr);
+uintptr_t Gimbal::subscribe_control_status(uintptr_t cb_ptr,
+                                           uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, ControlStatus);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Gimbal::ControlStatusHandle handle =
-      _impl->subscribe_control_status([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_control_status([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Gimbal::ControlStatusHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -163,16 +164,16 @@ Gimbal::get_control_status(int32_t gimbal_id) const {
   return _impl->get_control_status(gimbal_id);
 }
 
-uintptr_t Gimbal::subscribe_attitude(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<AttitudeCallback *>(cb_ptr);
+uintptr_t Gimbal::subscribe_attitude(uintptr_t cb_ptr, uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Attitude);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Gimbal::AttitudeHandle handle =
-      _impl->subscribe_attitude([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_attitude([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Gimbal::AttitudeHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);

@@ -17,16 +17,17 @@ Transponder::Transponder(std::shared_ptr<System> system)
 
 Transponder::~Transponder() {}
 
-uintptr_t Transponder::subscribe_transponder(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<TransponderCallback *>(cb_ptr);
+uintptr_t Transponder::subscribe_transponder(uintptr_t cb_ptr,
+                                             uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, AdsbVehicle);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Transponder::TransponderHandle handle =
-      _impl->subscribe_transponder([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_transponder([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Transponder::TransponderHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);

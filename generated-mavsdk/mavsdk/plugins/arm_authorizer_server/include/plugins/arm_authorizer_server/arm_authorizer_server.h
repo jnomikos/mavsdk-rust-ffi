@@ -110,7 +110,7 @@ public:
    * @brief Subscribe to arm authorization request messages. Each request
    * received should respond to using RespondArmAuthorization
    */
-  uintptr_t subscribe_arm_authorization(uintptr_t cb_ptr);
+  uintptr_t subscribe_arm_authorization(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_arm_authorization

@@ -41,16 +41,17 @@ CameraServer::Result CameraServer::set_in_progress(bool in_progress) const {
   return _impl->set_in_progress(in_progress);
 }
 
-uintptr_t CameraServer::subscribe_take_photo(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<TakePhotoCallback *>(cb_ptr);
+uintptr_t CameraServer::subscribe_take_photo(uintptr_t cb_ptr,
+                                             uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, int32_t);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   CameraServer::TakePhotoHandle handle =
-      _impl->subscribe_take_photo([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_take_photo([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new CameraServer::TakePhotoHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -80,16 +81,17 @@ CameraServer::respond_take_photo(CameraFeedback take_photo_feedback,
   return _impl->respond_take_photo(take_photo_feedback, capture_info);
 }
 
-uintptr_t CameraServer::subscribe_start_video(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<StartVideoCallback *>(cb_ptr);
+uintptr_t CameraServer::subscribe_start_video(uintptr_t cb_ptr,
+                                              uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, int32_t);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   CameraServer::StartVideoHandle handle =
-      _impl->subscribe_start_video([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_start_video([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new CameraServer::StartVideoHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -118,16 +120,17 @@ CameraServer::respond_start_video(CameraFeedback start_video_feedback) const {
   return _impl->respond_start_video(start_video_feedback);
 }
 
-uintptr_t CameraServer::subscribe_stop_video(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<StopVideoCallback *>(cb_ptr);
+uintptr_t CameraServer::subscribe_stop_video(uintptr_t cb_ptr,
+                                             uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, int32_t);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   CameraServer::StopVideoHandle handle =
-      _impl->subscribe_stop_video([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_stop_video([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new CameraServer::StopVideoHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -156,17 +159,19 @@ CameraServer::respond_stop_video(CameraFeedback stop_video_feedback) const {
   return _impl->respond_stop_video(stop_video_feedback);
 }
 
-uintptr_t CameraServer::subscribe_start_video_streaming(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<StartVideoStreamingCallback *>(cb_ptr);
+uintptr_t CameraServer::subscribe_start_video_streaming(uintptr_t cb_ptr,
+                                                        uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, int32_t);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   CameraServer::StartVideoStreamingHandle handle =
-      _impl->subscribe_start_video_streaming([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
-      });
+      _impl->subscribe_start_video_streaming(
+          [callback, user_data](auto &&...args) {
+            callback(user_data, std::forward<decltype(args)>(args)...);
+          });
   auto *handle_ptr = new CameraServer::StartVideoStreamingHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
 }
@@ -196,17 +201,19 @@ CameraServer::Result CameraServer::respond_start_video_streaming(
   return _impl->respond_start_video_streaming(start_video_streaming_feedback);
 }
 
-uintptr_t CameraServer::subscribe_stop_video_streaming(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<StopVideoStreamingCallback *>(cb_ptr);
+uintptr_t CameraServer::subscribe_stop_video_streaming(uintptr_t cb_ptr,
+                                                       uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, int32_t);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   CameraServer::StopVideoStreamingHandle handle =
-      _impl->subscribe_stop_video_streaming([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
-      });
+      _impl->subscribe_stop_video_streaming(
+          [callback, user_data](auto &&...args) {
+            callback(user_data, std::forward<decltype(args)>(args)...);
+          });
   auto *handle_ptr = new CameraServer::StopVideoStreamingHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
 }
@@ -236,16 +243,17 @@ CameraServer::Result CameraServer::respond_stop_video_streaming(
   return _impl->respond_stop_video_streaming(stop_video_streaming_feedback);
 }
 
-uintptr_t CameraServer::subscribe_set_mode(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<SetModeCallback *>(cb_ptr);
+uintptr_t CameraServer::subscribe_set_mode(uintptr_t cb_ptr,
+                                           uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Mode);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   CameraServer::SetModeHandle handle =
-      _impl->subscribe_set_mode([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_set_mode([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new CameraServer::SetModeHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -274,17 +282,19 @@ CameraServer::respond_set_mode(CameraFeedback set_mode_feedback) const {
   return _impl->respond_set_mode(set_mode_feedback);
 }
 
-uintptr_t CameraServer::subscribe_storage_information(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<StorageInformationCallback *>(cb_ptr);
+uintptr_t CameraServer::subscribe_storage_information(uintptr_t cb_ptr,
+                                                      uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, int32_t);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   CameraServer::StorageInformationHandle handle =
-      _impl->subscribe_storage_information([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
-      });
+      _impl->subscribe_storage_information(
+          [callback, user_data](auto &&...args) {
+            callback(user_data, std::forward<decltype(args)>(args)...);
+          });
   auto *handle_ptr = new CameraServer::StorageInformationHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
 }
@@ -316,16 +326,17 @@ CameraServer::Result CameraServer::respond_storage_information(
                                             storage_information);
 }
 
-uintptr_t CameraServer::subscribe_capture_status(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<CaptureStatusCallback *>(cb_ptr);
+uintptr_t CameraServer::subscribe_capture_status(uintptr_t cb_ptr,
+                                                 uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, int32_t);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   CameraServer::CaptureStatusHandle handle =
-      _impl->subscribe_capture_status([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_capture_status([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new CameraServer::CaptureStatusHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -355,16 +366,17 @@ CameraServer::respond_capture_status(CameraFeedback capture_status_feedback,
   return _impl->respond_capture_status(capture_status_feedback, capture_status);
 }
 
-uintptr_t CameraServer::subscribe_format_storage(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<FormatStorageCallback *>(cb_ptr);
+uintptr_t CameraServer::subscribe_format_storage(uintptr_t cb_ptr,
+                                                 uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, int32_t);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   CameraServer::FormatStorageHandle handle =
-      _impl->subscribe_format_storage([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_format_storage([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new CameraServer::FormatStorageHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -393,16 +405,17 @@ CameraServer::Result CameraServer::respond_format_storage(
   return _impl->respond_format_storage(format_storage_feedback);
 }
 
-uintptr_t CameraServer::subscribe_reset_settings(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<ResetSettingsCallback *>(cb_ptr);
+uintptr_t CameraServer::subscribe_reset_settings(uintptr_t cb_ptr,
+                                                 uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, int32_t);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   CameraServer::ResetSettingsHandle handle =
-      _impl->subscribe_reset_settings([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_reset_settings([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new CameraServer::ResetSettingsHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -431,16 +444,17 @@ CameraServer::Result CameraServer::respond_reset_settings(
   return _impl->respond_reset_settings(reset_settings_feedback);
 }
 
-uintptr_t CameraServer::subscribe_zoom_in_start(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<ZoomInStartCallback *>(cb_ptr);
+uintptr_t CameraServer::subscribe_zoom_in_start(uintptr_t cb_ptr,
+                                                uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, int32_t);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   CameraServer::ZoomInStartHandle handle =
-      _impl->subscribe_zoom_in_start([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_zoom_in_start([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new CameraServer::ZoomInStartHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -469,16 +483,17 @@ CameraServer::Result CameraServer::respond_zoom_in_start(
   return _impl->respond_zoom_in_start(zoom_in_start_feedback);
 }
 
-uintptr_t CameraServer::subscribe_zoom_out_start(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<ZoomOutStartCallback *>(cb_ptr);
+uintptr_t CameraServer::subscribe_zoom_out_start(uintptr_t cb_ptr,
+                                                 uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, int32_t);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   CameraServer::ZoomOutStartHandle handle =
-      _impl->subscribe_zoom_out_start([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_zoom_out_start([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new CameraServer::ZoomOutStartHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -507,16 +522,17 @@ CameraServer::Result CameraServer::respond_zoom_out_start(
   return _impl->respond_zoom_out_start(zoom_out_start_feedback);
 }
 
-uintptr_t CameraServer::subscribe_zoom_stop(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<ZoomStopCallback *>(cb_ptr);
+uintptr_t CameraServer::subscribe_zoom_stop(uintptr_t cb_ptr,
+                                            uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, int32_t);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   CameraServer::ZoomStopHandle handle =
-      _impl->subscribe_zoom_stop([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_zoom_stop([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new CameraServer::ZoomStopHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -545,16 +561,17 @@ CameraServer::respond_zoom_stop(CameraFeedback zoom_stop_feedback) const {
   return _impl->respond_zoom_stop(zoom_stop_feedback);
 }
 
-uintptr_t CameraServer::subscribe_zoom_range(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<ZoomRangeCallback *>(cb_ptr);
+uintptr_t CameraServer::subscribe_zoom_range(uintptr_t cb_ptr,
+                                             uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, float);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   CameraServer::ZoomRangeHandle handle =
-      _impl->subscribe_zoom_range([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_zoom_range([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new CameraServer::ZoomRangeHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -592,17 +609,19 @@ void CameraServer::set_tracking_off_status() const {
   _impl->set_tracking_off_status();
 }
 
-uintptr_t CameraServer::subscribe_tracking_point_command(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<TrackingPointCommandCallback *>(cb_ptr);
+uintptr_t CameraServer::subscribe_tracking_point_command(uintptr_t cb_ptr,
+                                                         uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, TrackPoint);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   CameraServer::TrackingPointCommandHandle handle =
-      _impl->subscribe_tracking_point_command([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
-      });
+      _impl->subscribe_tracking_point_command(
+          [callback, user_data](auto &&...args) {
+            callback(user_data, std::forward<decltype(args)>(args)...);
+          });
   auto *handle_ptr = new CameraServer::TrackingPointCommandHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
 }
@@ -627,17 +646,20 @@ void CameraServer::unsubscribe_tracking_point_command(
   _impl->unsubscribe_tracking_point_command(handle);
 }
 
-uintptr_t CameraServer::subscribe_tracking_rectangle_command(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<TrackingRectangleCommandCallback *>(cb_ptr);
+uintptr_t
+CameraServer::subscribe_tracking_rectangle_command(uintptr_t cb_ptr,
+                                                   uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, TrackRectangle);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   CameraServer::TrackingRectangleCommandHandle handle =
-      _impl->subscribe_tracking_rectangle_command([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
-      });
+      _impl->subscribe_tracking_rectangle_command(
+          [callback, user_data](auto &&...args) {
+            callback(user_data, std::forward<decltype(args)>(args)...);
+          });
   auto *handle_ptr = new CameraServer::TrackingRectangleCommandHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
 }
@@ -663,17 +685,19 @@ void CameraServer::unsubscribe_tracking_rectangle_command(
   _impl->unsubscribe_tracking_rectangle_command(handle);
 }
 
-uintptr_t CameraServer::subscribe_tracking_off_command(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<TrackingOffCommandCallback *>(cb_ptr);
+uintptr_t CameraServer::subscribe_tracking_off_command(uintptr_t cb_ptr,
+                                                       uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, int32_t);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   CameraServer::TrackingOffCommandHandle handle =
-      _impl->subscribe_tracking_off_command([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
-      });
+      _impl->subscribe_tracking_off_command(
+          [callback, user_data](auto &&...args) {
+            callback(user_data, std::forward<decltype(args)>(args)...);
+          });
   auto *handle_ptr = new CameraServer::TrackingOffCommandHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
 }

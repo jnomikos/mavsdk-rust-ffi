@@ -196,12 +196,24 @@ public:
   struct Position {
     double latitude_deg{
         double(NAN)}; /**< @brief Latitude in degrees (range: -90 to +90) */
+
+    double telemetry_get_latitude_deg() const { return latitude_deg; }
     double longitude_deg{
         double(NAN)}; /**< @brief Longitude in degrees (range: -180 to +180) */
+
+    double telemetry_get_longitude_deg() const { return longitude_deg; }
     float absolute_altitude_m{float(
         NAN)}; /**< @brief Altitude AMSL (above mean sea level) in metres */
+
+    float telemetry_get_absolute_altitude_m() const {
+      return absolute_altitude_m;
+    }
     float relative_altitude_m{float(
         NAN)}; /**< @brief Altitude relative to takeoff altitude in metres */
+
+    float telemetry_get_relative_altitude_m() const {
+      return relative_altitude_m;
+    }
   };
 
   /**
@@ -226,6 +238,8 @@ public:
   struct Heading {
     double heading_deg{
         double(NAN)}; /**< @brief Heading in degrees (range: 0 to +360) */
+
+    double telemetry_get_heading_deg() const { return heading_deg; }
   };
 
   /**
@@ -255,11 +269,21 @@ public:
    * For more info see: https://en.wikipedia.org/wiki/Quaternion
    */
   struct Quaternion {
-    float w{float(NAN)};   /**< @brief Quaternion entry 0, also denoted as a */
-    float x{float(NAN)};   /**< @brief Quaternion entry 1, also denoted as b */
-    float y{float(NAN)};   /**< @brief Quaternion entry 2, also denoted as c */
-    float z{float(NAN)};   /**< @brief Quaternion entry 3, also denoted as d */
+    float w{float(NAN)}; /**< @brief Quaternion entry 0, also denoted as a */
+
+    float telemetry_get_w() const { return w; }
+    float x{float(NAN)}; /**< @brief Quaternion entry 1, also denoted as b */
+
+    float telemetry_get_x() const { return x; }
+    float y{float(NAN)}; /**< @brief Quaternion entry 2, also denoted as c */
+
+    float telemetry_get_y() const { return y; }
+    float z{float(NAN)}; /**< @brief Quaternion entry 3, also denoted as d */
+
+    float telemetry_get_z() const { return z; }
     uint64_t timestamp_us; /**< @brief Timestamp in microseconds */
+
+    uint64_t telemetry_get_timestamp_us() const { return timestamp_us; }
   };
 
   /**
@@ -289,13 +313,21 @@ public:
    * For more info see https://en.wikipedia.org/wiki/Euler_angles
    */
   struct EulerAngle {
-    float roll_deg{float(NAN)};  /**< @brief Roll angle in degrees, positive is
-                                    banking to the right */
+    float roll_deg{float(NAN)}; /**< @brief Roll angle in degrees, positive is
+                                   banking to the right */
+
+    float telemetry_get_roll_deg() const { return roll_deg; }
     float pitch_deg{float(NAN)}; /**< @brief Pitch angle in degrees, positive is
                                     pitching nose up */
-    float yaw_deg{float(NAN)};   /**< @brief Yaw angle in degrees, positive is
-                                    clock-wise seen from above */
-    uint64_t timestamp_us;       /**< @brief Timestamp in microseconds */
+
+    float telemetry_get_pitch_deg() const { return pitch_deg; }
+    float yaw_deg{float(NAN)}; /**< @brief Yaw angle in degrees, positive is
+                                  clock-wise seen from above */
+
+    float telemetry_get_yaw_deg() const { return yaw_deg; }
+    uint64_t timestamp_us; /**< @brief Timestamp in microseconds */
+
+    uint64_t telemetry_get_timestamp_us() const { return timestamp_us; }
   };
 
   /**
@@ -319,9 +351,15 @@ public:
    * @brief Angular velocity type.
    */
   struct AngularVelocityBody {
-    float roll_rad_s{float(NAN)};  /**< @brief Roll angular velocity */
+    float roll_rad_s{float(NAN)}; /**< @brief Roll angular velocity */
+
+    float telemetry_get_roll_rad_s() const { return roll_rad_s; }
     float pitch_rad_s{float(NAN)}; /**< @brief Pitch angular velocity */
-    float yaw_rad_s{float(NAN)};   /**< @brief Yaw angular velocity */
+
+    float telemetry_get_pitch_rad_s() const { return pitch_rad_s; }
+    float yaw_rad_s{float(NAN)}; /**< @brief Yaw angular velocity */
+
+    float telemetry_get_yaw_rad_s() const { return yaw_rad_s; }
   };
 
   /**
@@ -348,8 +386,12 @@ public:
    */
   struct GpsInfo {
     int32_t num_satellites{
-        0};           /**< @brief Number of visible satellites in use */
+        0}; /**< @brief Number of visible satellites in use */
+
+    int32_t telemetry_get_num_satellites() const { return num_satellites; }
     FixType fix_type; /**< @brief Fix type */
+
+    const FixType &telemetry_get_fix_type() const { return fix_type; }
   };
 
   /**
@@ -376,30 +418,70 @@ public:
    * sensor.
    */
   struct RawGps {
-    uint64_t timestamp_us;     /**< @brief Timestamp in microseconds (UNIX Epoch
-                                  time or time since system boot, to be inferred) */
-    double latitude_deg;       /**< @brief Latitude in degrees (WGS84, EGM96
-                                  ellipsoid) */
-    double longitude_deg;      /**< @brief Longitude in degrees (WGS84, EGM96
-                                  ellipsoid) */
+    uint64_t timestamp_us; /**< @brief Timestamp in microseconds (UNIX Epoch
+                              time or time since system boot, to be inferred) */
+
+    uint64_t telemetry_get_timestamp_us() const { return timestamp_us; }
+    double latitude_deg; /**< @brief Latitude in degrees (WGS84, EGM96
+                            ellipsoid) */
+
+    double telemetry_get_latitude_deg() const { return latitude_deg; }
+    double longitude_deg; /**< @brief Longitude in degrees (WGS84, EGM96
+                             ellipsoid) */
+
+    double telemetry_get_longitude_deg() const { return longitude_deg; }
     float absolute_altitude_m; /**< @brief Altitude AMSL (above mean sea level)
                                   in metres */
+
+    float telemetry_get_absolute_altitude_m() const {
+      return absolute_altitude_m;
+    }
     float hdop; /**< @brief GPS HDOP horizontal dilution of position (unitless).
                    If unknown, set to NaN */
+
+    float telemetry_get_hdop() const { return hdop; }
     float vdop; /**< @brief GPS VDOP vertical dilution of position (unitless).
                    If unknown, set to NaN */
+
+    float telemetry_get_vdop() const { return vdop; }
     float velocity_m_s; /**< @brief Ground velocity in metres per second */
+
+    float telemetry_get_velocity_m_s() const { return velocity_m_s; }
     float cog_deg; /**< @brief Course over ground (NOT heading, but direction of
                       movement) in degrees. If unknown, set to NaN */
+
+    float telemetry_get_cog_deg() const { return cog_deg; }
     float altitude_ellipsoid_m; /**< @brief Altitude in metres (above WGS84,
                                    EGM96 ellipsoid) */
+
+    float telemetry_get_altitude_ellipsoid_m() const {
+      return altitude_ellipsoid_m;
+    }
     float
         horizontal_uncertainty_m; /**< @brief Position uncertainty in metres */
+
+    float telemetry_get_horizontal_uncertainty_m() const {
+      return horizontal_uncertainty_m;
+    }
     float vertical_uncertainty_m; /**< @brief Altitude uncertainty in metres */
+
+    float telemetry_get_vertical_uncertainty_m() const {
+      return vertical_uncertainty_m;
+    }
     float velocity_uncertainty_m_s; /**< @brief Velocity uncertainty in metres
                                        per second */
+
+    float telemetry_get_velocity_uncertainty_m_s() const {
+      return velocity_uncertainty_m_s;
+    }
     float heading_uncertainty_deg; /**< @brief Heading uncertainty in degrees */
-    float yaw_deg;                 /**< @brief Yaw in earth frame from north. */
+
+    float telemetry_get_heading_uncertainty_deg() const {
+      return heading_uncertainty_deg;
+    }
+    float yaw_deg; /**< @brief Yaw in earth frame from north. */
+
+    float telemetry_get_yaw_deg() const { return yaw_deg; }
   };
 
   /**
@@ -424,21 +506,41 @@ public:
   struct Battery {
     uint32_t id{
         0}; /**< @brief Battery ID, for systems with multiple batteries */
+
+    uint32_t telemetry_get_id() const { return id; }
     float temperature_degc{
         float(NAN)}; /**< @brief Temperature of the battery in degrees Celsius.
                         NAN for unknown temperature */
+
+    float telemetry_get_temperature_degc() const { return temperature_degc; }
     float voltage_v{float(NAN)}; /**< @brief Voltage in volts */
+
+    float telemetry_get_voltage_v() const { return voltage_v; }
     float current_battery_a{
         float(NAN)}; /**< @brief Battery current in Amps, NAN if autopilot does
                         not measure the current */
+
+    float telemetry_get_current_battery_a() const { return current_battery_a; }
     float capacity_consumed_ah{
         float(NAN)}; /**< @brief Consumed charge in Amp hours, NAN if autopilot
                         does not provide consumption estimate */
+
+    float telemetry_get_capacity_consumed_ah() const {
+      return capacity_consumed_ah;
+    }
     float remaining_percent{float(
         NAN)}; /**< @brief Estimated battery remaining (range: 0 to 100) */
+
+    float telemetry_get_remaining_percent() const { return remaining_percent; }
     float time_remaining_s{
         float(NAN)}; /**< @brief Estimated battery usage time remaining */
+
+    float telemetry_get_time_remaining_s() const { return time_remaining_s; }
     BatteryFunction battery_function; /**< @brief Function of the battery */
+
+    const BatteryFunction &telemetry_get_battery_function() const {
+      return battery_function;
+    }
   };
 
   /**
@@ -463,19 +565,45 @@ public:
   struct Health {
     bool is_gyrometer_calibration_ok{
         false}; /**< @brief True if the gyrometer is calibrated */
+
+    bool telemetry_get_is_gyrometer_calibration_ok() const {
+      return is_gyrometer_calibration_ok;
+    }
     bool is_accelerometer_calibration_ok{
         false}; /**< @brief True if the accelerometer is calibrated */
+
+    bool telemetry_get_is_accelerometer_calibration_ok() const {
+      return is_accelerometer_calibration_ok;
+    }
     bool is_magnetometer_calibration_ok{
         false}; /**< @brief True if the magnetometer is calibrated */
+
+    bool telemetry_get_is_magnetometer_calibration_ok() const {
+      return is_magnetometer_calibration_ok;
+    }
     bool is_local_position_ok{
         false}; /**< @brief True if the local position estimate is good enough
                    to fly in 'position control' mode */
+
+    bool telemetry_get_is_local_position_ok() const {
+      return is_local_position_ok;
+    }
     bool is_global_position_ok{
         false}; /**< @brief True if the global position estimate is good enough
                    to fly in 'position control' mode */
+
+    bool telemetry_get_is_global_position_ok() const {
+      return is_global_position_ok;
+    }
     bool is_home_position_ok{false}; /**< @brief True if the home position has
                                         been initialized properly */
-    bool is_armable{false};          /**< @brief True if system can be armed */
+
+    bool telemetry_get_is_home_position_ok() const {
+      return is_home_position_ok;
+    }
+    bool is_armable{false}; /**< @brief True if system can be armed */
+
+    bool telemetry_get_is_armable() const { return is_armable; }
   };
 
   /**
@@ -500,10 +628,18 @@ public:
   struct RcStatus {
     bool was_available_once{
         false}; /**< @brief True if an RC signal has been available once */
+
+    bool telemetry_get_was_available_once() const { return was_available_once; }
     bool is_available{
         false}; /**< @brief True if the RC signal is available now */
+
+    bool telemetry_get_is_available() const { return is_available; }
     float signal_strength_percent{float(
         NAN)}; /**< @brief Signal strength (range: 0 to 100, NaN if unknown) */
+
+    float telemetry_get_signal_strength_percent() const {
+      return signal_strength_percent;
+    }
   };
 
   /**
@@ -527,9 +663,11 @@ public:
    */
   struct StatusText {
     StatusTextType type; /**< @brief Message type */
-    StatusTextType get_type() const { return type; }
+
+    const StatusTextType &telemetry_get_type() const { return type; }
     std::string text; /**< @brief MAVLink status message */
-    const std::string &get_text() const { return text; }
+
+    const std::string &telemetry_get_text() const { return text; }
   };
 
   /**
@@ -556,10 +694,14 @@ public:
     int32_t group{
         0}; /**< @brief An actuator control group is e.g. 'attitude' for the
                core flight controls, or 'gimbal' for a payload. */
-    int32_t get_group() const { return group; }
+
+    int32_t telemetry_get_group() const { return group; }
     std::vector<float> controls; /**< @brief Controls normed from -1 to 1, where
                                     0 is neutral position. */
-    const std::vector<float> &get_controls() const { return controls; }
+
+    const std::vector<float> &telemetry_get_controls() const {
+      return controls;
+    }
   };
 
   /**
@@ -586,9 +728,13 @@ public:
    */
   struct ActuatorOutputStatus {
     uint32_t active{0}; /**< @brief Active outputs */
-    uint32_t get_active() const { return active; }
+
+    uint32_t telemetry_get_active() const { return active; }
     std::vector<float> actuator; /**< @brief Servo/motor output values */
-    const std::vector<float> &get_actuator() const { return actuator; }
+
+    const std::vector<float> &telemetry_get_actuator() const {
+      return actuator;
+    }
   };
 
   /**
@@ -620,7 +766,8 @@ public:
   struct Covariance {
     std::vector<float>
         covariance_matrix; /**< @brief Representation of a covariance matrix. */
-    const std::vector<float> &get_covariance_matrix() const {
+
+    const std::vector<float> &telemetry_get_covariance_matrix() const {
       return covariance_matrix;
     }
   };
@@ -648,8 +795,14 @@ public:
    */
   struct VelocityBody {
     float x_m_s; /**< @brief Velocity in X in metres/second */
+
+    float telemetry_get_x_m_s() const { return x_m_s; }
     float y_m_s; /**< @brief Velocity in Y in metres/second */
+
+    float telemetry_get_y_m_s() const { return y_m_s; }
     float z_m_s; /**< @brief Velocity in Z in metres/second */
+
+    float telemetry_get_z_m_s() const { return z_m_s; }
   };
 
   /**
@@ -674,8 +827,14 @@ public:
    */
   struct PositionBody {
     float x_m; /**< @brief X Position in metres. */
+
+    float telemetry_get_x_m() const { return x_m; }
     float y_m; /**< @brief Y Position in metres. */
+
+    float telemetry_get_y_m() const { return y_m; }
     float z_m; /**< @brief Z Position in metres. */
+
+    float telemetry_get_z_m() const { return z_m; }
   };
 
   /**
@@ -724,19 +883,49 @@ public:
     operator<<(std::ostream &str,
                Telemetry::Odometry::MavFrame const &mav_frame);
     uint64_t time_usec; /**< @brief Timestamp (0 to use Backend timestamp). */
-    MavFrame frame_id;  /**< @brief Coordinate frame of reference for the pose
-                           data. */
+
+    uint64_t telemetry_get_time_usec() const { return time_usec; }
+    MavFrame frame_id; /**< @brief Coordinate frame of reference for the pose
+                          data. */
+
+    const MavFrame &telemetry_get_frame_id() const { return frame_id; }
     MavFrame child_frame_id; /**< @brief Coordinate frame of reference for the
                                 velocity in free space (twist) data. */
+
+    const MavFrame &telemetry_get_child_frame_id() const {
+      return child_frame_id;
+    }
     PositionBody position_body; /**< @brief Position. */
+
+    const PositionBody &telemetry_get_position_body() const {
+      return position_body;
+    }
     Quaternion q; /**< @brief Quaternion components, w, x, y, z (1 0 0 0 is the
                      null-rotation). */
+
+    const Quaternion &telemetry_get_q() const { return q; }
     VelocityBody velocity_body; /**< @brief Linear velocity (m/s). */
+
+    const VelocityBody &telemetry_get_velocity_body() const {
+      return velocity_body;
+    }
     AngularVelocityBody
-        angular_velocity_body;  /**< @brief Angular velocity (rad/s). */
+        angular_velocity_body; /**< @brief Angular velocity (rad/s). */
+
+    const AngularVelocityBody &telemetry_get_angular_velocity_body() const {
+      return angular_velocity_body;
+    }
     Covariance pose_covariance; /**< @brief Pose cross-covariance matrix. */
+
+    const Covariance &telemetry_get_pose_covariance() const {
+      return pose_covariance;
+    }
     Covariance
         velocity_covariance; /**< @brief Velocity cross-covariance matrix. */
+
+    const Covariance &telemetry_get_velocity_covariance() const {
+      return velocity_covariance;
+    }
   };
 
   /**
@@ -762,12 +951,26 @@ public:
     float minimum_distance_m{
         float(NAN)}; /**< @brief Minimum distance the sensor can measure, NaN if
                         unknown. */
+
+    float telemetry_get_minimum_distance_m() const {
+      return minimum_distance_m;
+    }
     float maximum_distance_m{
         float(NAN)}; /**< @brief Maximum distance the sensor can measure, NaN if
                         unknown. */
+
+    float telemetry_get_maximum_distance_m() const {
+      return maximum_distance_m;
+    }
     float current_distance_m{
         float(NAN)}; /**< @brief Current distance reading, NaN if unknown. */
+
+    float telemetry_get_current_distance_m() const {
+      return current_distance_m;
+    }
     EulerAngle orientation; /**< @brief Sensor Orientation reading. */
+
+    const EulerAngle &telemetry_get_orientation() const { return orientation; }
   };
 
   /**
@@ -793,15 +996,31 @@ public:
    */
   struct ScaledPressure {
     uint64_t timestamp_us; /**< @brief Timestamp (time since system boot) */
+
+    uint64_t telemetry_get_timestamp_us() const { return timestamp_us; }
     float absolute_pressure_hpa; /**< @brief Absolute pressure in hPa */
+
+    float telemetry_get_absolute_pressure_hpa() const {
+      return absolute_pressure_hpa;
+    }
     float
         differential_pressure_hpa; /**< @brief Differential pressure 1 in hPa */
-    float temperature_deg;         /**< @brief Absolute pressure temperature (in
-                                      celsius) */
+
+    float telemetry_get_differential_pressure_hpa() const {
+      return differential_pressure_hpa;
+    }
+    float temperature_deg; /**< @brief Absolute pressure temperature (in
+                              celsius) */
+
+    float telemetry_get_temperature_deg() const { return temperature_deg; }
     float
         differential_pressure_temperature_deg; /**< @brief Differential pressure
                                                   temperature (in celsius, 0 if
                                                   not available) */
+
+    float telemetry_get_differential_pressure_temperature_deg() const {
+      return differential_pressure_temperature_deg;
+    }
   };
 
   /**
@@ -828,10 +1047,16 @@ public:
   struct PositionNed {
     float north_m{
         float(NAN)}; /**< @brief Position along north direction in metres */
+
+    float telemetry_get_north_m() const { return north_m; }
     float east_m{
         float(NAN)}; /**< @brief Position along east direction in metres */
+
+    float telemetry_get_east_m() const { return east_m; }
     float down_m{
         float(NAN)}; /**< @brief Position along down direction in metres */
+
+    float telemetry_get_down_m() const { return down_m; }
   };
 
   /**
@@ -857,10 +1082,16 @@ public:
   struct VelocityNed {
     float north_m_s; /**< @brief Velocity along north direction in metres per
                         second */
-    float east_m_s;  /**< @brief Velocity along east direction in metres per
-                        second */
-    float down_m_s;  /**< @brief Velocity along down direction in metres per
-                        second */
+
+    float telemetry_get_north_m_s() const { return north_m_s; }
+    float east_m_s; /**< @brief Velocity along east direction in metres per
+                       second */
+
+    float telemetry_get_east_m_s() const { return east_m_s; }
+    float down_m_s; /**< @brief Velocity along down direction in metres per
+                       second */
+
+    float telemetry_get_down_m_s() const { return down_m_s; }
   };
 
   /**
@@ -885,7 +1116,11 @@ public:
    */
   struct PositionVelocityNed {
     PositionNed position; /**< @brief Position (NED) */
+
+    const PositionNed &telemetry_get_position() const { return position; }
     VelocityNed velocity; /**< @brief Velocity (NED) */
+
+    const VelocityNed &telemetry_get_velocity() const { return velocity; }
   };
 
   /**
@@ -913,10 +1148,18 @@ public:
   struct GroundTruth {
     double latitude_deg{
         double(NAN)}; /**< @brief Latitude in degrees (range: -90 to +90) */
+
+    double telemetry_get_latitude_deg() const { return latitude_deg; }
     double longitude_deg{
         double(NAN)}; /**< @brief Longitude in degrees (range: -180 to 180) */
+
+    double telemetry_get_longitude_deg() const { return longitude_deg; }
     float absolute_altitude_m{float(
         NAN)}; /**< @brief Altitude AMSL (above mean sea level) in metres */
+
+    float telemetry_get_absolute_altitude_m() const {
+      return absolute_altitude_m;
+    }
   };
 
   /**
@@ -942,16 +1185,32 @@ public:
   struct FixedwingMetrics {
     float airspeed_m_s{float(NAN)}; /**< @brief Current indicated airspeed (IAS)
                                        in metres per second */
+
+    float telemetry_get_airspeed_m_s() const { return airspeed_m_s; }
     float throttle_percentage{
         float(NAN)}; /**< @brief Current throttle setting (0 to 100) */
+
+    float telemetry_get_throttle_percentage() const {
+      return throttle_percentage;
+    }
     float climb_rate_m_s{
         float(NAN)}; /**< @brief Current climb rate in metres per second */
+
+    float telemetry_get_climb_rate_m_s() const { return climb_rate_m_s; }
     float groundspeed_m_s{
         float(NAN)}; /**< @brief Current groundspeed metres per second */
+
+    float telemetry_get_groundspeed_m_s() const { return groundspeed_m_s; }
     float heading_deg{float(
         NAN)}; /**< @brief Current heading in compass units (0-360, 0=north) */
+
+    float telemetry_get_heading_deg() const { return heading_deg; }
     float absolute_altitude_m{
         float(NAN)}; /**< @brief Current altitude in metres (MSL) */
+
+    float telemetry_get_absolute_altitude_m() const {
+      return absolute_altitude_m;
+    }
   };
 
   /**
@@ -978,10 +1237,16 @@ public:
   struct AccelerationFrd {
     float forward_m_s2{float(NAN)}; /**< @brief Acceleration in forward
                                        direction in metres per second^2 */
+
+    float telemetry_get_forward_m_s2() const { return forward_m_s2; }
     float right_m_s2{float(NAN)}; /**< @brief Acceleration in right direction in
                                      metres per second^2 */
-    float down_m_s2{float(NAN)};  /**< @brief Acceleration in down direction in
-                                     metres per second^2 */
+
+    float telemetry_get_right_m_s2() const { return right_m_s2; }
+    float down_m_s2{float(NAN)}; /**< @brief Acceleration in down direction in
+                                    metres per second^2 */
+
+    float telemetry_get_down_m_s2() const { return down_m_s2; }
   };
 
   /**
@@ -1008,10 +1273,16 @@ public:
   struct AngularVelocityFrd {
     float forward_rad_s{float(NAN)}; /**< @brief Angular velocity in forward
                                         direction in radians per second */
-    float right_rad_s{float(NAN)};   /**< @brief Angular velocity in right
-                                        direction in radians per second */
+
+    float telemetry_get_forward_rad_s() const { return forward_rad_s; }
+    float right_rad_s{float(NAN)}; /**< @brief Angular velocity in right
+                                      direction in radians per second */
+
+    float telemetry_get_right_rad_s() const { return right_rad_s; }
     float down_rad_s{float(NAN)}; /**< @brief Angular velocity in Down direction
                                      in radians per second */
+
+    float telemetry_get_down_rad_s() const { return down_rad_s; }
   };
 
   /**
@@ -1039,10 +1310,16 @@ public:
   struct MagneticFieldFrd {
     float forward_gauss{float(NAN)}; /**< @brief Magnetic field in forward
                                         direction measured in Gauss */
+
+    float telemetry_get_forward_gauss() const { return forward_gauss; }
     float right_gauss{float(
         NAN)}; /**< @brief Magnetic field in East direction measured in Gauss */
+
+    float telemetry_get_right_gauss() const { return right_gauss; }
     float down_gauss{float(
         NAN)}; /**< @brief Magnetic field in Down direction measured in Gauss */
+
+    float telemetry_get_down_gauss() const { return down_gauss; }
   };
 
   /**
@@ -1067,11 +1344,27 @@ public:
    * @brief Imu message type.
    */
   struct Imu {
-    AccelerationFrd acceleration_frd;        /**< @brief Acceleration */
+    AccelerationFrd acceleration_frd; /**< @brief Acceleration */
+
+    const AccelerationFrd &telemetry_get_acceleration_frd() const {
+      return acceleration_frd;
+    }
     AngularVelocityFrd angular_velocity_frd; /**< @brief Angular velocity */
-    MagneticFieldFrd magnetic_field_frd;     /**< @brief Magnetic field */
-    float temperature_degc{float(NAN)};      /**< @brief Temperature */
+
+    const AngularVelocityFrd &telemetry_get_angular_velocity_frd() const {
+      return angular_velocity_frd;
+    }
+    MagneticFieldFrd magnetic_field_frd; /**< @brief Magnetic field */
+
+    const MagneticFieldFrd &telemetry_get_magnetic_field_frd() const {
+      return magnetic_field_frd;
+    }
+    float temperature_degc{float(NAN)}; /**< @brief Temperature */
+
+    float telemetry_get_temperature_degc() const { return temperature_degc; }
     uint64_t timestamp_us; /**< @brief Timestamp in microseconds */
+
+    uint64_t telemetry_get_timestamp_us() const { return timestamp_us; }
   };
 
   /**
@@ -1092,10 +1385,16 @@ public:
    * @brief Gps global origin type.
    */
   struct GpsGlobalOrigin {
-    double latitude_deg{double(NAN)};  /**< @brief Latitude of the origin */
+    double latitude_deg{double(NAN)}; /**< @brief Latitude of the origin */
+
+    double telemetry_get_latitude_deg() const { return latitude_deg; }
     double longitude_deg{double(NAN)}; /**< @brief Longitude of the origin */
+
+    double telemetry_get_longitude_deg() const { return longitude_deg; }
     float altitude_m{float(
         NAN)}; /**< @brief Altitude AMSL (above mean sea level) in metres */
+
+    float telemetry_get_altitude_m() const { return altitude_m; }
   };
 
   /**
@@ -1123,17 +1422,37 @@ public:
     float altitude_monotonic_m{
         float(NAN)}; /**< @brief Altitude in meters is initialized on system
                         boot and monotonic */
+
+    float telemetry_get_altitude_monotonic_m() const {
+      return altitude_monotonic_m;
+    }
     float altitude_amsl_m{float(
         NAN)}; /**< @brief  Altitude AMSL (above mean sea level) in meters */
+
+    float telemetry_get_altitude_amsl_m() const { return altitude_amsl_m; }
     float altitude_local_m{float(NAN)}; /**< @brief Local altitude in meters */
+
+    float telemetry_get_altitude_local_m() const { return altitude_local_m; }
     float altitude_relative_m{
         float(NAN)}; /**< @brief Altitude above home position in meters */
+
+    float telemetry_get_altitude_relative_m() const {
+      return altitude_relative_m;
+    }
     float altitude_terrain_m{
         float(NAN)}; /**< @brief Altitude above terrain in meters */
+
+    float telemetry_get_altitude_terrain_m() const {
+      return altitude_terrain_m;
+    }
     float bottom_clearance_m{
         float(NAN)}; /**< @brief This is not the altitude, but the clear space
                         below the system according to the fused clearance
                         estimate in meters. */
+
+    float telemetry_get_bottom_clearance_m() const {
+      return bottom_clearance_m;
+    }
   };
 
   /**
@@ -1158,22 +1477,48 @@ public:
   struct Wind {
     float wind_x_ned_m_s{
         float(NAN)}; /**< @brief Wind in North (NED) direction */
+
+    float telemetry_get_wind_x_ned_m_s() const { return wind_x_ned_m_s; }
     float wind_y_ned_m_s{
         float(NAN)}; /**< @brief  Wind in East (NED) direction */
+
+    float telemetry_get_wind_y_ned_m_s() const { return wind_y_ned_m_s; }
     float wind_z_ned_m_s{
         float(NAN)}; /**< @brief Wind in down (NED) direction */
+
+    float telemetry_get_wind_z_ned_m_s() const { return wind_z_ned_m_s; }
     float horizontal_variability_stddev_m_s{
         float(NAN)}; /**< @brief Variability of wind in XY, 1-STD estimated from
                         a 1 Hz lowpassed wind estimate */
+
+    float telemetry_get_horizontal_variability_stddev_m_s() const {
+      return horizontal_variability_stddev_m_s;
+    }
     float vertical_variability_stddev_m_s{
         float(NAN)}; /**< @brief Variability of wind in Z, 1-STD estimated from
                         a 1 Hz lowpassed wind estimate */
+
+    float telemetry_get_vertical_variability_stddev_m_s() const {
+      return vertical_variability_stddev_m_s;
+    }
     float wind_altitude_msl_m{float(
         NAN)}; /**< @brief Altitude (MSL) that this measurement was taken at */
+
+    float telemetry_get_wind_altitude_msl_m() const {
+      return wind_altitude_msl_m;
+    }
     float horizontal_wind_speed_accuracy_m_s{
         float(NAN)}; /**< @brief Horizontal speed 1-STD accuracy */
+
+    float telemetry_get_horizontal_wind_speed_accuracy_m_s() const {
+      return horizontal_wind_speed_accuracy_m_s;
+    }
     float vertical_wind_speed_accuracy_m_s{
         float(NAN)}; /**< @brief Vertical speed 1-STD accuracy */
+
+    float telemetry_get_vertical_wind_speed_accuracy_m_s() const {
+      return vertical_wind_speed_accuracy_m_s;
+    }
   };
 
   /**
@@ -1233,7 +1578,7 @@ public:
   /**
    * @brief Subscribe to 'position' updates.
    */
-  uintptr_t subscribe_position(uintptr_t cb_ptr);
+  uintptr_t subscribe_position(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_position
@@ -1270,7 +1615,7 @@ public:
   /**
    * @brief Subscribe to 'home position' updates.
    */
-  uintptr_t subscribe_home(uintptr_t cb_ptr);
+  uintptr_t subscribe_home(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_home
@@ -1307,7 +1652,7 @@ public:
   /**
    * @brief Subscribe to in-air updates.
    */
-  uintptr_t subscribe_in_air(uintptr_t cb_ptr);
+  uintptr_t subscribe_in_air(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_in_air
@@ -1344,7 +1689,7 @@ public:
   /**
    * @brief Subscribe to landed state updates
    */
-  uintptr_t subscribe_landed_state(uintptr_t cb_ptr);
+  uintptr_t subscribe_landed_state(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_landed_state
@@ -1381,7 +1726,7 @@ public:
   /**
    * @brief Subscribe to armed updates.
    */
-  uintptr_t subscribe_armed(uintptr_t cb_ptr);
+  uintptr_t subscribe_armed(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_armed
@@ -1418,7 +1763,7 @@ public:
   /**
    * @brief subscribe to vtol state Updates
    */
-  uintptr_t subscribe_vtol_state(uintptr_t cb_ptr);
+  uintptr_t subscribe_vtol_state(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_vtol_state
@@ -1455,7 +1800,8 @@ public:
   /**
    * @brief Subscribe to 'attitude' updates (quaternion).
    */
-  uintptr_t subscribe_attitude_quaternion(uintptr_t cb_ptr);
+  uintptr_t subscribe_attitude_quaternion(uintptr_t cb_ptr,
+                                          uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_attitude_quaternion
@@ -1493,7 +1839,7 @@ public:
   /**
    * @brief Subscribe to 'attitude' updates (Euler).
    */
-  uintptr_t subscribe_attitude_euler(uintptr_t cb_ptr);
+  uintptr_t subscribe_attitude_euler(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_attitude_euler
@@ -1532,7 +1878,8 @@ public:
   /**
    * @brief Subscribe to 'attitude' updates (angular velocity)
    */
-  uintptr_t subscribe_attitude_angular_velocity_body(uintptr_t cb_ptr);
+  uintptr_t subscribe_attitude_angular_velocity_body(uintptr_t cb_ptr,
+                                                     uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_attitude_angular_velocity_body
@@ -1571,7 +1918,7 @@ public:
   /**
    * @brief Subscribe to 'ground speed' updates (NED).
    */
-  uintptr_t subscribe_velocity_ned(uintptr_t cb_ptr);
+  uintptr_t subscribe_velocity_ned(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_velocity_ned
@@ -1608,7 +1955,7 @@ public:
   /**
    * @brief Subscribe to 'GPS info' updates.
    */
-  uintptr_t subscribe_gps_info(uintptr_t cb_ptr);
+  uintptr_t subscribe_gps_info(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_gps_info
@@ -1645,7 +1992,7 @@ public:
   /**
    * @brief Subscribe to 'Raw GPS' updates.
    */
-  uintptr_t subscribe_raw_gps(uintptr_t cb_ptr);
+  uintptr_t subscribe_raw_gps(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_raw_gps
@@ -1682,7 +2029,7 @@ public:
   /**
    * @brief Subscribe to 'battery' updates.
    */
-  uintptr_t subscribe_battery(uintptr_t cb_ptr);
+  uintptr_t subscribe_battery(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_battery
@@ -1719,7 +2066,7 @@ public:
   /**
    * @brief Subscribe to 'flight mode' updates.
    */
-  uintptr_t subscribe_flight_mode(uintptr_t cb_ptr);
+  uintptr_t subscribe_flight_mode(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_flight_mode
@@ -1756,7 +2103,7 @@ public:
   /**
    * @brief Subscribe to 'health' updates.
    */
-  uintptr_t subscribe_health(uintptr_t cb_ptr);
+  uintptr_t subscribe_health(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_health
@@ -1793,7 +2140,7 @@ public:
   /**
    * @brief Subscribe to 'RC status' updates.
    */
-  uintptr_t subscribe_rc_status(uintptr_t cb_ptr);
+  uintptr_t subscribe_rc_status(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_rc_status
@@ -1830,7 +2177,7 @@ public:
   /**
    * @brief Subscribe to 'status text' updates.
    */
-  uintptr_t subscribe_status_text(uintptr_t cb_ptr);
+  uintptr_t subscribe_status_text(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_status_text
@@ -1868,7 +2215,8 @@ public:
   /**
    * @brief Subscribe to 'actuator control target' updates.
    */
-  uintptr_t subscribe_actuator_control_target(uintptr_t cb_ptr);
+  uintptr_t subscribe_actuator_control_target(uintptr_t cb_ptr,
+                                              uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_actuator_control_target
@@ -1907,7 +2255,8 @@ public:
   /**
    * @brief Subscribe to 'actuator output status' updates.
    */
-  uintptr_t subscribe_actuator_output_status(uintptr_t cb_ptr);
+  uintptr_t subscribe_actuator_output_status(uintptr_t cb_ptr,
+                                             uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_actuator_output_status
@@ -1945,7 +2294,7 @@ public:
   /**
    * @brief Subscribe to 'odometry' updates.
    */
-  uintptr_t subscribe_odometry(uintptr_t cb_ptr);
+  uintptr_t subscribe_odometry(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_odometry
@@ -1982,7 +2331,8 @@ public:
   /**
    * @brief Subscribe to 'position velocity' updates.
    */
-  uintptr_t subscribe_position_velocity_ned(uintptr_t cb_ptr);
+  uintptr_t subscribe_position_velocity_ned(uintptr_t cb_ptr,
+                                            uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_position_velocity_ned
@@ -2020,7 +2370,7 @@ public:
   /**
    * @brief Subscribe to 'ground truth' updates.
    */
-  uintptr_t subscribe_ground_truth(uintptr_t cb_ptr);
+  uintptr_t subscribe_ground_truth(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_ground_truth
@@ -2057,7 +2407,7 @@ public:
   /**
    * @brief Subscribe to 'fixedwing metrics' updates.
    */
-  uintptr_t subscribe_fixedwing_metrics(uintptr_t cb_ptr);
+  uintptr_t subscribe_fixedwing_metrics(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_fixedwing_metrics
@@ -2095,7 +2445,7 @@ public:
   /**
    * @brief Subscribe to 'IMU' updates (in SI units in NED body frame).
    */
-  uintptr_t subscribe_imu(uintptr_t cb_ptr);
+  uintptr_t subscribe_imu(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_imu
@@ -2132,7 +2482,7 @@ public:
   /**
    * @brief Subscribe to 'Scaled IMU' updates.
    */
-  uintptr_t subscribe_scaled_imu(uintptr_t cb_ptr);
+  uintptr_t subscribe_scaled_imu(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_scaled_imu
@@ -2170,7 +2520,7 @@ public:
    * @brief Subscribe to 'Raw IMU' updates (note that units are are incorrect
    * and "raw" as provided by the sensor)
    */
-  uintptr_t subscribe_raw_imu(uintptr_t cb_ptr);
+  uintptr_t subscribe_raw_imu(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_raw_imu
@@ -2208,7 +2558,7 @@ public:
   /**
    * @brief Subscribe to 'HealthAllOk' updates.
    */
-  uintptr_t subscribe_health_all_ok(uintptr_t cb_ptr);
+  uintptr_t subscribe_health_all_ok(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_health_all_ok
@@ -2246,7 +2596,7 @@ public:
   /**
    * @brief Subscribe to 'unix epoch time' updates.
    */
-  uintptr_t subscribe_unix_epoch_time(uintptr_t cb_ptr);
+  uintptr_t subscribe_unix_epoch_time(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_unix_epoch_time
@@ -2284,7 +2634,7 @@ public:
   /**
    * @brief Subscribe to 'Distance Sensor' updates.
    */
-  uintptr_t subscribe_distance_sensor(uintptr_t cb_ptr);
+  uintptr_t subscribe_distance_sensor(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_distance_sensor
@@ -2322,7 +2672,7 @@ public:
   /**
    * @brief Subscribe to 'Scaled Pressure' updates.
    */
-  uintptr_t subscribe_scaled_pressure(uintptr_t cb_ptr);
+  uintptr_t subscribe_scaled_pressure(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_scaled_pressure
@@ -2360,7 +2710,7 @@ public:
   /**
    * @brief Subscribe to 'Heading' updates.
    */
-  uintptr_t subscribe_heading(uintptr_t cb_ptr);
+  uintptr_t subscribe_heading(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_heading
@@ -2397,7 +2747,7 @@ public:
   /**
    * @brief Subscribe to 'Altitude' updates.
    */
-  uintptr_t subscribe_altitude(uintptr_t cb_ptr);
+  uintptr_t subscribe_altitude(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_altitude
@@ -2434,7 +2784,7 @@ public:
   /**
    * @brief Subscribe to 'Wind Estimated' updates.
    */
-  uintptr_t subscribe_wind(uintptr_t cb_ptr);
+  uintptr_t subscribe_wind(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_wind

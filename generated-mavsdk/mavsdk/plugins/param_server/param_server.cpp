@@ -59,16 +59,17 @@ ParamServer::AllParams ParamServer::retrieve_all_params() const {
   return _impl->retrieve_all_params();
 }
 
-uintptr_t ParamServer::subscribe_changed_param_int(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<ChangedParamIntCallback *>(cb_ptr);
+uintptr_t ParamServer::subscribe_changed_param_int(uintptr_t cb_ptr,
+                                                   uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, IntParam);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   ParamServer::ChangedParamIntHandle handle =
-      _impl->subscribe_changed_param_int([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_changed_param_int([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new ParamServer::ChangedParamIntHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -92,17 +93,19 @@ void ParamServer::unsubscribe_changed_param_int(ChangedParamIntHandle handle) {
   _impl->unsubscribe_changed_param_int(handle);
 }
 
-uintptr_t ParamServer::subscribe_changed_param_float(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<ChangedParamFloatCallback *>(cb_ptr);
+uintptr_t ParamServer::subscribe_changed_param_float(uintptr_t cb_ptr,
+                                                     uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, FloatParam);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   ParamServer::ChangedParamFloatHandle handle =
-      _impl->subscribe_changed_param_float([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
-      });
+      _impl->subscribe_changed_param_float(
+          [callback, user_data](auto &&...args) {
+            callback(user_data, std::forward<decltype(args)>(args)...);
+          });
   auto *handle_ptr = new ParamServer::ChangedParamFloatHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
 }
@@ -126,17 +129,19 @@ void ParamServer::unsubscribe_changed_param_float(
   _impl->unsubscribe_changed_param_float(handle);
 }
 
-uintptr_t ParamServer::subscribe_changed_param_custom(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<ChangedParamCustomCallback *>(cb_ptr);
+uintptr_t ParamServer::subscribe_changed_param_custom(uintptr_t cb_ptr,
+                                                      uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, CustomParam);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   ParamServer::ChangedParamCustomHandle handle =
-      _impl->subscribe_changed_param_custom([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
-      });
+      _impl->subscribe_changed_param_custom(
+          [callback, user_data](auto &&...args) {
+            callback(user_data, std::forward<decltype(args)>(args)...);
+          });
   auto *handle_ptr = new ParamServer::ChangedParamCustomHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
 }

@@ -72,7 +72,10 @@ public:
    */
   struct MetadataData {
     std::string json_metadata; /**< @brief The JSON metadata */
-    const std::string &get_json_metadata() const { return json_metadata; }
+
+    const std::string &component_metadata_get_json_metadata() const {
+      return json_metadata;
+    }
   };
 
   /**
@@ -123,11 +126,16 @@ public:
    */
   struct MetadataUpdate {
     uint32_t compid; /**< @brief The component ID */
-    uint32_t get_compid() const { return compid; }
+
+    uint32_t component_metadata_get_compid() const { return compid; }
     MetadataType type; /**< @brief The metadata type */
-    MetadataType get_type() const { return type; }
+
+    const MetadataType &component_metadata_get_type() const { return type; }
     std::string json_metadata; /**< @brief The JSON metadata */
-    const std::string &get_json_metadata() const { return json_metadata; }
+
+    const std::string &component_metadata_get_json_metadata() const {
+      return json_metadata;
+    }
   };
 
   /**
@@ -191,7 +199,7 @@ public:
   /**
    * @brief Register a callback that gets called when metadata is available
    */
-  uintptr_t subscribe_metadata_available(uintptr_t cb_ptr);
+  uintptr_t subscribe_metadata_available(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_metadata_available

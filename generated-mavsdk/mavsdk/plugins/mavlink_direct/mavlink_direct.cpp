@@ -23,16 +23,17 @@ MavlinkDirect::send_message(MavlinkMessage message) const {
 }
 
 uintptr_t MavlinkDirect::subscribe_message(std::string message_name,
-                                           uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<MessageCallback *>(cb_ptr);
+                                           uintptr_t cb_ptr,
+                                           uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, MavlinkMessage);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
-  MavlinkDirect::MessageHandle handle =
-      _impl->subscribe_message(message_name, [callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+  MavlinkDirect::MessageHandle handle = _impl->subscribe_message(
+      message_name, [callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new MavlinkDirect::MessageHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);

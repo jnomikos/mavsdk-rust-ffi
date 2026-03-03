@@ -109,16 +109,16 @@ Camera::list_photos(int32_t component_id, PhotosRange photos_range) const {
   return _impl->list_photos(component_id, photos_range);
 }
 
-uintptr_t Camera::subscribe_camera_list(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<CameraListCallback *>(cb_ptr);
+uintptr_t Camera::subscribe_camera_list(uintptr_t cb_ptr, uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, CameraList);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Camera::CameraListHandle handle =
-      _impl->subscribe_camera_list([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_camera_list([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Camera::CameraListHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -144,16 +144,17 @@ void Camera::unsubscribe_camera_list(CameraListHandle handle) {
 
 Camera::CameraList Camera::camera_list() const { return _impl->camera_list(); }
 
-uintptr_t Camera::subscribe_mode(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<ModeCallback *>(cb_ptr);
+uintptr_t Camera::subscribe_mode(uintptr_t cb_ptr, uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, ModeUpdate);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
-  Camera::ModeHandle handle = _impl->subscribe_mode([callback](auto &&...args) {
-    return (*callback)(std::forward<decltype(args)>(args)...);
-  });
+  Camera::ModeHandle handle =
+      _impl->subscribe_mode([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
+      });
   auto *handle_ptr = new Camera::ModeHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
 }
@@ -180,16 +181,17 @@ Camera::get_mode(int32_t component_id) const {
   return _impl->get_mode(component_id);
 }
 
-uintptr_t Camera::subscribe_video_stream_info(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<VideoStreamInfoCallback *>(cb_ptr);
+uintptr_t Camera::subscribe_video_stream_info(uintptr_t cb_ptr,
+                                              uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, VideoStreamUpdate);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Camera::VideoStreamInfoHandle handle =
-      _impl->subscribe_video_stream_info([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_video_stream_info([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Camera::VideoStreamInfoHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -218,16 +220,17 @@ Camera::get_video_stream_info(int32_t component_id) const {
   return _impl->get_video_stream_info(component_id);
 }
 
-uintptr_t Camera::subscribe_capture_info(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<CaptureInfoCallback *>(cb_ptr);
+uintptr_t Camera::subscribe_capture_info(uintptr_t cb_ptr,
+                                         uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, CaptureInfo);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Camera::CaptureInfoHandle handle =
-      _impl->subscribe_capture_info([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_capture_info([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Camera::CaptureInfoHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -251,16 +254,16 @@ void Camera::unsubscribe_capture_info(CaptureInfoHandle handle) {
   _impl->unsubscribe_capture_info(handle);
 }
 
-uintptr_t Camera::subscribe_storage(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<StorageCallback *>(cb_ptr);
+uintptr_t Camera::subscribe_storage(uintptr_t cb_ptr, uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, StorageUpdate);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Camera::StorageHandle handle =
-      _impl->subscribe_storage([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_storage([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Camera::StorageHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -289,16 +292,17 @@ Camera::get_storage(int32_t component_id) const {
   return _impl->get_storage(component_id);
 }
 
-uintptr_t Camera::subscribe_current_settings(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<CurrentSettingsCallback *>(cb_ptr);
+uintptr_t Camera::subscribe_current_settings(uintptr_t cb_ptr,
+                                             uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, CurrentSettingsUpdate);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Camera::CurrentSettingsHandle handle =
-      _impl->subscribe_current_settings([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_current_settings([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Camera::CurrentSettingsHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -327,17 +331,19 @@ Camera::get_current_settings(int32_t component_id) const {
   return _impl->get_current_settings(component_id);
 }
 
-uintptr_t Camera::subscribe_possible_setting_options(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<PossibleSettingOptionsCallback *>(cb_ptr);
+uintptr_t Camera::subscribe_possible_setting_options(uintptr_t cb_ptr,
+                                                     uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, PossibleSettingOptionsUpdate);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Camera::PossibleSettingOptionsHandle handle =
-      _impl->subscribe_possible_setting_options([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
-      });
+      _impl->subscribe_possible_setting_options(
+          [callback, user_data](auto &&...args) {
+            callback(user_data, std::forward<decltype(args)>(args)...);
+          });
   auto *handle_ptr = new Camera::PossibleSettingOptionsHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
 }

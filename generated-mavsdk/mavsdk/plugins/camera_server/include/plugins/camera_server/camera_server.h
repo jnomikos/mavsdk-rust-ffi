@@ -89,52 +89,71 @@ public:
    */
   struct Information {
     std::string vendor_name; /**< @brief Name of the camera vendor */
-    const std::string &get_vendor_name() const { return vendor_name; }
+
+    const std::string &camera_server_get_vendor_name() const {
+      return vendor_name;
+    }
     std::string model_name; /**< @brief Name of the camera model */
-    const std::string &get_model_name() const { return model_name; }
+
+    const std::string &camera_server_get_model_name() const {
+      return model_name;
+    }
     std::string firmware_version; /**< @brief Camera firmware version in
                                      major[.minor[.patch[.dev]]] format */
-    const std::string &get_firmware_version() const { return firmware_version; }
+
+    const std::string &camera_server_get_firmware_version() const {
+      return firmware_version;
+    }
     float focal_length_mm; /**< @brief Focal length */
-    float get_focal_length_mm() const { return focal_length_mm; }
+
+    float camera_server_get_focal_length_mm() const { return focal_length_mm; }
     float horizontal_sensor_size_mm; /**< @brief Horizontal sensor size */
-    float get_horizontal_sensor_size_mm() const {
+
+    float camera_server_get_horizontal_sensor_size_mm() const {
       return horizontal_sensor_size_mm;
     }
     float vertical_sensor_size_mm; /**< @brief Vertical sensor size */
-    float get_vertical_sensor_size_mm() const {
+
+    float camera_server_get_vertical_sensor_size_mm() const {
       return vertical_sensor_size_mm;
     }
     uint32_t horizontal_resolution_px; /**< @brief Horizontal image resolution
                                           in pixels */
-    uint32_t get_horizontal_resolution_px() const {
+
+    uint32_t camera_server_get_horizontal_resolution_px() const {
       return horizontal_resolution_px;
     }
     uint32_t vertical_resolution_px; /**< @brief Vertical image resolution in
                                         pixels */
-    uint32_t get_vertical_resolution_px() const {
+
+    uint32_t camera_server_get_vertical_resolution_px() const {
       return vertical_resolution_px;
     }
     uint32_t lens_id; /**< @brief Lens ID */
-    uint32_t get_lens_id() const { return lens_id; }
+
+    uint32_t camera_server_get_lens_id() const { return lens_id; }
     uint32_t definition_file_version; /**< @brief Camera definition file version
                                          (iteration) */
-    uint32_t get_definition_file_version() const {
+
+    uint32_t camera_server_get_definition_file_version() const {
       return definition_file_version;
     }
     std::string definition_file_uri; /**< @brief Camera definition URI (http or
                                         mavlink ftp) */
-    const std::string &get_definition_file_uri() const {
+
+    const std::string &camera_server_get_definition_file_uri() const {
       return definition_file_uri;
     }
     bool image_in_video_mode_supported; /**< @brief Camera supports taking
                                            images while in video mode */
-    bool get_image_in_video_mode_supported() const {
+
+    bool camera_server_get_image_in_video_mode_supported() const {
       return image_in_video_mode_supported;
     }
     bool video_in_image_mode_supported; /**< @brief Camera supports recording
                                            video while in image mode */
-    bool get_video_in_image_mode_supported() const {
+
+    bool camera_server_get_video_in_image_mode_supported() const {
       return video_in_image_mode_supported;
     }
   };
@@ -161,10 +180,12 @@ public:
    */
   struct VideoStreaming {
     bool has_rtsp_server; /**< @brief True if the capture was successful */
-    bool get_has_rtsp_server() const { return has_rtsp_server; }
+
+    bool camera_server_get_has_rtsp_server() const { return has_rtsp_server; }
     std::string
         rtsp_uri; /**< @brief RTSP URI (e.g. rtsp://192.168.1.42:8554/live) */
-    const std::string &get_rtsp_uri() const { return rtsp_uri; }
+
+    const std::string &camera_server_get_rtsp_uri() const { return rtsp_uri; }
   };
 
   /**
@@ -191,12 +212,24 @@ public:
    */
   struct Position {
     double latitude_deg; /**< @brief Latitude in degrees (range: -90 to +90) */
+
+    double camera_server_get_latitude_deg() const { return latitude_deg; }
     double
         longitude_deg; /**< @brief Longitude in degrees (range: -180 to +180) */
+
+    double camera_server_get_longitude_deg() const { return longitude_deg; }
     float absolute_altitude_m; /**< @brief Altitude AMSL (above mean sea level)
                                   in metres */
+
+    float camera_server_get_absolute_altitude_m() const {
+      return absolute_altitude_m;
+    }
     float relative_altitude_m; /**< @brief Altitude relative to takeoff altitude
                                   in metres */
+
+    float camera_server_get_relative_altitude_m() const {
+      return relative_altitude_m;
+    }
   };
 
   /**
@@ -228,9 +261,17 @@ public:
    */
   struct Quaternion {
     float w; /**< @brief Quaternion entry 0, also denoted as a */
+
+    float camera_server_get_w() const { return w; }
     float x; /**< @brief Quaternion entry 1, also denoted as b */
+
+    float camera_server_get_x() const { return x; }
     float y; /**< @brief Quaternion entry 2, also denoted as c */
+
+    float camera_server_get_y() const { return y; }
     float z; /**< @brief Quaternion entry 3, also denoted as d */
+
+    float camera_server_get_z() const { return z; }
   };
 
   /**
@@ -255,19 +296,27 @@ public:
    */
   struct CaptureInfo {
     Position position; /**< @brief Location where the picture was taken */
-    Position get_position() const { return position; }
+
+    const Position &camera_server_get_position() const { return position; }
     Quaternion attitude_quaternion; /**< @brief Attitude of the camera when the
                                        picture was taken (quaternion) */
-    Quaternion get_attitude_quaternion() const { return attitude_quaternion; }
+
+    const Quaternion &camera_server_get_attitude_quaternion() const {
+      return attitude_quaternion;
+    }
     uint64_t time_utc_us; /**< @brief Timestamp in UTC (since UNIX epoch) in
                              microseconds */
-    uint64_t get_time_utc_us() const { return time_utc_us; }
+
+    uint64_t camera_server_get_time_utc_us() const { return time_utc_us; }
     bool is_success; /**< @brief True if the capture was successful */
-    bool get_is_success() const { return is_success; }
+
+    bool camera_server_get_is_success() const { return is_success; }
     int32_t index; /**< @brief Index from TakePhotoResponse */
-    int32_t get_index() const { return index; }
+
+    int32_t camera_server_get_index() const { return index; }
     std::string file_url; /**< @brief Download URL of this image */
-    const std::string &get_file_url() const { return file_url; }
+
+    const std::string &camera_server_get_file_url() const { return file_url; }
   };
 
   /**
@@ -355,14 +404,44 @@ public:
     friend std::ostream &operator<<(
         std::ostream &str,
         CameraServer::StorageInformation::StorageType const &storage_type);
-    float used_storage_mib;       /**< @brief Used storage (in MiB) */
-    float available_storage_mib;  /**< @brief Available storage (in MiB) */
-    float total_storage_mib;      /**< @brief Total storage (in MiB) */
+    float used_storage_mib; /**< @brief Used storage (in MiB) */
+
+    float camera_server_get_used_storage_mib() const {
+      return used_storage_mib;
+    }
+    float available_storage_mib; /**< @brief Available storage (in MiB) */
+
+    float camera_server_get_available_storage_mib() const {
+      return available_storage_mib;
+    }
+    float total_storage_mib; /**< @brief Total storage (in MiB) */
+
+    float camera_server_get_total_storage_mib() const {
+      return total_storage_mib;
+    }
     StorageStatus storage_status; /**< @brief Storage status */
-    uint32_t storage_id;          /**< @brief Storage ID starting at 1 */
-    StorageType storage_type;     /**< @brief Storage type */
-    float read_speed_mib_s;       /**< @brief Read speed [MiB/s] */
-    float write_speed_mib_s;      /**< @brief Write speed [MiB/s] */
+
+    const StorageStatus &camera_server_get_storage_status() const {
+      return storage_status;
+    }
+    uint32_t storage_id; /**< @brief Storage ID starting at 1 */
+
+    uint32_t camera_server_get_storage_id() const { return storage_id; }
+    StorageType storage_type; /**< @brief Storage type */
+
+    const StorageType &camera_server_get_storage_type() const {
+      return storage_type;
+    }
+    float read_speed_mib_s; /**< @brief Read speed [MiB/s] */
+
+    float camera_server_get_read_speed_mib_s() const {
+      return read_speed_mib_s;
+    }
+    float write_speed_mib_s; /**< @brief Write speed [MiB/s] */
+
+    float camera_server_get_write_speed_mib_s() const {
+      return write_speed_mib_s;
+    }
   };
 
   /**
@@ -423,14 +502,36 @@ public:
     operator<<(std::ostream &str,
                CameraServer::CaptureStatus::VideoStatus const &video_status);
     float image_interval_s; /**< @brief Image capture interval (in s) */
+
+    float camera_server_get_image_interval_s() const {
+      return image_interval_s;
+    }
     float recording_time_s; /**< @brief Elapsed time since recording started (in
                                s) */
+
+    float camera_server_get_recording_time_s() const {
+      return recording_time_s;
+    }
     float available_capacity_mib; /**< @brief Available storage capacity. (in
                                      MiB) */
+
+    float camera_server_get_available_capacity_mib() const {
+      return available_capacity_mib;
+    }
     ImageStatus image_status; /**< @brief Current status of image capturing */
+
+    const ImageStatus &camera_server_get_image_status() const {
+      return image_status;
+    }
     VideoStatus video_status; /**< @brief Current status of video capturing */
+
+    const VideoStatus &camera_server_get_video_status() const {
+      return video_status;
+    }
     int32_t image_count; /**< @brief Total number of images captured ('forever',
                             or until reset using MAV_CMD_STORAGE_FORMAT) */
+
+    int32_t camera_server_get_image_count() const { return image_count; }
   };
 
   /**
@@ -457,10 +558,16 @@ public:
   struct TrackPoint {
     float point_x; /**< @brief Point to track x value (normalized 0..1, 0 is
                       left, 1 is right). */
+
+    float camera_server_get_point_x() const { return point_x; }
     float point_y; /**< @brief Point to track y value (normalized 0..1, 0 is
                       top, 1 is bottom). */
+
+    float camera_server_get_point_y() const { return point_y; }
     float radius; /**< @brief Point to track y value (normalized 0..1, 0 is top,
                      1 is bottom). */
+
+    float camera_server_get_radius() const { return radius; }
   };
 
   /**
@@ -486,14 +593,30 @@ public:
   struct TrackRectangle {
     float top_left_corner_x; /**< @brief Top left corner of rectangle x value
                                 (normalized 0..1, 0 is left, 1 is right). */
+
+    float camera_server_get_top_left_corner_x() const {
+      return top_left_corner_x;
+    }
     float top_left_corner_y; /**< @brief Top left corner of rectangle y value
                                 (normalized 0..1, 0 is top, 1 is bottom). */
+
+    float camera_server_get_top_left_corner_y() const {
+      return top_left_corner_y;
+    }
     float bottom_right_corner_x; /**< @brief Bottom right corner of rectangle x
                                     value (normalized 0..1, 0 is left, 1 is
                                     right). */
+
+    float camera_server_get_bottom_right_corner_x() const {
+      return bottom_right_corner_x;
+    }
     float bottom_right_corner_y; /**< @brief Bottom right corner of rectangle y
                                     value (normalized 0..1, 0 is top, 1 is
                                     bottom). */
+
+    float camera_server_get_bottom_right_corner_y() const {
+      return bottom_right_corner_y;
+    }
   };
 
   /**
@@ -569,7 +692,7 @@ public:
    * @brief Subscribe to image capture requests. Each request received should
    * respond to using RespondTakePhoto.
    */
-  uintptr_t subscribe_take_photo(uintptr_t cb_ptr);
+  uintptr_t subscribe_take_photo(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_take_photo
@@ -613,7 +736,7 @@ public:
    * @brief Subscribe to start video requests. Each request received should
    * respond to using RespondStartVideo
    */
-  uintptr_t subscribe_start_video(uintptr_t cb_ptr);
+  uintptr_t subscribe_start_video(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_start_video
@@ -657,7 +780,7 @@ public:
    * @brief Subscribe to stop video requests. Each request received should
    * response to using RespondStopVideo
    */
-  uintptr_t subscribe_stop_video(uintptr_t cb_ptr);
+  uintptr_t subscribe_stop_video(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_stop_video
@@ -700,7 +823,8 @@ public:
    * @brief Subscribe to start video streaming requests. Each request received
    * should response to using RespondStartVideoStreaming
    */
-  uintptr_t subscribe_start_video_streaming(uintptr_t cb_ptr);
+  uintptr_t subscribe_start_video_streaming(uintptr_t cb_ptr,
+                                            uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_start_video_streaming
@@ -745,7 +869,8 @@ public:
    * @brief Subscribe to stop video streaming requests. Each request received
    * should response to using RespondStopVideoStreaming
    */
-  uintptr_t subscribe_stop_video_streaming(uintptr_t cb_ptr);
+  uintptr_t subscribe_stop_video_streaming(uintptr_t cb_ptr,
+                                           uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_stop_video_streaming
@@ -790,7 +915,7 @@ public:
    * @brief Subscribe to set camera mode requests. Each request received should
    * response to using RespondSetMode
    */
-  uintptr_t subscribe_set_mode(uintptr_t cb_ptr);
+  uintptr_t subscribe_set_mode(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_set_mode
@@ -833,7 +958,8 @@ public:
    * @brief Subscribe to camera storage information requests. Each request
    * received should response to using RespondStorageInformation
    */
-  uintptr_t subscribe_storage_information(uintptr_t cb_ptr);
+  uintptr_t subscribe_storage_information(uintptr_t cb_ptr,
+                                          uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_storage_information
@@ -880,7 +1006,7 @@ public:
    * @brief Subscribe to camera capture status requests. Each request received
    * should response to using RespondCaptureStatus
    */
-  uintptr_t subscribe_capture_status(uintptr_t cb_ptr);
+  uintptr_t subscribe_capture_status(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_capture_status
@@ -925,7 +1051,7 @@ public:
    * @brief Subscribe to format storage requests. Each request received should
    * response to using RespondFormatStorage
    */
-  uintptr_t subscribe_format_storage(uintptr_t cb_ptr);
+  uintptr_t subscribe_format_storage(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_format_storage
@@ -969,7 +1095,7 @@ public:
    * @brief Subscribe to reset settings requests. Each request received should
    * response to using RespondResetSettings
    */
-  uintptr_t subscribe_reset_settings(uintptr_t cb_ptr);
+  uintptr_t subscribe_reset_settings(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_reset_settings
@@ -1012,7 +1138,7 @@ public:
   /**
    * @brief Subscribe to zoom in start command
    */
-  uintptr_t subscribe_zoom_in_start(uintptr_t cb_ptr);
+  uintptr_t subscribe_zoom_in_start(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_zoom_in_start
@@ -1054,7 +1180,7 @@ public:
   /**
    * @brief Subscribe to zoom out start command
    */
-  uintptr_t subscribe_zoom_out_start(uintptr_t cb_ptr);
+  uintptr_t subscribe_zoom_out_start(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_zoom_out_start
@@ -1096,7 +1222,7 @@ public:
   /**
    * @brief Subscribe to zoom stop command
    */
-  uintptr_t subscribe_zoom_stop(uintptr_t cb_ptr);
+  uintptr_t subscribe_zoom_stop(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_zoom_stop
@@ -1137,7 +1263,7 @@ public:
   /**
    * @brief Subscribe to zoom range command
    */
-  uintptr_t subscribe_zoom_range(uintptr_t cb_ptr);
+  uintptr_t subscribe_zoom_range(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_zoom_range
@@ -1196,7 +1322,8 @@ public:
   /**
    * @brief Subscribe to incoming tracking point command.
    */
-  uintptr_t subscribe_tracking_point_command(uintptr_t cb_ptr);
+  uintptr_t subscribe_tracking_point_command(uintptr_t cb_ptr,
+                                             uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_tracking_point_command
@@ -1227,7 +1354,8 @@ public:
   /**
    * @brief Subscribe to incoming tracking rectangle command.
    */
-  uintptr_t subscribe_tracking_rectangle_command(uintptr_t cb_ptr);
+  uintptr_t subscribe_tracking_rectangle_command(uintptr_t cb_ptr,
+                                                 uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_tracking_rectangle_command
@@ -1259,7 +1387,8 @@ public:
   /**
    * @brief Subscribe to incoming tracking off command.
    */
-  uintptr_t subscribe_tracking_off_command(uintptr_t cb_ptr);
+  uintptr_t subscribe_tracking_off_command(uintptr_t cb_ptr,
+                                           uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_tracking_off_command

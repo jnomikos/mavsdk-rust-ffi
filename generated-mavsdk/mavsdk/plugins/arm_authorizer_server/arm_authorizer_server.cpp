@@ -17,16 +17,18 @@ ArmAuthorizerServer::ArmAuthorizerServer(
 
 ArmAuthorizerServer::~ArmAuthorizerServer() {}
 
-uintptr_t ArmAuthorizerServer::subscribe_arm_authorization(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<ArmAuthorizationCallback *>(cb_ptr);
+uintptr_t
+ArmAuthorizerServer::subscribe_arm_authorization(uintptr_t cb_ptr,
+                                                 uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, uint32_t);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   ArmAuthorizerServer::ArmAuthorizationHandle handle =
-      _impl->subscribe_arm_authorization([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_arm_authorization([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new ArmAuthorizerServer::ArmAuthorizationHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);

@@ -50,7 +50,8 @@ public:
    */
   struct RtcmData {
     std::string data_base64; /**< @brief The data encoded as a base64 string */
-    const std::string &get_data_base64() const { return data_base64; }
+
+    const std::string &rtk_get_data_base64() const { return data_base64; }
   };
 
   /**

@@ -112,9 +112,17 @@ public:
    */
   struct Quaternion {
     float w{float(NAN)}; /**< @brief Quaternion entry 0, also denoted as a */
+
+    float gimbal_get_w() const { return w; }
     float x{float(NAN)}; /**< @brief Quaternion entry 1, also denoted as b */
+
+    float gimbal_get_x() const { return x; }
     float y{float(NAN)}; /**< @brief Quaternion entry 2, also denoted as c */
+
+    float gimbal_get_y() const { return y; }
     float z{float(NAN)}; /**< @brief Quaternion entry 3, also denoted as d */
+
+    float gimbal_get_z() const { return z; }
   };
 
   /**
@@ -143,12 +151,18 @@ public:
    * For more info see https://en.wikipedia.org/wiki/Euler_angles
    */
   struct EulerAngle {
-    float roll_deg{float(NAN)};  /**< @brief Roll angle in degrees, positive is
-                                    banking to the right */
+    float roll_deg{float(NAN)}; /**< @brief Roll angle in degrees, positive is
+                                   banking to the right */
+
+    float gimbal_get_roll_deg() const { return roll_deg; }
     float pitch_deg{float(NAN)}; /**< @brief Pitch angle in degrees, positive is
                                     pitching nose up */
-    float yaw_deg{float(NAN)};   /**< @brief Yaw angle in degrees, positive is
-                                    clock-wise seen from above */
+
+    float gimbal_get_pitch_deg() const { return pitch_deg; }
+    float yaw_deg{float(NAN)}; /**< @brief Yaw angle in degrees, positive is
+                                  clock-wise seen from above */
+
+    float gimbal_get_yaw_deg() const { return yaw_deg; }
   };
 
   /**
@@ -171,9 +185,15 @@ public:
    * @brief Gimbal angular rate type
    */
   struct AngularVelocityBody {
-    float roll_rad_s{float(NAN)};  /**< @brief Roll angular velocity */
+    float roll_rad_s{float(NAN)}; /**< @brief Roll angular velocity */
+
+    float gimbal_get_roll_rad_s() const { return roll_rad_s; }
     float pitch_rad_s{float(NAN)}; /**< @brief Pitch angular velocity */
-    float yaw_rad_s{float(NAN)};   /**< @brief Yaw angular velocity */
+
+    float gimbal_get_pitch_rad_s() const { return pitch_rad_s; }
+    float yaw_rad_s{float(NAN)}; /**< @brief Yaw angular velocity */
+
+    float gimbal_get_yaw_rad_s() const { return yaw_rad_s; }
   };
 
   /**
@@ -199,13 +219,37 @@ public:
    */
   struct Attitude {
     int32_t gimbal_id; /**< @brief Gimbal ID */
+
+    int32_t gimbal_get_gimbal_id() const { return gimbal_id; }
     EulerAngle
         euler_angle_forward; /**< @brief Euler angle relative to forward */
+
+    const EulerAngle &gimbal_get_euler_angle_forward() const {
+      return euler_angle_forward;
+    }
     Quaternion quaternion_forward; /**< @brief Quaternion relative to forward */
-    EulerAngle euler_angle_north;  /**< @brief Euler angle relative to North */
-    Quaternion quaternion_north;   /**< @brief Quaternion relative to North */
+
+    const Quaternion &gimbal_get_quaternion_forward() const {
+      return quaternion_forward;
+    }
+    EulerAngle euler_angle_north; /**< @brief Euler angle relative to North */
+
+    const EulerAngle &gimbal_get_euler_angle_north() const {
+      return euler_angle_north;
+    }
+    Quaternion quaternion_north; /**< @brief Quaternion relative to North */
+
+    const Quaternion &gimbal_get_quaternion_north() const {
+      return quaternion_north;
+    }
     AngularVelocityBody angular_velocity; /**< @brief The angular rate */
+
+    const AngularVelocityBody &gimbal_get_angular_velocity() const {
+      return angular_velocity;
+    }
     uint64_t timestamp_us; /**< @brief Timestamp in microseconds */
+
+    uint64_t gimbal_get_timestamp_us() const { return timestamp_us; }
   };
 
   /**
@@ -230,20 +274,26 @@ public:
   struct GimbalItem {
     int32_t gimbal_id; /**< @brief ID to address it, starting at 1 (0 means all
                           gimbals) */
-    int32_t get_gimbal_id() const { return gimbal_id; }
+
+    int32_t gimbal_get_gimbal_id() const { return gimbal_id; }
     std::string vendor_name; /**< @brief Vendor name */
-    const std::string &get_vendor_name() const { return vendor_name; }
+
+    const std::string &gimbal_get_vendor_name() const { return vendor_name; }
     std::string model_name; /**< @brief Model name */
-    const std::string &get_model_name() const { return model_name; }
+
+    const std::string &gimbal_get_model_name() const { return model_name; }
     std::string custom_name; /**< @brief Custom name name */
-    const std::string &get_custom_name() const { return custom_name; }
+
+    const std::string &gimbal_get_custom_name() const { return custom_name; }
     int32_t gimbal_manager_component_id; /**< @brief MAVLink component of gimbal
                                             manager, for debugging purposes */
-    int32_t get_gimbal_manager_component_id() const {
+
+    int32_t gimbal_get_gimbal_manager_component_id() const {
       return gimbal_manager_component_id;
     }
     int32_t gimbal_device_id; /**< @brief MAVLink component of gimbal device */
-    int32_t get_gimbal_device_id() const { return gimbal_device_id; }
+
+    int32_t gimbal_get_gimbal_device_id() const { return gimbal_device_id; }
   };
 
   /**
@@ -267,7 +317,10 @@ public:
    */
   struct GimbalList {
     std::vector<GimbalItem> gimbals; /**< @brief Gimbal items. */
-    const std::vector<GimbalItem> &get_gimbals() const { return gimbals; }
+
+    const std::vector<GimbalItem> &gimbal_get_gimbals() const {
+      return gimbals;
+    }
   };
 
   /**
@@ -291,20 +344,40 @@ public:
    */
   struct ControlStatus {
     int32_t gimbal_id; /**< @brief Gimbal ID */
+
+    int32_t gimbal_get_gimbal_id() const { return gimbal_id; }
     ControlMode
         control_mode; /**< @brief Control mode (none, primary or secondary) */
-    int32_t sysid_primary_control;  /**< @brief Sysid of the component that has
-                                       primary control over the gimbal (0 if no
-                                       one is in control) */
+
+    const ControlMode &gimbal_get_control_mode() const { return control_mode; }
+    int32_t sysid_primary_control; /**< @brief Sysid of the component that has
+                                      primary control over the gimbal (0 if no
+                                      one is in control) */
+
+    int32_t gimbal_get_sysid_primary_control() const {
+      return sysid_primary_control;
+    }
     int32_t compid_primary_control; /**< @brief Compid of the component that has
                                        primary control over the gimbal (0 if no
                                        one is in control) */
+
+    int32_t gimbal_get_compid_primary_control() const {
+      return compid_primary_control;
+    }
     int32_t sysid_secondary_control; /**< @brief Sysid of the component that has
                                         secondary control over the gimbal (0 if
                                         no one is in control) */
+
+    int32_t gimbal_get_sysid_secondary_control() const {
+      return sysid_secondary_control;
+    }
     int32_t compid_secondary_control; /**< @brief Compid of the component that
                                          has secondary control over the gimbal
                                          (0 if no one is in control) */
+
+    int32_t gimbal_get_compid_secondary_control() const {
+      return compid_secondary_control;
+    }
   };
 
   /**
@@ -536,7 +609,7 @@ public:
    * This allows to find out what gimbals are connected to the system.
    * Based on the gimbal ID, we can then address a specific gimbal.
    */
-  uintptr_t subscribe_gimbal_list(uintptr_t cb_ptr);
+  uintptr_t subscribe_gimbal_list(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_gimbal_list
@@ -580,7 +653,7 @@ public:
    * no control over the gimbal. Also, it gives the system and component ids
    * of the other components in control (if any).
    */
-  uintptr_t subscribe_control_status(uintptr_t cb_ptr);
+  uintptr_t subscribe_control_status(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_control_status
@@ -627,7 +700,7 @@ public:
    *
    * This gets you the gimbal's attitude and angular rate.
    */
-  uintptr_t subscribe_attitude(uintptr_t cb_ptr);
+  uintptr_t subscribe_attitude(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_attitude

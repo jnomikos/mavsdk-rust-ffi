@@ -52,7 +52,11 @@ public:
   struct MissionProgress {
     int32_t current; /**< @brief Current mission item index (0-based), if equal
                         to total, the mission is finished */
-    int32_t total;   /**< @brief Total number of mission items */
+
+    int32_t mission_raw_get_current() const { return current; }
+    int32_t total; /**< @brief Total number of mission items */
+
+    int32_t mission_raw_get_total() const { return total; }
   };
 
   /**
@@ -77,25 +81,51 @@ public:
    * @brief Mission item exactly identical to MAVLink MISSION_ITEM_INT.
    */
   struct MissionItem {
-    uint32_t seq;   /**< @brief Sequence (uint16_t) */
+    uint32_t seq; /**< @brief Sequence (uint16_t) */
+
+    uint32_t mission_raw_get_seq() const { return seq; }
     uint32_t frame; /**< @brief The coordinate system of the waypoint (actually
                        uint8_t) */
-    uint32_t command;      /**< @brief The scheduled action for the waypoint
-                              (actually uint16_t) */
-    uint32_t current;      /**< @brief false:0, true:1 (actually uint8_t) */
+
+    uint32_t mission_raw_get_frame() const { return frame; }
+    uint32_t command; /**< @brief The scheduled action for the waypoint
+                         (actually uint16_t) */
+
+    uint32_t mission_raw_get_command() const { return command; }
+    uint32_t current; /**< @brief false:0, true:1 (actually uint8_t) */
+
+    uint32_t mission_raw_get_current() const { return current; }
     uint32_t autocontinue; /**< @brief Autocontinue to next waypoint (actually
                               uint8_t) */
-    float param1;          /**< @brief PARAM1, see MAV_CMD enum */
-    float param2;          /**< @brief PARAM2, see MAV_CMD enum */
-    float param3;          /**< @brief PARAM3, see MAV_CMD enum */
-    float param4;          /**< @brief PARAM4, see MAV_CMD enum */
+
+    uint32_t mission_raw_get_autocontinue() const { return autocontinue; }
+    float param1; /**< @brief PARAM1, see MAV_CMD enum */
+
+    float mission_raw_get_param1() const { return param1; }
+    float param2; /**< @brief PARAM2, see MAV_CMD enum */
+
+    float mission_raw_get_param2() const { return param2; }
+    float param3; /**< @brief PARAM3, see MAV_CMD enum */
+
+    float mission_raw_get_param3() const { return param3; }
+    float param4; /**< @brief PARAM4, see MAV_CMD enum */
+
+    float mission_raw_get_param4() const { return param4; }
     int32_t x; /**< @brief PARAM5 / local: x position in meters * 1e4, global:
                   latitude in degrees * 10^7 */
+
+    int32_t mission_raw_get_x() const { return x; }
     int32_t y; /**< @brief PARAM6 / y position: local: x position in meters *
                   1e4, global: longitude in degrees *10^7 */
-    float z;   /**< @brief PARAM7 / local: Z coordinate, global: altitude
-                  (relative or absolute, depending on frame) */
+
+    int32_t mission_raw_get_y() const { return y; }
+    float z; /**< @brief PARAM7 / local: Z coordinate, global: altitude
+                (relative or absolute, depending on frame) */
+
+    float mission_raw_get_z() const { return z; }
     uint32_t mission_type; /**< @brief Mission type (actually uint8_t) */
+
+    uint32_t mission_raw_get_mission_type() const { return mission_type; }
   };
 
   /**
@@ -120,15 +150,18 @@ public:
    */
   struct MissionImportData {
     std::vector<MissionItem> mission_items; /**< @brief Mission items */
-    const std::vector<MissionItem> &get_mission_items() const {
+
+    const std::vector<MissionItem> &mission_raw_get_mission_items() const {
       return mission_items;
     }
     std::vector<MissionItem> geofence_items; /**< @brief Geofence items */
-    const std::vector<MissionItem> &get_geofence_items() const {
+
+    const std::vector<MissionItem> &mission_raw_get_geofence_items() const {
       return geofence_items;
     }
     std::vector<MissionItem> rally_items; /**< @brief Rally items */
-    const std::vector<MissionItem> &get_rally_items() const {
+
+    const std::vector<MissionItem> &mission_raw_get_rally_items() const {
       return rally_items;
     }
   };
@@ -487,7 +520,7 @@ public:
   /**
    * @brief Subscribe to mission progress updates.
    */
-  uintptr_t subscribe_mission_progress(uintptr_t cb_ptr);
+  uintptr_t subscribe_mission_progress(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_mission_progress
@@ -530,7 +563,7 @@ public:
    *
    * @param callback Callback to notify about change.
    */
-  uintptr_t subscribe_mission_changed(uintptr_t cb_ptr);
+  uintptr_t subscribe_mission_changed(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_mission_changed

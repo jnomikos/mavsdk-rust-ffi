@@ -33,16 +33,17 @@ LogStreaming::Result LogStreaming::stop_log_streaming() const {
   return _impl->stop_log_streaming();
 }
 
-uintptr_t LogStreaming::subscribe_log_streaming_raw(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<LogStreamingRawCallback *>(cb_ptr);
+uintptr_t LogStreaming::subscribe_log_streaming_raw(uintptr_t cb_ptr,
+                                                    uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, LogStreamingRaw);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   LogStreaming::LogStreamingRawHandle handle =
-      _impl->subscribe_log_streaming_raw([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_log_streaming_raw([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new LogStreaming::LogStreamingRawHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);

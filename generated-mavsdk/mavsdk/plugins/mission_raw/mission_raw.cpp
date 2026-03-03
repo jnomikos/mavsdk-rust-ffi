@@ -120,16 +120,17 @@ MissionRaw::Result MissionRaw::set_current_mission_item(int32_t index) const {
   return _impl->set_current_mission_item(index);
 }
 
-uintptr_t MissionRaw::subscribe_mission_progress(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<MissionProgressCallback *>(cb_ptr);
+uintptr_t MissionRaw::subscribe_mission_progress(uintptr_t cb_ptr,
+                                                 uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, MissionProgress);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   MissionRaw::MissionProgressHandle handle =
-      _impl->subscribe_mission_progress([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_mission_progress([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new MissionRaw::MissionProgressHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
@@ -157,16 +158,17 @@ MissionRaw::MissionProgress MissionRaw::mission_progress() const {
   return _impl->mission_progress();
 }
 
-uintptr_t MissionRaw::subscribe_mission_changed(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<MissionChangedCallback *>(cb_ptr);
+uintptr_t MissionRaw::subscribe_mission_changed(uintptr_t cb_ptr,
+                                                uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, bool);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   MissionRaw::MissionChangedHandle handle =
-      _impl->subscribe_mission_changed([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_mission_changed([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new MissionRaw::MissionChangedHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);

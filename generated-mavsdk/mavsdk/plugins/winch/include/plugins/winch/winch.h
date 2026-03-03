@@ -87,28 +87,56 @@ public:
    * not specify which states are mutually exclusive.
    */
   struct StatusFlags {
-    bool healthy;         /**< @brief Winch is healthy */
+    bool healthy; /**< @brief Winch is healthy */
+
+    bool winch_get_healthy() const { return healthy; }
     bool fully_retracted; /**< @brief Winch line is fully retracted */
-    bool moving;          /**< @brief Winch motor is moving */
-    bool clutch_engaged;  /**< @brief Winch clutch is engaged allowing motor to
-                             move freely */
-    bool locked;          /**< @brief Winch is locked by locking mechanism */
-    bool dropping;        /**< @brief Winch is gravity dropping payload */
-    bool arresting;       /**< @brief Winch is arresting payload descent */
+
+    bool winch_get_fully_retracted() const { return fully_retracted; }
+    bool moving; /**< @brief Winch motor is moving */
+
+    bool winch_get_moving() const { return moving; }
+    bool clutch_engaged; /**< @brief Winch clutch is engaged allowing motor to
+                            move freely */
+
+    bool winch_get_clutch_engaged() const { return clutch_engaged; }
+    bool locked; /**< @brief Winch is locked by locking mechanism */
+
+    bool winch_get_locked() const { return locked; }
+    bool dropping; /**< @brief Winch is gravity dropping payload */
+
+    bool winch_get_dropping() const { return dropping; }
+    bool arresting; /**< @brief Winch is arresting payload descent */
+
+    bool winch_get_arresting() const { return arresting; }
     bool ground_sense; /**< @brief Winch is using torque measurements to sense
                           the ground */
-    bool retracting;   /**< @brief Winch is returning to the fully retracted
-                          position */
-    bool redeliver;    /**< @brief Winch is redelivering the payload. This is a
-                          failover state if the line tension goes above a threshold
-                          during RETRACTING. */
+
+    bool winch_get_ground_sense() const { return ground_sense; }
+    bool retracting; /**< @brief Winch is returning to the fully retracted
+                        position */
+
+    bool winch_get_retracting() const { return retracting; }
+    bool redeliver; /**< @brief Winch is redelivering the payload. This is a
+                       failover state if the line tension goes above a threshold
+                       during RETRACTING. */
+
+    bool winch_get_redeliver() const { return redeliver; }
     bool abandon_line; /**< @brief Winch is abandoning the line and possibly
                           payload. Winch unspools the entire calculated line
                           length. This is a failover state from REDELIVER if the
                           number of attempts exceeds a threshold. */
-    bool locking;      /**< @brief Winch is engaging the locking mechanism */
-    bool load_line;    /**< @brief Winch is spooling on line */
+
+    bool winch_get_abandon_line() const { return abandon_line; }
+    bool locking; /**< @brief Winch is engaging the locking mechanism */
+
+    bool winch_get_locking() const { return locking; }
+    bool load_line; /**< @brief Winch is spooling on line */
+
+    bool winch_get_load_line() const { return load_line; }
     bool load_payload; /**< @brief Winch is loading a payload */
+
+    bool winch_get_load_payload() const { return load_payload; }
   };
 
   /**
@@ -131,14 +159,30 @@ public:
    * @brief Status type.
    */
   struct Status {
-    uint64_t time_usec;       /**< @brief Time in usec */
-    float line_length_m;      /**< @brief Length of the line in meters */
-    float speed_m_s;          /**< @brief Speed in meters per second */
-    float tension_kg;         /**< @brief Tension in kilograms */
-    float voltage_v;          /**< @brief Voltage in volts */
-    float current_a;          /**< @brief Current in amperes */
-    int32_t temperature_c;    /**< @brief Temperature in Celsius */
+    uint64_t time_usec; /**< @brief Time in usec */
+
+    uint64_t winch_get_time_usec() const { return time_usec; }
+    float line_length_m; /**< @brief Length of the line in meters */
+
+    float winch_get_line_length_m() const { return line_length_m; }
+    float speed_m_s; /**< @brief Speed in meters per second */
+
+    float winch_get_speed_m_s() const { return speed_m_s; }
+    float tension_kg; /**< @brief Tension in kilograms */
+
+    float winch_get_tension_kg() const { return tension_kg; }
+    float voltage_v; /**< @brief Voltage in volts */
+
+    float winch_get_voltage_v() const { return voltage_v; }
+    float current_a; /**< @brief Current in amperes */
+
+    float winch_get_current_a() const { return current_a; }
+    int32_t temperature_c; /**< @brief Temperature in Celsius */
+
+    int32_t winch_get_temperature_c() const { return temperature_c; }
     StatusFlags status_flags; /**< @brief Status flags */
+
+    const StatusFlags &winch_get_status_flags() const { return status_flags; }
   };
 
   /**
@@ -195,7 +239,7 @@ public:
   /**
    * @brief Subscribe to 'winch status' updates.
    */
-  uintptr_t subscribe_status(uintptr_t cb_ptr);
+  uintptr_t subscribe_status(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_status

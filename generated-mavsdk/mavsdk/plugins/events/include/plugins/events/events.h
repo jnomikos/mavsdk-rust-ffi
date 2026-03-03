@@ -73,19 +73,27 @@ public:
    */
   struct Event {
     uint32_t compid; /**< @brief The source component ID of the event */
-    uint32_t get_compid() const { return compid; }
+
+    uint32_t events_get_compid() const { return compid; }
     std::string message; /**< @brief Short, single-line message */
-    const std::string &get_message() const { return message; }
+
+    const std::string &events_get_message() const { return message; }
     std::string description; /**< @brief Detailed description (optional, might
                                 be multiple lines) */
-    const std::string &get_description() const { return description; }
+
+    const std::string &events_get_description() const { return description; }
     LogLevel log_level; /**< @brief Log level of message */
-    LogLevel get_log_level() const { return log_level; }
+
+    const LogLevel &events_get_log_level() const { return log_level; }
     std::string event_namespace; /**< @brief Namespace, e.g. "px4" */
-    const std::string &get_event_namespace() const { return event_namespace; }
+
+    const std::string &events_get_event_namespace() const {
+      return event_namespace;
+    }
     std::string
         event_name; /**< @brief Event name (unique within the namespace) */
-    const std::string &get_event_name() const { return event_name; }
+
+    const std::string &events_get_event_name() const { return event_name; }
   };
 
   /**
@@ -108,15 +116,21 @@ public:
    */
   struct HealthAndArmingCheckProblem {
     std::string message; /**< @brief Short, single-line message */
-    const std::string &get_message() const { return message; }
+
+    const std::string &events_get_message() const { return message; }
     std::string description; /**< @brief Detailed description (optional, might
                                 be multiple lines) */
-    const std::string &get_description() const { return description; }
+
+    const std::string &events_get_description() const { return description; }
     LogLevel log_level; /**< @brief Log level of message */
-    LogLevel get_log_level() const { return log_level; }
+
+    const LogLevel &events_get_log_level() const { return log_level; }
     std::string
         health_component; /**< @brief Associated health component, e.g. "gps" */
-    const std::string &get_health_component() const { return health_component; }
+
+    const std::string &events_get_health_component() const {
+      return health_component;
+    }
   };
 
   /**
@@ -143,14 +157,18 @@ public:
    */
   struct HealthAndArmingCheckMode {
     std::string mode_name; /**< @brief Mode name, e.g. "Position" */
-    const std::string &get_mode_name() const { return mode_name; }
+
+    const std::string &events_get_mode_name() const { return mode_name; }
     bool can_arm_or_run; /**< @brief If disarmed: indicates if arming is
                             possible. If armed: indicates if the mode can be
                             selected */
-    bool get_can_arm_or_run() const { return can_arm_or_run; }
+
+    bool events_get_can_arm_or_run() const { return can_arm_or_run; }
     std::vector<HealthAndArmingCheckProblem>
         problems; /**< @brief List of reported problems for the mode */
-    const std::vector<HealthAndArmingCheckProblem> &get_problems() const {
+
+    const std::vector<HealthAndArmingCheckProblem> &
+    events_get_problems() const {
       return problems;
     }
   };
@@ -179,16 +197,21 @@ public:
    */
   struct HealthComponentReport {
     std::string name; /**< @brief Unique component name, e.g. "gps" */
-    const std::string &get_name() const { return name; }
+
+    const std::string &events_get_name() const { return name; }
     std::string label; /**< @brief Human readable label of the component, e.g.
                           "GPS" or "Accelerometer" */
-    const std::string &get_label() const { return label; }
+
+    const std::string &events_get_label() const { return label; }
     bool is_present; /**< @brief If the component is present */
-    bool get_is_present() const { return is_present; }
+
+    bool events_get_is_present() const { return is_present; }
     bool has_error; /**< @brief If the component has errors */
-    bool get_has_error() const { return has_error; }
+
+    bool events_get_has_error() const { return has_error; }
     bool has_warning; /**< @brief If the component has warnings */
-    bool get_has_warning() const { return has_warning; }
+
+    bool events_get_has_warning() const { return has_warning; }
   };
 
   /**
@@ -217,18 +240,23 @@ public:
     HealthAndArmingCheckMode
         current_mode_intention; /**< @brief Report for currently intended mode
                                  */
-    HealthAndArmingCheckMode get_current_mode_intention() const {
+
+    const HealthAndArmingCheckMode &events_get_current_mode_intention() const {
       return current_mode_intention;
     }
     std::vector<HealthComponentReport>
         health_components; /**< @brief Health components list (e.g. for "gps")
                             */
-    const std::vector<HealthComponentReport> &get_health_components() const {
+
+    const std::vector<HealthComponentReport> &
+    events_get_health_components() const {
       return health_components;
     }
     std::vector<HealthAndArmingCheckProblem>
         all_problems; /**< @brief Complete list of problems */
-    const std::vector<HealthAndArmingCheckProblem> &get_all_problems() const {
+
+    const std::vector<HealthAndArmingCheckProblem> &
+    events_get_all_problems() const {
       return all_problems;
     }
   };
@@ -293,7 +321,7 @@ public:
   /**
    * @brief Subscribe to event updates.
    */
-  uintptr_t subscribe_events(uintptr_t cb_ptr);
+  uintptr_t subscribe_events(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_events
@@ -324,7 +352,8 @@ public:
   /**
    * @brief Subscribe to arming check updates.
    */
-  uintptr_t subscribe_health_and_arming_checks(uintptr_t cb_ptr);
+  uintptr_t subscribe_health_and_arming_checks(uintptr_t cb_ptr,
+                                               uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_health_and_arming_checks

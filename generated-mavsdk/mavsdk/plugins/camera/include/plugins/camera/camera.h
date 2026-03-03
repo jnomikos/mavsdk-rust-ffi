@@ -89,10 +89,12 @@ public:
    */
   struct Option {
     std::string option_id; /**< @brief Name of the option (machine readable) */
-    const std::string &get_option_id() const { return option_id; }
+
+    const std::string &camera_get_option_id() const { return option_id; }
     std::string option_description; /**< @brief Description of the option (human
                                        readable) */
-    const std::string &get_option_description() const {
+
+    const std::string &camera_get_option_description() const {
       return option_description;
     }
   };
@@ -117,20 +119,24 @@ public:
    */
   struct Setting {
     std::string setting_id; /**< @brief Name of a setting (machine readable) */
-    const std::string &get_setting_id() const { return setting_id; }
+
+    const std::string &camera_get_setting_id() const { return setting_id; }
     std::string
         setting_description; /**< @brief Description of the setting (human
                                 readable). This field is meant to be read from
                                 the drone, ignore it when setting. */
-    const std::string &get_setting_description() const {
+
+    const std::string &camera_get_setting_description() const {
       return setting_description;
     }
     Option option; /**< @brief Selected option */
-    Option get_option() const { return option; }
+
+    const Option &camera_get_option() const { return option; }
     bool
         is_range; /**< @brief If option is given as a range. This field is meant
                      to be read from the drone, ignore it when setting. */
-    bool get_is_range() const { return is_range; }
+
+    bool camera_get_is_range() const { return is_range; }
   };
 
   /**
@@ -154,20 +160,25 @@ public:
    */
   struct SettingOptions {
     int32_t component_id; /**< @brief Component ID */
-    int32_t get_component_id() const { return component_id; }
+
+    int32_t camera_get_component_id() const { return component_id; }
     std::string
         setting_id; /**< @brief Name of the setting (machine readable) */
-    const std::string &get_setting_id() const { return setting_id; }
+
+    const std::string &camera_get_setting_id() const { return setting_id; }
     std::string setting_description; /**< @brief Description of the setting
                                         (human readable) */
-    const std::string &get_setting_description() const {
+
+    const std::string &camera_get_setting_description() const {
       return setting_description;
     }
     std::vector<Option> options; /**< @brief List of options or if range [min,
                                     max] or [min, max, interval] */
-    const std::vector<Option> &get_options() const { return options; }
+
+    const std::vector<Option> &camera_get_options() const { return options; }
     bool is_range; /**< @brief If option is given as a range */
-    bool get_is_range() const { return is_range; }
+
+    bool camera_get_is_range() const { return is_range; }
   };
 
   /**
@@ -192,26 +203,33 @@ public:
    */
   struct VideoStreamSettings {
     float frame_rate_hz; /**< @brief Frames per second */
-    float get_frame_rate_hz() const { return frame_rate_hz; }
+
+    float camera_get_frame_rate_hz() const { return frame_rate_hz; }
     uint32_t horizontal_resolution_pix; /**< @brief Horizontal resolution (in
                                            pixels) */
-    uint32_t get_horizontal_resolution_pix() const {
+
+    uint32_t camera_get_horizontal_resolution_pix() const {
       return horizontal_resolution_pix;
     }
     uint32_t
         vertical_resolution_pix; /**< @brief Vertical resolution (in pixels) */
-    uint32_t get_vertical_resolution_pix() const {
+
+    uint32_t camera_get_vertical_resolution_pix() const {
       return vertical_resolution_pix;
     }
     uint32_t bit_rate_b_s; /**< @brief Bit rate (in bits per second) */
-    uint32_t get_bit_rate_b_s() const { return bit_rate_b_s; }
+
+    uint32_t camera_get_bit_rate_b_s() const { return bit_rate_b_s; }
     uint32_t rotation_deg; /**< @brief Video image rotation (clockwise, 0-359
                               degrees) */
-    uint32_t get_rotation_deg() const { return rotation_deg; }
+
+    uint32_t camera_get_rotation_deg() const { return rotation_deg; }
     std::string uri; /**< @brief Video stream URI */
-    const std::string &get_uri() const { return uri; }
+
+    const std::string &camera_get_uri() const { return uri; }
     float horizontal_fov_deg; /**< @brief Horizontal fov in degrees */
-    float get_horizontal_fov_deg() const { return horizontal_fov_deg; }
+
+    float camera_get_horizontal_fov_deg() const { return horizontal_fov_deg; }
   };
 
   /**
@@ -271,11 +289,19 @@ public:
     operator<<(std::ostream &str,
                Camera::VideoStreamInfo::VideoStreamSpectrum const
                    &video_stream_spectrum);
-    int32_t stream_id;            /**< @brief Stream ID */
+    int32_t stream_id; /**< @brief Stream ID */
+
+    int32_t camera_get_stream_id() const { return stream_id; }
     VideoStreamSettings settings; /**< @brief Video stream settings */
+
+    const VideoStreamSettings &camera_get_settings() const { return settings; }
     VideoStreamStatus status; /**< @brief Current status of video streaming */
+
+    const VideoStreamStatus &camera_get_status() const { return status; }
     VideoStreamSpectrum
         spectrum; /**< @brief Light-spectrum of the video stream */
+
+    const VideoStreamSpectrum &camera_get_spectrum() const { return spectrum; }
   };
 
   /**
@@ -301,7 +327,11 @@ public:
    */
   struct ModeUpdate {
     int32_t component_id; /**< @brief Component ID */
-    Mode mode;            /**< @brief Camera mode */
+
+    int32_t camera_get_component_id() const { return component_id; }
+    Mode mode; /**< @brief Camera mode */
+
+    const Mode &camera_get_mode() const { return mode; }
   };
 
   /**
@@ -324,8 +354,14 @@ public:
    * @brief An update about a video stream
    */
   struct VideoStreamUpdate {
-    int32_t component_id;              /**< @brief Component ID */
+    int32_t component_id; /**< @brief Component ID */
+
+    int32_t camera_get_component_id() const { return component_id; }
     VideoStreamInfo video_stream_info; /**< @brief Video stream info */
+
+    const VideoStreamInfo &camera_get_video_stream_info() const {
+      return video_stream_info;
+    }
   };
 
   /**
@@ -391,33 +427,48 @@ public:
     operator<<(std::ostream &str,
                Camera::Storage::StorageType const &storage_type);
     int32_t component_id; /**< @brief Component ID */
-    int32_t get_component_id() const { return component_id; }
+
+    int32_t camera_get_component_id() const { return component_id; }
     bool
         video_on; /**< @brief Whether video recording is currently in process */
-    bool get_video_on() const { return video_on; }
+
+    bool camera_get_video_on() const { return video_on; }
     bool photo_interval_on; /**< @brief Whether a photo interval is currently in
                                process */
-    bool get_photo_interval_on() const { return photo_interval_on; }
+
+    bool camera_get_photo_interval_on() const { return photo_interval_on; }
     float used_storage_mib; /**< @brief Used storage (in MiB) */
-    float get_used_storage_mib() const { return used_storage_mib; }
+
+    float camera_get_used_storage_mib() const { return used_storage_mib; }
     float available_storage_mib; /**< @brief Available storage (in MiB) */
-    float get_available_storage_mib() const { return available_storage_mib; }
+
+    float camera_get_available_storage_mib() const {
+      return available_storage_mib;
+    }
     float total_storage_mib; /**< @brief Total storage (in MiB) */
-    float get_total_storage_mib() const { return total_storage_mib; }
+
+    float camera_get_total_storage_mib() const { return total_storage_mib; }
     float recording_time_s; /**< @brief Elapsed time since starting the video
                                recording (in seconds) */
-    float get_recording_time_s() const { return recording_time_s; }
+
+    float camera_get_recording_time_s() const { return recording_time_s; }
     std::string media_folder_name; /**< @brief Current folder name where media
                                       are saved */
-    const std::string &get_media_folder_name() const {
+
+    const std::string &camera_get_media_folder_name() const {
       return media_folder_name;
     }
     StorageStatus storage_status; /**< @brief Storage status */
-    StorageStatus get_storage_status() const { return storage_status; }
+
+    const StorageStatus &camera_get_storage_status() const {
+      return storage_status;
+    }
     uint32_t storage_id; /**< @brief Storage ID starting at 1 */
-    uint32_t get_storage_id() const { return storage_id; }
+
+    uint32_t camera_get_storage_id() const { return storage_id; }
     StorageType storage_type; /**< @brief Storage type */
-    StorageType get_storage_type() const { return storage_type; }
+
+    const StorageType &camera_get_storage_type() const { return storage_type; }
   };
 
   /**
@@ -441,7 +492,11 @@ public:
    */
   struct StorageUpdate {
     int32_t component_id; /**< @brief Component ID */
-    Storage storage;      /**< @brief Storage */
+
+    int32_t camera_get_component_id() const { return component_id; }
+    Storage storage; /**< @brief Storage */
+
+    const Storage &camera_get_storage() const { return storage; }
   };
 
   /**
@@ -466,10 +521,12 @@ public:
    */
   struct CurrentSettingsUpdate {
     int32_t component_id; /**< @brief Component ID */
-    int32_t get_component_id() const { return component_id; }
+
+    int32_t camera_get_component_id() const { return component_id; }
     std::vector<Setting>
         current_settings; /**< @brief List of current settings */
-    const std::vector<Setting> &get_current_settings() const {
+
+    const std::vector<Setting> &camera_get_current_settings() const {
       return current_settings;
     }
   };
@@ -498,10 +555,12 @@ public:
    */
   struct PossibleSettingOptionsUpdate {
     int32_t component_id; /**< @brief Component ID */
-    int32_t get_component_id() const { return component_id; }
+
+    int32_t camera_get_component_id() const { return component_id; }
     std::vector<SettingOptions>
         setting_options; /**< @brief List of settings that can be changed */
-    const std::vector<SettingOptions> &get_setting_options() const {
+
+    const std::vector<SettingOptions> &camera_get_setting_options() const {
       return setting_options;
     }
   };
@@ -557,12 +616,20 @@ public:
    */
   struct Position {
     double latitude_deg; /**< @brief Latitude in degrees (range: -90 to +90) */
+
+    double camera_get_latitude_deg() const { return latitude_deg; }
     double
         longitude_deg; /**< @brief Longitude in degrees (range: -180 to +180) */
+
+    double camera_get_longitude_deg() const { return longitude_deg; }
     float absolute_altitude_m; /**< @brief Altitude AMSL (above mean sea level)
                                   in metres */
+
+    float camera_get_absolute_altitude_m() const { return absolute_altitude_m; }
     float relative_altitude_m; /**< @brief Altitude relative to takeoff altitude
                                   in metres */
+
+    float camera_get_relative_altitude_m() const { return relative_altitude_m; }
   };
 
   /**
@@ -593,9 +660,17 @@ public:
    */
   struct Quaternion {
     float w; /**< @brief Quaternion entry 0, also denoted as a */
+
+    float camera_get_w() const { return w; }
     float x; /**< @brief Quaternion entry 1, also denoted as b */
+
+    float camera_get_x() const { return x; }
     float y; /**< @brief Quaternion entry 2, also denoted as c */
+
+    float camera_get_y() const { return y; }
     float z; /**< @brief Quaternion entry 3, also denoted as d */
+
+    float camera_get_z() const { return z; }
   };
 
   /**
@@ -624,12 +699,18 @@ public:
    * For more info see https://en.wikipedia.org/wiki/Euler_angles
    */
   struct EulerAngle {
-    float roll_deg;  /**< @brief Roll angle in degrees, positive is banking to
-                        the right */
+    float roll_deg; /**< @brief Roll angle in degrees, positive is banking to
+                       the right */
+
+    float camera_get_roll_deg() const { return roll_deg; }
     float pitch_deg; /**< @brief Pitch angle in degrees, positive is pitching
                         nose up */
+
+    float camera_get_pitch_deg() const { return pitch_deg; }
     float yaw_deg; /**< @brief Yaw angle in degrees, positive is clock-wise seen
                       from above */
+
+    float camera_get_yaw_deg() const { return yaw_deg; }
   };
 
   /**
@@ -653,25 +734,37 @@ public:
    */
   struct CaptureInfo {
     int32_t component_id; /**< @brief Component ID */
-    int32_t get_component_id() const { return component_id; }
+
+    int32_t camera_get_component_id() const { return component_id; }
     Position position; /**< @brief Location where the picture was taken */
-    Position get_position() const { return position; }
+
+    const Position &camera_get_position() const { return position; }
     Quaternion attitude_quaternion; /**< @brief Attitude of the camera when the
                                        picture was taken (quaternion) */
-    Quaternion get_attitude_quaternion() const { return attitude_quaternion; }
+
+    const Quaternion &camera_get_attitude_quaternion() const {
+      return attitude_quaternion;
+    }
     EulerAngle attitude_euler_angle; /**< @brief Attitude of the camera when the
                                         picture was taken (euler angle) */
-    EulerAngle get_attitude_euler_angle() const { return attitude_euler_angle; }
+
+    const EulerAngle &camera_get_attitude_euler_angle() const {
+      return attitude_euler_angle;
+    }
     uint64_t time_utc_us; /**< @brief Timestamp in UTC (since UNIX epoch) in
                              microseconds */
-    uint64_t get_time_utc_us() const { return time_utc_us; }
+
+    uint64_t camera_get_time_utc_us() const { return time_utc_us; }
     bool is_success; /**< @brief True if the capture was successful */
-    bool get_is_success() const { return is_success; }
+
+    bool camera_get_is_success() const { return is_success; }
     int32_t index; /**< @brief Zero-based index of this image since vehicle was
                       armed */
-    int32_t get_index() const { return index; }
+
+    int32_t camera_get_index() const { return index; }
     std::string file_url; /**< @brief Download URL of this image */
-    const std::string &get_file_url() const { return file_url; }
+
+    const std::string &camera_get_file_url() const { return file_url; }
   };
 
   /**
@@ -695,29 +788,37 @@ public:
    */
   struct Information {
     int32_t component_id; /**< @brief Component ID */
-    int32_t get_component_id() const { return component_id; }
+
+    int32_t camera_get_component_id() const { return component_id; }
     std::string vendor_name; /**< @brief Name of the camera vendor */
-    const std::string &get_vendor_name() const { return vendor_name; }
+
+    const std::string &camera_get_vendor_name() const { return vendor_name; }
     std::string model_name; /**< @brief Name of the camera model */
-    const std::string &get_model_name() const { return model_name; }
+
+    const std::string &camera_get_model_name() const { return model_name; }
     float focal_length_mm; /**< @brief Focal length */
-    float get_focal_length_mm() const { return focal_length_mm; }
+
+    float camera_get_focal_length_mm() const { return focal_length_mm; }
     float horizontal_sensor_size_mm; /**< @brief Horizontal sensor size */
-    float get_horizontal_sensor_size_mm() const {
+
+    float camera_get_horizontal_sensor_size_mm() const {
       return horizontal_sensor_size_mm;
     }
     float vertical_sensor_size_mm; /**< @brief Vertical sensor size */
-    float get_vertical_sensor_size_mm() const {
+
+    float camera_get_vertical_sensor_size_mm() const {
       return vertical_sensor_size_mm;
     }
     uint32_t horizontal_resolution_px; /**< @brief Horizontal image resolution
                                           in pixels */
-    uint32_t get_horizontal_resolution_px() const {
+
+    uint32_t camera_get_horizontal_resolution_px() const {
       return horizontal_resolution_px;
     }
     uint32_t vertical_resolution_px; /**< @brief Vertical image resolution in
                                         pixels */
-    uint32_t get_vertical_resolution_px() const {
+
+    uint32_t camera_get_vertical_resolution_px() const {
       return vertical_resolution_px;
     }
   };
@@ -743,7 +844,10 @@ public:
    */
   struct CameraList {
     std::vector<Information> cameras; /**< @brief Camera items. */
-    const std::vector<Information> &get_cameras() const { return cameras; }
+
+    const std::vector<Information> &camera_get_cameras() const {
+      return cameras;
+    }
   };
 
   /**
@@ -961,7 +1065,7 @@ public:
    * This allows to find out what cameras are connected to the system.
    * Based on the camera ID, we can then address a specific camera.
    */
-  uintptr_t subscribe_camera_list(uintptr_t cb_ptr);
+  uintptr_t subscribe_camera_list(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_camera_list
@@ -1001,7 +1105,7 @@ public:
   /**
    * @brief Subscribe to camera mode updates.
    */
-  uintptr_t subscribe_mode(uintptr_t cb_ptr);
+  uintptr_t subscribe_mode(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_mode
@@ -1040,7 +1144,7 @@ public:
   /**
    * @brief Subscribe to video stream info updates.
    */
-  uintptr_t subscribe_video_stream_info(uintptr_t cb_ptr);
+  uintptr_t subscribe_video_stream_info(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_video_stream_info
@@ -1081,7 +1185,7 @@ public:
   /**
    * @brief Subscribe to capture info updates.
    */
-  uintptr_t subscribe_capture_info(uintptr_t cb_ptr);
+  uintptr_t subscribe_capture_info(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_capture_info
@@ -1111,7 +1215,7 @@ public:
   /**
    * @brief Subscribe to camera's storage status updates.
    */
-  uintptr_t subscribe_storage(uintptr_t cb_ptr);
+  uintptr_t subscribe_storage(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_storage
@@ -1150,7 +1254,7 @@ public:
   /**
    * @brief Get the list of current camera settings.
    */
-  uintptr_t subscribe_current_settings(uintptr_t cb_ptr);
+  uintptr_t subscribe_current_settings(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_current_settings
@@ -1192,7 +1296,8 @@ public:
   /**
    * @brief Get the list of settings that can be changed.
    */
-  uintptr_t subscribe_possible_setting_options(uintptr_t cb_ptr);
+  uintptr_t subscribe_possible_setting_options(uintptr_t cb_ptr,
+                                               uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_possible_setting_options

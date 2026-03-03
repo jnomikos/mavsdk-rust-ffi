@@ -60,11 +60,19 @@ public:
   struct Attitude {
     float roll_deg; /**< @brief Roll angle (in degrees, positive is right side
                        down) */
+
+    float offboard_get_roll_deg() const { return roll_deg; }
     float
         pitch_deg; /**< @brief Pitch angle (in degrees, positive is nose up) */
+
+    float offboard_get_pitch_deg() const { return pitch_deg; }
     float yaw_deg; /**< @brief Yaw angle (in degrees, positive is move nose to
                       the right) */
+
+    float offboard_get_yaw_deg() const { return yaw_deg; }
     float thrust_value; /**< @brief Thrust (range: 0 to 1) */
+
+    float offboard_get_thrust_value() const { return thrust_value; }
   };
 
   /**
@@ -90,7 +98,8 @@ public:
    */
   struct ActuatorControlGroup {
     std::vector<float> controls; /**< @brief Controls in the group */
-    const std::vector<float> &get_controls() const { return controls; }
+
+    const std::vector<float> &offboard_get_controls() const { return controls; }
   };
 
   /**
@@ -133,7 +142,8 @@ public:
    */
   struct ActuatorControl {
     std::vector<ActuatorControlGroup> groups; /**< @brief Control groups. */
-    const std::vector<ActuatorControlGroup> &get_groups() const {
+
+    const std::vector<ActuatorControlGroup> &offboard_get_groups() const {
       return groups;
     }
   };
@@ -163,11 +173,19 @@ public:
   struct AttitudeRate {
     float roll_deg_s; /**< @brief Roll angular rate (in degrees/second, positive
                          for clock-wise looking from front) */
+
+    float offboard_get_roll_deg_s() const { return roll_deg_s; }
     float pitch_deg_s; /**< @brief Pitch angular rate (in degrees/second,
                           positive for head/front moving up) */
-    float yaw_deg_s;   /**< @brief Yaw angular rate (in degrees/second, positive
-                          for clock-wise looking from above) */
+
+    float offboard_get_pitch_deg_s() const { return pitch_deg_s; }
+    float yaw_deg_s; /**< @brief Yaw angular rate (in degrees/second, positive
+                        for clock-wise looking from above) */
+
+    float offboard_get_yaw_deg_s() const { return yaw_deg_s; }
     float thrust_value; /**< @brief Thrust (range: 0 to 1) */
+
+    float offboard_get_thrust_value() const { return thrust_value; }
   };
 
   /**
@@ -193,10 +211,18 @@ public:
    */
   struct PositionNedYaw {
     float north_m; /**< @brief Position North (in metres) */
-    float east_m;  /**< @brief Position East (in metres) */
-    float down_m;  /**< @brief Position Down (in metres) */
+
+    float offboard_get_north_m() const { return north_m; }
+    float east_m; /**< @brief Position East (in metres) */
+
+    float offboard_get_east_m() const { return east_m; }
+    float down_m; /**< @brief Position Down (in metres) */
+
+    float offboard_get_down_m() const { return down_m; }
     float yaw_deg; /**< @brief Yaw in degrees (0 North, positive is clock-wise
                       looking from above) */
+
+    float offboard_get_yaw_deg() const { return yaw_deg; }
   };
 
   /**
@@ -240,11 +266,23 @@ public:
     operator<<(std::ostream &str,
                Offboard::PositionGlobalYaw::AltitudeType const &altitude_type);
     double lat_deg; /**< @brief Latitude (in degrees) */
+
+    double offboard_get_lat_deg() const { return lat_deg; }
     double lon_deg; /**< @brief Longitude (in degrees) */
-    float alt_m;    /**< @brief altitude (in metres) */
-    float yaw_deg;  /**< @brief Yaw in degrees (0 North, positive is clock-wise
-                       looking from above) */
+
+    double offboard_get_lon_deg() const { return lon_deg; }
+    float alt_m; /**< @brief altitude (in metres) */
+
+    float offboard_get_alt_m() const { return alt_m; }
+    float yaw_deg; /**< @brief Yaw in degrees (0 North, positive is clock-wise
+                      looking from above) */
+
+    float offboard_get_yaw_deg() const { return yaw_deg; }
     AltitudeType altitude_type; /**< @brief altitude type for this position */
+
+    const AltitudeType &offboard_get_altitude_type() const {
+      return altitude_type;
+    }
   };
 
   /**
@@ -269,11 +307,19 @@ public:
    * @brief Type for velocity commands in body coordinates.
    */
   struct VelocityBodyYawspeed {
-    float forward_m_s;    /**< @brief Velocity forward (in metres/second) */
-    float right_m_s;      /**< @brief Velocity right (in metres/second) */
-    float down_m_s;       /**< @brief Velocity down (in metres/second) */
+    float forward_m_s; /**< @brief Velocity forward (in metres/second) */
+
+    float offboard_get_forward_m_s() const { return forward_m_s; }
+    float right_m_s; /**< @brief Velocity right (in metres/second) */
+
+    float offboard_get_right_m_s() const { return right_m_s; }
+    float down_m_s; /**< @brief Velocity down (in metres/second) */
+
+    float offboard_get_down_m_s() const { return down_m_s; }
     float yawspeed_deg_s; /**< @brief Yaw angular rate (in degrees/second,
                              positive for clock-wise looking from above) */
+
+    float offboard_get_yawspeed_deg_s() const { return yawspeed_deg_s; }
   };
 
   /**
@@ -301,10 +347,18 @@ public:
    */
   struct VelocityNedYaw {
     float north_m_s; /**< @brief Velocity North (in metres/second) */
-    float east_m_s;  /**< @brief Velocity East (in metres/second) */
-    float down_m_s;  /**< @brief Velocity Down (in metres/second) */
-    float yaw_deg;   /**< @brief Yaw in degrees (0 North, positive is clock-wise
-                        looking from above) */
+
+    float offboard_get_north_m_s() const { return north_m_s; }
+    float east_m_s; /**< @brief Velocity East (in metres/second) */
+
+    float offboard_get_east_m_s() const { return east_m_s; }
+    float down_m_s; /**< @brief Velocity Down (in metres/second) */
+
+    float offboard_get_down_m_s() const { return down_m_s; }
+    float yaw_deg; /**< @brief Yaw in degrees (0 North, positive is clock-wise
+                      looking from above) */
+
+    float offboard_get_yaw_deg() const { return yaw_deg; }
   };
 
   /**
@@ -330,8 +384,14 @@ public:
    */
   struct AccelerationNed {
     float north_m_s2; /**< @brief Acceleration North (in metres/second^2) */
-    float east_m_s2;  /**< @brief Acceleration East (in metres/second^2) */
-    float down_m_s2;  /**< @brief Acceleration Down (in metres/second^2) */
+
+    float offboard_get_north_m_s2() const { return north_m_s2; }
+    float east_m_s2; /**< @brief Acceleration East (in metres/second^2) */
+
+    float offboard_get_east_m_s2() const { return east_m_s2; }
+    float down_m_s2; /**< @brief Acceleration Down (in metres/second^2) */
+
+    float offboard_get_down_m_s2() const { return down_m_s2; }
   };
 
   /**

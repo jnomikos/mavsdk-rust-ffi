@@ -72,25 +72,41 @@ public:
     friend std::ostream &operator<<(
         std::ostream &str,
         FollowMe::Config::FollowAltitudeMode const &follow_altitude_mode);
-    float follow_height_m{8.0f};   /**< @brief [m] Follow height in meters
-                                      (recommended minimum 8 meters) */
+    float follow_height_m{8.0f}; /**< @brief [m] Follow height in meters
+                                    (recommended minimum 8 meters) */
+
+    float follow_me_get_follow_height_m() const { return follow_height_m; }
     float follow_distance_m{8.0f}; /**< @brief [m] Follow distance to target in
                                       meters (recommended minimum 4 meter) */
+
+    float follow_me_get_follow_distance_m() const { return follow_distance_m; }
     float responsiveness{
         0.1f}; /**< @brief How responsive the vehicle is to the motion of the
                   target, Lower value = More responsive (range 0.0 to 1.0) */
+
+    float follow_me_get_responsiveness() const { return responsiveness; }
     FollowAltitudeMode
         altitude_mode; /**< @brief Follow Altitude control mode */
+
+    const FollowAltitudeMode &follow_me_get_altitude_mode() const {
+      return altitude_mode;
+    }
     float max_tangential_vel_m_s{
         8.0f}; /**< @brief [m/s] Maximum orbit tangential velocity relative to
                   the target, in meters per second. Higher value = More
                   aggressive follow angle tracking. */
+
+    float follow_me_get_max_tangential_vel_m_s() const {
+      return max_tangential_vel_m_s;
+    }
     float follow_angle_deg{
         180.0f}; /**< @brief [deg] Follow Angle relative to the target. 0 equals
                     following in front of the target's direction. Angle
                     increases in Clockwise direction, so following from right
                     would be 90 degrees, from the left is -90 degrees, and so
                     on. */
+
+    float follow_me_get_follow_angle_deg() const { return follow_angle_deg; }
   };
 
   /**
@@ -114,16 +130,30 @@ public:
    */
   struct TargetLocation {
     double latitude_deg{double(NAN)}; /**< @brief Target latitude in degrees */
+
+    double follow_me_get_latitude_deg() const { return latitude_deg; }
     double longitude_deg{
         double(NAN)}; /**< @brief Target longitude in degrees */
+
+    double follow_me_get_longitude_deg() const { return longitude_deg; }
     float absolute_altitude_m{
         float(NAN)}; /**< @brief Target altitude in meters above MSL */
+
+    float follow_me_get_absolute_altitude_m() const {
+      return absolute_altitude_m;
+    }
     float velocity_x_m_s{float(
         NAN)}; /**< @brief Target velocity in X axis, in meters per second */
+
+    float follow_me_get_velocity_x_m_s() const { return velocity_x_m_s; }
     float velocity_y_m_s{float(
         NAN)}; /**< @brief Target velocity in Y axis, in meters per second */
+
+    float follow_me_get_velocity_y_m_s() const { return velocity_y_m_s; }
     float velocity_z_m_s{float(
         NAN)}; /**< @brief Target velocity in Z axis, in meters per second */
+
+    float follow_me_get_velocity_z_m_s() const { return velocity_z_m_s; }
   };
 
   /**

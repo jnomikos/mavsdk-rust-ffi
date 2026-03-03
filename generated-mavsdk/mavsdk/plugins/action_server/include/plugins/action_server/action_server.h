@@ -86,9 +86,17 @@ public:
    * respective flightmodes
    */
   struct AllowableFlightModes {
-    bool can_auto_mode;      /**< @brief Auto/mission mode */
-    bool can_guided_mode;    /**< @brief Guided mode */
+    bool can_auto_mode; /**< @brief Auto/mission mode */
+
+    bool action_server_get_can_auto_mode() const { return can_auto_mode; }
+    bool can_guided_mode; /**< @brief Guided mode */
+
+    bool action_server_get_can_guided_mode() const { return can_guided_mode; }
     bool can_stabilize_mode; /**< @brief Stabilize mode */
+
+    bool action_server_get_can_stabilize_mode() const {
+      return can_stabilize_mode;
+    }
   };
 
   /**
@@ -114,8 +122,12 @@ public:
    * @brief Arming message type
    */
   struct ArmDisarm {
-    bool arm;   /**< @brief Should vehicle arm */
+    bool arm; /**< @brief Should vehicle arm */
+
+    bool action_server_get_arm() const { return arm; }
     bool force; /**< @brief Should arm override pre-flight checks */
+
+    bool action_server_get_force() const { return force; }
   };
 
   /**
@@ -185,7 +197,7 @@ public:
   /**
    * @brief Subscribe to ARM/DISARM commands
    */
-  uintptr_t subscribe_arm_disarm(uintptr_t cb_ptr);
+  uintptr_t subscribe_arm_disarm(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_arm_disarm
@@ -215,7 +227,7 @@ public:
   /**
    * @brief Subscribe to DO_SET_MODE
    */
-  uintptr_t subscribe_flight_mode_change(uintptr_t cb_ptr);
+  uintptr_t subscribe_flight_mode_change(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_flight_mode_change
@@ -246,7 +258,7 @@ public:
   /**
    * @brief Subscribe to takeoff command
    */
-  uintptr_t subscribe_takeoff(uintptr_t cb_ptr);
+  uintptr_t subscribe_takeoff(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_takeoff
@@ -276,7 +288,7 @@ public:
   /**
    * @brief Subscribe to land command
    */
-  uintptr_t subscribe_land(uintptr_t cb_ptr);
+  uintptr_t subscribe_land(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_land
@@ -306,7 +318,7 @@ public:
   /**
    * @brief Subscribe to reboot command
    */
-  uintptr_t subscribe_reboot(uintptr_t cb_ptr);
+  uintptr_t subscribe_reboot(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_reboot
@@ -336,7 +348,7 @@ public:
   /**
    * @brief Subscribe to shutdown command
    */
-  uintptr_t subscribe_shutdown(uintptr_t cb_ptr);
+  uintptr_t subscribe_shutdown(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_shutdown
@@ -366,7 +378,7 @@ public:
   /**
    * @brief Subscribe to terminate command
    */
-  uintptr_t subscribe_terminate(uintptr_t cb_ptr);
+  uintptr_t subscribe_terminate(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_terminate

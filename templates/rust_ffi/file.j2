@@ -1,0 +1,399 @@
+// Auto-generated wrapper. Do not edit.
+use std::ffi::c_void;
+use tokio::sync::watch;
+use std::sync::Mutex;
+
+{# ================= Utility Macros ================= #}
+
+{%- macro rust_primitive_type(name) -%}
+    {%- set mapping = {
+        'bool': 'bool',
+        'int32_t': 'i32', 'uint32_t': 'u32',
+        'int64_t': 'i64', 'uint64_t': 'u64',
+        'int8_t': 'i8', 'uint8_t': 'u8',
+        'int16_t': 'i16', 'uint16_t': 'u16',
+        'float': 'f32', 'double': 'f64'
+    } -%}
+    {{ mapping.get(name, '') }}
+{%- endmacro -%}
+
+{%- macro safe_field_name(name) -%}
+    {%- set keywords = [
+        'type', 'match', 'move', 'ref', 'mod', 'use', 'fn', 'let', 'mut', 
+        'pub', 'self', 'super', 'crate', 'static', 'const', 'unsafe', 'extern', 
+        'as', 'break', 'continue', 'else', 'enum', 'false', 'for', 'if', 'impl', 
+        'in', 'loop', 'return', 'struct', 'trait', 'true', 'where', 'while', 
+        'async', 'await', 'dyn'
+    ] -%}
+    {%- if name in keywords -%}
+        r#{{ name }}
+    {%- else -%}
+        {{ name }}
+    {%- endif -%}
+{%- endmacro -%}
+
+{# Prevent colliding with common Rust names like Option, Result, Vec, etc. #}
+{# e.g Option -> PluginNameOption #}
+{%- macro safe_struct_name(name) -%}
+    {%- set keywords = ['Option', 'Result', 'Vec', 'String', 'Box', 'Rc', 'Arc'] -%}
+    {%- if name in keywords -%}
+        {{ plugin_name.upper_camel_case }}{{ name }}
+    {%- else -%}
+        {{ name }}
+    {%- endif -%}
+{%- endmacro -%}
+
+
+{# ================= Type Resolution Macros ================= #}
+
+{%- macro rust_inner_type(type_info) -%}
+    {%- set primitive = rust_primitive_type(type_info.inner_name) -%}
+    {%- if type_info.inner_name == 'std::string' -%}
+        cxx::CxxString
+    {%- elif primitive -%}
+        {{ primitive }}
+    {%- elif type_info.inner_name -%}
+        crate::{{ plugin_name.lower_snake_case }}::mavsdk::{{ plugin_name.upper_camel_case }}_{{ type_info.inner_name }}
+    {%- else -%}
+        _
+    {%- endif -%}
+{%- endmacro -%}
+
+{%- macro rust_type(type_info, struct_name, nested_enums) -%}
+    {%- set primitive = rust_primitive_type(type_info.name) -%}
+    
+    {# Look up the type definition in the global lists to determine POD/Enum status #}
+    {%- set found_structs = structs | selectattr('name.upper_camel_case', 'equalto', type_info.name) | list -%}
+    {%- set found_enums = enums | selectattr('name.upper_camel_case', 'equalto', type_info.name) | list -%}
+    {%- set struct_def = found_structs[0] if found_structs else none -%}
+    {%- set enum_def = found_enums[0] if found_enums else none -%}
+
+    {%- if type_info.is_string -%}
+        &cxx::CxxString
+    {%- elif primitive -%}
+        {{ primitive }}
+    {%- elif type_info.name in nested_enums -%}
+        &crate::{{ plugin_name.lower_snake_case }}::mavsdk::{{ plugin_name.upper_camel_case }}_{{ struct_name }}_{{ type_info.name }}
+    {%- elif found_enums | length > 0 -%}
+        &crate::{{ plugin_name.lower_snake_case }}::mavsdk::{{ plugin_name.upper_camel_case }}_{{ enum_def.name.upper_camel_case }}
+    {%- elif found_structs | length > 0 and not struct_def.is_pod -%}
+        {{ type_info.name }}<'a>
+    {%- else -%}
+        &crate::{{ plugin_name.lower_snake_case }}::mavsdk::{{ plugin_name.upper_camel_case }}_{{ type_info.name }}
+    {%- endif -%}
+{%- endmacro -%}
+
+{%- macro rust_type_without_lifetime(type_info) -%}
+{%- set primitive = rust_primitive_type(type_info.name) -%}
+    {%- if type_info.is_string -%}
+        cxx::CxxString
+    {%- elif primitive -%}
+        {{ primitive }}
+    {%- else -%}
+        &crate::{{ plugin_name.lower_snake_case }}::mavsdk::{{ plugin_name.upper_camel_case }}_{{ type_info.name }}
+    {%- endif -%}
+{%- endmacro -%}
+
+{%- macro rust_owned_method_type(method) -%}
+    {%- if method.has_result %}
+        {%- set primitive = rust_primitive_type(method.return_type.name) -%}
+        {%- if primitive %}
+            {{ method.name.upper_camel_case }}Status
+        {%- else %}
+            {{ method.return_type.name }}Status
+        {%- endif %}
+    {%- else %}
+        {{ rust_owned_type(method.return_type) }}
+    {%- endif %}
+{%- endmacro -%}
+
+{%- macro rust_owned_type(type_info) -%}
+    {%- set found_structs = structs | selectattr('name.upper_camel_case', 'equalto', type_info.name) | list -%}
+    {%- set found_enums = enums | selectattr('name.upper_camel_case', 'equalto', type_info.name) | list -%}
+    {%- set struct_def = found_structs[0] if found_structs else none -%}
+    {%- set enum_def = found_enums[0] if found_enums else none -%}
+    {%- set primitive = rust_primitive_type(type_info.name) -%}
+    {%- set inner_primitive = rust_primitive_type(type_info.inner_name) -%}
+    {%- set repeated = type_info.is_repeated -%}
+
+    {%- set ns = namespace(nested_struct=none) -%}
+    {%- for struct in structs %}
+        {%- if type_info.name in struct.nested_enums %}
+            {%- set ns.nested_struct = struct -%}
+        {%- endif %}
+    {%- endfor %}
+    {%- set nested_struct = ns.nested_struct -%}
+
+    {%- if repeated %}
+        {%- set found_inner_structs = structs | selectattr('name.upper_camel_case', 'equalto', type_info.inner_name) | list -%}
+        {%- set found_inner_enums = enums | selectattr('name.upper_camel_case', 'equalto', type_info.inner_name) | list -%}
+        {%- if type_info.is_string %}
+            std::vec::Vec<String>
+        {%- elif inner_primitive %}
+            std::vec::Vec<{{ inner_primitive }}>
+        {%- elif nested_struct %}
+            std::vec::Vec<crate::{{ plugin_name.lower_snake_case }}::mavsdk::{{ plugin_name.upper_camel_case }}_{{ nested_struct.name.upper_camel_case }}_{{ type_info.inner_name }}>
+        {%- elif found_inner_enums | length > 0 %}
+            std::vec::Vec<crate::{{ plugin_name.lower_snake_case }}::mavsdk::{{ plugin_name.upper_camel_case }}_{{ found_inner_enums[0].name.upper_camel_case }}>
+        {%- elif found_inner_structs | length > 0 %}
+            std::vec::Vec<{{ type_info.inner_name }}Owned>
+        {%- else %}
+            std::vec::Vec<crate::{{ plugin_name.lower_snake_case }}::mavsdk::{{ plugin_name.upper_camel_case }}_{{ type_info.inner_name }}>
+        {%- endif %}
+    {%- elif type_info.is_string -%}
+        String
+    {%- elif primitive -%}
+        {{ primitive }}
+    {%- elif nested_struct -%}
+        crate::{{ plugin_name.lower_snake_case }}::mavsdk::{{ plugin_name.upper_camel_case }}_{{ nested_struct.name.upper_camel_case }}_{{ type_info.name }}
+    {%- elif found_enums | length > 0 -%}
+        crate::{{ plugin_name.lower_snake_case }}::mavsdk::{{ plugin_name.upper_camel_case }}_{{ enum_def.name.upper_camel_case }}
+    {%- elif found_structs | length > 0 -%}
+        {{ type_info.name }}Owned
+    {%- else -%}
+        crate::{{ plugin_name.lower_snake_case }}::mavsdk::{{ plugin_name.upper_camel_case }}_{{ type_info.name }}
+    {%- endif -%}
+{%- endmacro -%}
+
+{%- macro rust_owned_struct_member(field) -%}
+    {%- set found_structs = structs | selectattr('name.upper_camel_case', 'equalto', field.type_info.name) | list -%}
+    {%- set found_enums = enums | selectattr('name.upper_camel_case', 'equalto', field.type_info.name) | list -%}
+    {%- set struct_def = found_structs[0] if found_structs else none -%}
+    {%- set enum_def = found_enums[0] if found_enums else none -%}
+    {%- set primitive = rust_primitive_type(field.type_info.name) -%}
+    {%- set inner_primitive = rust_primitive_type(field.type_info.inner_name) -%}
+    {%- set repeated = field.type_info.is_repeated -%}
+
+    {%- set ns = namespace(nested_struct=none) -%}
+    {%- for struct in structs %}
+        {%- if field.type_info.name in struct.nested_enums %}
+            {%- set ns.nested_struct = struct -%}
+        {%- endif %}
+    {%- endfor %}
+    {%- set nested_struct = ns.nested_struct -%}
+
+    /// {{ field.description }}
+    pub fn {{ safe_field_name(field.name.lower_snake_case) }}(&self) -> {{ rust_owned_type(field.type_info) }} {
+    {%- if repeated %}
+        {%- set found_inner_structs = structs | selectattr('name.upper_camel_case', 'equalto', field.type_info.inner_name) | list -%}
+        {%- set found_inner_enums = enums | selectattr('name.upper_camel_case', 'equalto', field.type_info.inner_name) | list -%}
+        {%- if field.type_info.is_string %}
+            // CxxString convert to Rust String in vector
+            self.inner.{{ plugin_name.lower_snake_case }}_get_{{ field.name.lower_snake_case }}()
+                .iter()
+                .map(|s| s.to_string_lossy().into_owned())
+                .collect()
+        {%- elif inner_primitive %}
+            self.inner.{{ plugin_name.lower_snake_case }}_get_{{ field.name.lower_snake_case }}().as_slice().to_vec()
+        {%- elif nested_struct %}
+            self.inner.{{ plugin_name.lower_snake_case }}_get_{{ field.name.lower_snake_case }}()
+                .iter()
+                .map(|item| crate::{{ plugin_name.lower_snake_case }}::mavsdk::{{ plugin_name.upper_camel_case }}_{{ nested_struct.name.upper_camel_case }}_{{ field.type_info.inner_name }}::new(item).into_owned())
+                .collect()
+        {%- elif found_inner_enums | length > 0 %}
+            self.inner.{{ plugin_name.lower_snake_case }}_get_{{ field.name.lower_snake_case }}()
+                .iter()
+                .cloned()
+                .collect()
+        {%- elif found_inner_structs | length > 0 %}
+            self.inner.{{ plugin_name.lower_snake_case }}_get_{{ field.name.lower_snake_case }}()
+                .iter()
+                .map(|item| {{ safe_struct_name(field.type_info.inner_name) }}::new(item).into_owned())
+                .collect()
+        {%- else %}
+            self.inner.{{ plugin_name.lower_snake_case }}_get_{{ field.name.lower_snake_case }}().as_slice().to_vec()
+        {%- endif %}
+    {%- elif field.type_info.is_string %}
+        self.inner.{{ plugin_name.lower_snake_case }}_get_{{ field.name.lower_snake_case }}().to_string_lossy().into_owned()
+    {%- elif primitive %}
+        self.inner.{{ plugin_name.lower_snake_case }}_get_{{ field.name.lower_snake_case }}()
+    {%- elif nested_struct %}
+        self.inner.{{ plugin_name.lower_snake_case }}_get_{{ field.name.lower_snake_case }}().clone()
+    {%- elif found_enums | length > 0 -%}
+        self.inner.{{ plugin_name.lower_snake_case }}_get_{{ field.name.lower_snake_case }}().clone()
+    {%- elif found_structs | length > 0 and not struct_def.is_pod -%}
+        {{ safe_struct_name(field.type_info.inner_name) }}::new(self.inner.{{ plugin_name.lower_snake_case }}_get_{{ field.name.lower_snake_case }}()).into_owned()
+    {%- else %}
+        {{ safe_struct_name(field.type_info.inner_name) }}::new(self.inner.{{ plugin_name.lower_snake_case }}_get_{{ field.name.lower_snake_case }}()).into_owned()
+    {%- endif %}
+    }
+{%- endmacro -%}
+
+{%- macro rust_owned_struct_field_decl(method) -%}
+    {%- set found_structs = structs | selectattr('name.upper_camel_case', 'equalto', method.return_type.name) | list -%}
+    {%- set found_enums = enums | selectattr('name.upper_camel_case', 'equalto', method.return_type.name) | list -%}
+    {%- set struct_def = found_structs[0] if found_structs else none -%}
+    {%- set enum_def = found_enums[0] if found_enums else none -%}
+    {%- set primitive = rust_primitive_type(method.return_type.name) -%}
+    {%- set inner_primitive = rust_primitive_type(method.return_type.inner_name) -%}
+    {%- set repeated = method.return_type.is_repeated -%}
+
+    {%- set primitive = rust_primitive_type(method.return_type.name) -%}
+    {%- if primitive %}
+        {{ method.name.lower_snake_case }}.clone()
+    {%- elif method.return_type.is_string %}
+        {{ method.name.lower_snake_case }}.to_string_lossy().into_owned()
+    {%- elif found_enums | length > 0 %}
+        {{ method.name.lower_snake_case }}.clone()
+    {%- elif found_structs | length > 0 -%}
+        {{ method.return_type.name }}::new({{ method.name.lower_snake_case }}).into_owned()
+    {%- else %}
+        {{ method.name.lower_snake_case }}.clone()
+    {%- endif %}
+{%- endmacro -%}
+
+{# ================= Main Generation Loop ================= #}
+
+{% for struct in structs if not struct.name.upper_camel_case.endswith('Result') %}
+
+pub struct {{ struct.name.upper_camel_case }}Owned {
+    {%- for field in struct.fields %}
+        pub {{ safe_field_name(field.name.lower_snake_case) }}: {{ rust_owned_type(field.type_info) }},
+    {%- endfor %}
+}
+
+/* {{ struct.description }} */
+pub struct {{ safe_struct_name(struct.name.upper_camel_case) }}<'a> {
+    inner: &'a crate::{{ plugin_name.lower_snake_case }}::mavsdk::{{ plugin_name.upper_camel_case }}_{{ struct.name.upper_camel_case }},
+}
+
+impl<'a> {{ safe_struct_name(struct.name.upper_camel_case) }}<'a> {
+    pub fn new(inner: &'a crate::{{ plugin_name.lower_snake_case }}::mavsdk::{{ plugin_name.upper_camel_case }}_{{ struct.name.upper_camel_case }}) -> Self {
+        Self { inner }
+    }
+
+    pub fn into_owned(&self) -> {{ struct.name.upper_camel_case }}Owned {
+        {{ struct.name.upper_camel_case }}Owned {
+            {% for field in struct.fields %}
+            {{ safe_field_name(field.name.lower_snake_case) }}: self.{{ safe_field_name(field.name.lower_snake_case) }}(),
+            {%- endfor %}
+        }
+    }
+
+    {%- for field in struct.fields %}
+        {{ rust_owned_struct_member(field) }}
+    {%- endfor %}
+}
+{% endfor %}
+
+{%- if methods|length > 0 %}
+    struct {{ plugin_name.upper_camel_case }}Inner {
+        plugin: cxx::UniquePtr<crate::{{ plugin_name.lower_snake_case }}::mavsdk::{{ plugin_name.upper_camel_case }}>,
+        {% for method in methods if method.is_async and method.is_stream and not method.is_finite %}
+            {%- if method.params|length == 0 %}
+                /// {{ method.name.upper_camel_case }} State
+                {{ method.name.lower_snake_case }}_handle: Option<usize>,
+                {{ method.name.lower_snake_case }}_user_data: *mut c_void,
+            {%- endif %}
+        {%- endfor %}
+    }
+
+    pub struct {{ plugin_name.upper_camel_case }}Client {
+        inner: Mutex<{{ plugin_name.upper_camel_case }}Inner>,
+        {% for method in methods if method.is_async and method.is_stream and not method.is_finite %}
+                {%- set full_sender_type = "std::option::Option<" ~ rust_owned_method_type(method) ~ ">" -%}
+            {%- if method.params|length == 0 %}
+                // Producer for the latest {{ method.name.upper_camel_case }} state; broadcast to all active subscribers.
+                {{ method.name.lower_snake_case }}_tx: watch::Sender<{{ full_sender_type }}>,
+            {%- endif %}
+        {%- endfor %}
+    }
+
+    impl {{ plugin_name.upper_camel_case }}Client {
+        pub fn new(plugin: cxx::UniquePtr<crate::{{ plugin_name.lower_snake_case }}::mavsdk::{{ plugin_name.upper_camel_case }}>) -> Self {
+            {% for method in methods if method.is_async and method.is_stream and not method.is_finite %}
+                {%- if method.params|length == 0 %}
+                    let ({{ method.name.lower_snake_case }}_tx, _) = watch::channel(None);
+                {%- endif %}
+            {%- endfor %}
+
+            Self {
+                inner: Mutex::new({{ plugin_name.upper_camel_case }}Inner {
+                    plugin,
+                    {% for method in methods if method.is_async and method.is_stream and not method.is_finite %}
+                        {%- if method.params|length == 0 %}
+                            {{ method.name.lower_snake_case }}_handle: None,
+                            {{ method.name.lower_snake_case }}_user_data: std::ptr::null_mut(),
+                        {%- endif %}
+                    {%- endfor %}
+                }),
+                {% for method in methods if method.is_async and method.is_stream and not method.is_finite %}
+                    {%- if method.params|length == 0 %}
+                        {{ method.name.lower_snake_case }}_tx,
+                    {%- endif %}
+                {%- endfor %}
+            }
+        }
+        
+        {% for method in methods if method.is_async and method.is_stream and not method.is_finite %}
+            {%- if method.params|length == 0 %}
+                {%- set full_sender_type = "std::option::Option<" ~ rust_owned_method_type(method) ~ ">" -%}
+                pub fn subscribe_{{ method.name.lower_snake_case }}(&self) -> watch::Receiver<{{ full_sender_type }}> {
+                    let mut inner = self.inner.lock().unwrap();
+
+                    if inner.{{ method.name.lower_snake_case }}_handle.is_none() {
+                        // Lazy initialization of C++ '{{ method.name.lower_snake_case }}' {{ plugin_name.lower_snake_case }} stream.
+                        let user_data_ptr = Box::into_raw(Box::new(self.{{ method.name.lower_snake_case }}_tx.clone())) as *mut c_void;
+
+                        let handle = inner.plugin.pin_mut().subscribe_{{ method.name.lower_snake_case }}(
+                            {{ plugin_name.lower_snake_case }}_{{method.name.lower_snake_case}}_callback_ffi as usize as libc::uintptr_t,
+                            user_data_ptr as libc::uintptr_t
+                        ) as usize;
+
+                        inner.{{ method.name.lower_snake_case }}_handle = Some(handle);
+                        inner.{{ method.name.lower_snake_case }}_user_data = user_data_ptr;
+                    }
+                    
+                    self.{{ method.name.lower_snake_case }}_tx.subscribe()
+                }
+            {%- endif %}
+        {%- endfor %}
+    }
+{%- endif %}
+
+{% for method in methods if method.is_async and method.is_stream and not method.is_finite %}
+    {%- set primitive = rust_primitive_type(method.return_type.name) -%}
+    {%- set option_type_name = method.name.upper_camel_case if primitive else method.return_type.name -%}
+    {%- if method.has_result %}
+        pub struct {{ option_type_name }}Status {
+            pub result: crate::{{ plugin_name.lower_snake_case }}::mavsdk::{{ plugin_name.upper_camel_case }}_Result,
+            {%- if primitive %}
+            pub {{ method.name.lower_snake_case }}: {{ rust_type_without_lifetime(method.return_type) }},
+            {%- else %}
+            pub {{ method.name.lower_snake_case }}: {{ rust_owned_type(method.return_type) }},
+            {%- endif %}
+        }
+    {%- endif %}
+    {%- if params|length == 0 %}
+        #[unsafe(no_mangle)]
+        pub extern "C" fn {{ plugin_name.lower_snake_case }}_{{method.name.lower_snake_case}}_callback_ffi(
+            user_data: *mut c_void,
+            {%- if method.has_result %}
+            result: crate::{{ plugin_name.lower_snake_case }}::mavsdk::{{ plugin_name.upper_camel_case }}_Result,
+            {%- endif %}
+            {{ method.name.lower_snake_case }}: {{ rust_type_without_lifetime(method.return_type) }},
+        ) {
+            if user_data.is_null() { return; }
+            {%- set sender_type = "Status" if method.has_result else "Owned" -%}
+            {%- set option_type_name = method.name.upper_camel_case if primitive else method.return_type.name -%}
+            {%- set full_sender_type = "std::option::Option<" ~ rust_owned_method_type(method) ~ ">" -%}
+
+            {%- if method.has_result %}
+                let send_{{ method.name.lower_snake_case }} = {{ option_type_name }}{{ sender_type }} {
+                    result,
+                    {{ method.name.lower_snake_case }}: {{ rust_owned_struct_field_decl(method) }},
+                };
+            {%- else %}
+                let send_{{ method.name.lower_snake_case }} = {{ rust_owned_struct_field_decl(method) }};
+            {%- endif %}
+
+            // Cast the pointer to watch::Sender
+            let sender = unsafe {
+                &*(user_data as *const watch::Sender<{{ full_sender_type }}>)
+            };
+
+            // Overwrite the current value in the channel with the new update
+            let _ = sender.send(Some(send_{{ method.name.lower_snake_case }}));
+        }
+    {%- endif %}
+{%- endfor %}

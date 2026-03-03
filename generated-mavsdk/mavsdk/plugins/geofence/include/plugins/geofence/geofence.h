@@ -67,8 +67,12 @@ public:
    */
   struct Point {
     double latitude_deg; /**< @brief Latitude in degrees (range: -90 to +90) */
+
+    double geofence_get_latitude_deg() const { return latitude_deg; }
     double
         longitude_deg; /**< @brief Longitude in degrees (range: -180 to +180) */
+
+    double geofence_get_longitude_deg() const { return longitude_deg; }
   };
 
   /**
@@ -92,9 +96,11 @@ public:
    */
   struct Polygon {
     std::vector<Point> points; /**< @brief Points defining the polygon */
-    const std::vector<Point> &get_points() const { return points; }
+
+    const std::vector<Point> &geofence_get_points() const { return points; }
     FenceType fence_type; /**< @brief Fence type */
-    FenceType get_fence_type() const { return fence_type; }
+
+    const FenceType &geofence_get_fence_type() const { return fence_type; }
   };
 
   /**
@@ -117,9 +123,15 @@ public:
    * @brief Circular type.
    */
   struct Circle {
-    Point point;              /**< @brief Point defining the center */
+    Point point; /**< @brief Point defining the center */
+
+    const Point &geofence_get_point() const { return point; }
     float radius{float(NAN)}; /**< @brief Radius of the circular fence */
-    FenceType fence_type;     /**< @brief Fence type */
+
+    float geofence_get_radius() const { return radius; }
+    FenceType fence_type; /**< @brief Fence type */
+
+    const FenceType &geofence_get_fence_type() const { return fence_type; }
   };
 
   /**
@@ -144,10 +156,14 @@ public:
   struct GeofenceData {
     std::vector<Polygon>
         polygons; /**< @brief Polygon(s) representing the geofence(s) */
-    const std::vector<Polygon> &get_polygons() const { return polygons; }
+
+    const std::vector<Polygon> &geofence_get_polygons() const {
+      return polygons;
+    }
     std::vector<Circle>
         circles; /**< @brief Circle(s) representing the geofence(s) */
-    const std::vector<Circle> &get_circles() const { return circles; }
+
+    const std::vector<Circle> &geofence_get_circles() const { return circles; }
   };
 
   /**

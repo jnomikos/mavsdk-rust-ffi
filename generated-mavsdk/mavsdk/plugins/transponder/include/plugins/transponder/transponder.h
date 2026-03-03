@@ -109,35 +109,55 @@ public:
   struct AdsbVehicle {
     uint32_t icao_address; /**< @brief ICAO (International Civil Aviation
                               Organization) unique worldwide identifier */
-    uint32_t get_icao_address() const { return icao_address; }
+
+    uint32_t transponder_get_icao_address() const { return icao_address; }
     double latitude_deg; /**< @brief Latitude in degrees (range: -90 to +90) */
-    double get_latitude_deg() const { return latitude_deg; }
+
+    double transponder_get_latitude_deg() const { return latitude_deg; }
     double longitude_deg; /**< @brief Longitude in degrees (range: -180 to
                              +180). */
-    double get_longitude_deg() const { return longitude_deg; }
+
+    double transponder_get_longitude_deg() const { return longitude_deg; }
     AdsbAltitudeType altitude_type; /**< @brief ADSB altitude type. */
-    AdsbAltitudeType get_altitude_type() const { return altitude_type; }
+
+    const AdsbAltitudeType &transponder_get_altitude_type() const {
+      return altitude_type;
+    }
     float absolute_altitude_m; /**< @brief Altitude in metres according to
                                   altitude_type */
-    float get_absolute_altitude_m() const { return absolute_altitude_m; }
+
+    float transponder_get_absolute_altitude_m() const {
+      return absolute_altitude_m;
+    }
     float heading_deg; /**< @brief Course over ground, in degrees */
-    float get_heading_deg() const { return heading_deg; }
+
+    float transponder_get_heading_deg() const { return heading_deg; }
     float horizontal_velocity_m_s; /**< @brief The horizontal velocity in
                                       metres/second */
-    float get_horizontal_velocity_m_s() const {
+
+    float transponder_get_horizontal_velocity_m_s() const {
       return horizontal_velocity_m_s;
     }
     float vertical_velocity_m_s; /**< @brief The vertical velocity in
                                     metres/second. Positive is up. */
-    float get_vertical_velocity_m_s() const { return vertical_velocity_m_s; }
+
+    float transponder_get_vertical_velocity_m_s() const {
+      return vertical_velocity_m_s;
+    }
     std::string callsign; /**< @brief The callsign */
-    const std::string &get_callsign() const { return callsign; }
+
+    const std::string &transponder_get_callsign() const { return callsign; }
     AdsbEmitterType emitter_type; /**< @brief ADSB emitter type. */
-    AdsbEmitterType get_emitter_type() const { return emitter_type; }
+
+    const AdsbEmitterType &transponder_get_emitter_type() const {
+      return emitter_type;
+    }
     uint32_t squawk; /**< @brief Squawk code. */
-    uint32_t get_squawk() const { return squawk; }
+
+    uint32_t transponder_get_squawk() const { return squawk; }
     uint32_t tslc_s; /**< @brief Time Since Last Communication in seconds. */
-    uint32_t get_tslc_s() const { return tslc_s; }
+
+    uint32_t transponder_get_tslc_s() const { return tslc_s; }
   };
 
   /**
@@ -197,7 +217,7 @@ public:
   /**
    * @brief Subscribe to 'transponder' updates.
    */
-  uintptr_t subscribe_transponder(uintptr_t cb_ptr);
+  uintptr_t subscribe_transponder(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_transponder

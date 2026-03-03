@@ -27,17 +27,19 @@ void ComponentMetadata::request_autopilot_component() const {
   _impl->request_autopilot_component();
 }
 
-uintptr_t ComponentMetadata::subscribe_metadata_available(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<MetadataAvailableCallback *>(cb_ptr);
+uintptr_t ComponentMetadata::subscribe_metadata_available(uintptr_t cb_ptr,
+                                                          uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, MetadataUpdate);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   ComponentMetadata::MetadataAvailableHandle handle =
-      _impl->subscribe_metadata_available([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
-      });
+      _impl->subscribe_metadata_available(
+          [callback, user_data](auto &&...args) {
+            callback(user_data, std::forward<decltype(args)>(args)...);
+          });
   auto *handle_ptr = new ComponentMetadata::MetadataAvailableHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
 }

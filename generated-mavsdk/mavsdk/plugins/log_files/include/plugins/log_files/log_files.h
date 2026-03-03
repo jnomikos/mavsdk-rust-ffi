@@ -52,6 +52,8 @@ public:
    */
   struct ProgressData {
     float progress{float(NAN)}; /**< @brief Progress from 0 to 1 */
+
+    float log_files_get_progress() const { return progress; }
   };
 
   /**
@@ -77,12 +79,15 @@ public:
   struct Entry {
     uint32_t id; /**< @brief ID of the log file, to specify a file to be
                     downloaded */
-    uint32_t get_id() const { return id; }
+
+    uint32_t log_files_get_id() const { return id; }
     std::string date; /**< @brief Date of the log file in UTC in ISO 8601 format
                          "yyyy-mm-ddThh:mm:ssZ" */
-    const std::string &get_date() const { return date; }
+
+    const std::string &log_files_get_date() const { return date; }
     uint32_t size_bytes; /**< @brief Size of file in bytes */
-    uint32_t get_size_bytes() const { return size_bytes; }
+
+    uint32_t log_files_get_size_bytes() const { return size_bytes; }
   };
 
   /**

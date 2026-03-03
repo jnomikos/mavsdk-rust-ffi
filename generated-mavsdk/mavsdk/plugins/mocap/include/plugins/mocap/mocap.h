@@ -53,8 +53,14 @@ public:
    */
   struct PositionBody {
     float x_m; /**< @brief X position in metres. */
+
+    float mocap_get_x_m() const { return x_m; }
     float y_m; /**< @brief Y position in metres. */
+
+    float mocap_get_y_m() const { return y_m; }
     float z_m; /**< @brief Z position in metres. */
+
+    float mocap_get_z_m() const { return z_m; }
   };
 
   /**
@@ -77,9 +83,15 @@ public:
    * @brief Body angle type
    */
   struct AngleBody {
-    float roll_rad;  /**< @brief Roll angle in radians. */
+    float roll_rad; /**< @brief Roll angle in radians. */
+
+    float mocap_get_roll_rad() const { return roll_rad; }
     float pitch_rad; /**< @brief Pitch angle in radians. */
-    float yaw_rad;   /**< @brief Yaw angle in radians. */
+
+    float mocap_get_pitch_rad() const { return pitch_rad; }
+    float yaw_rad; /**< @brief Yaw angle in radians. */
+
+    float mocap_get_yaw_rad() const { return yaw_rad; }
   };
 
   /**
@@ -104,8 +116,14 @@ public:
    */
   struct SpeedBody {
     float x_m_s; /**< @brief Velocity in X in metres/second. */
+
+    float mocap_get_x_m_s() const { return x_m_s; }
     float y_m_s; /**< @brief Velocity in Y in metres/second. */
+
+    float mocap_get_y_m_s() const { return y_m_s; }
     float z_m_s; /**< @brief Velocity in Z in metres/second. */
+
+    float mocap_get_z_m_s() const { return z_m_s; }
   };
 
   /**
@@ -129,8 +147,14 @@ public:
    */
   struct SpeedNed {
     float north_m_s; /**< @brief Velocity North in metres/second. */
-    float east_m_s;  /**< @brief Velocity East in metres/second. */
-    float down_m_s;  /**< @brief Velocity Down in metres/second. */
+
+    float mocap_get_north_m_s() const { return north_m_s; }
+    float east_m_s; /**< @brief Velocity East in metres/second. */
+
+    float mocap_get_east_m_s() const { return east_m_s; }
+    float down_m_s; /**< @brief Velocity Down in metres/second. */
+
+    float mocap_get_down_m_s() const { return down_m_s; }
   };
 
   /**
@@ -153,9 +177,15 @@ public:
    * @brief Angular velocity type
    */
   struct AngularVelocityBody {
-    float roll_rad_s;  /**< @brief Roll angular velocity in radians/second. */
+    float roll_rad_s; /**< @brief Roll angular velocity in radians/second. */
+
+    float mocap_get_roll_rad_s() const { return roll_rad_s; }
     float pitch_rad_s; /**< @brief Pitch angular velocity in radians/second. */
-    float yaw_rad_s;   /**< @brief Yaw angular velocity in radians/second. */
+
+    float mocap_get_pitch_rad_s() const { return pitch_rad_s; }
+    float yaw_rad_s; /**< @brief Yaw angular velocity in radians/second. */
+
+    float mocap_get_yaw_rad_s() const { return yaw_rad_s; }
   };
 
   /**
@@ -184,7 +214,8 @@ public:
    */
   struct Covariance {
     std::vector<float> covariance_matrix; /**< @brief The covariance matrix */
-    const std::vector<float> &get_covariance_matrix() const {
+
+    const std::vector<float> &mocap_get_covariance_matrix() const {
       return covariance_matrix;
     }
   };
@@ -217,9 +248,17 @@ public:
    */
   struct Quaternion {
     float w; /**< @brief Quaternion entry 0, also denoted as a */
+
+    float mocap_get_w() const { return w; }
     float x; /**< @brief Quaternion entry 1, also denoted as b */
+
+    float mocap_get_x() const { return x; }
     float y; /**< @brief Quaternion entry 2, also denoted as c */
+
+    float mocap_get_y() const { return y; }
     float z; /**< @brief Quaternion entry 3, also denoted as d */
+
+    float mocap_get_z() const { return z; }
   };
 
   /**
@@ -244,9 +283,21 @@ public:
   struct VisionPositionEstimate {
     uint64_t time_usec; /**< @brief PositionBody frame timestamp UNIX Epoch time
                            (0 to use Backend timestamp) */
+
+    uint64_t mocap_get_time_usec() const { return time_usec; }
     PositionBody position_body; /**< @brief Global position (m) */
-    AngleBody angle_body;       /**< @brief Body angle (rad). */
+
+    const PositionBody &mocap_get_position_body() const {
+      return position_body;
+    }
+    AngleBody angle_body; /**< @brief Body angle (rad). */
+
+    const AngleBody &mocap_get_angle_body() const { return angle_body; }
     Covariance pose_covariance; /**< @brief Pose cross-covariance matrix. */
+
+    const Covariance &mocap_get_pose_covariance() const {
+      return pose_covariance;
+    }
   };
 
   /**
@@ -274,9 +325,17 @@ public:
   struct VisionSpeedEstimate {
     uint64_t time_usec; /**< @brief Timestamp UNIX Epoch time (0 to use Backend
                            timestamp) */
+
+    uint64_t mocap_get_time_usec() const { return time_usec; }
     SpeedNed speed_ned; /**< @brief Global speed (m/s) */
+
+    const SpeedNed &mocap_get_speed_ned() const { return speed_ned; }
     Covariance speed_covariance; /**< @brief Linear velocity cross-covariance
                                     matrix. */
+
+    const Covariance &mocap_get_speed_covariance() const {
+      return speed_covariance;
+    }
   };
 
   /**
@@ -303,10 +362,22 @@ public:
   struct AttitudePositionMocap {
     uint64_t time_usec; /**< @brief PositionBody frame timestamp UNIX Epoch time
                            (0 to use Backend timestamp) */
-    Quaternion q;       /**< @brief Attitude quaternion (w, x, y, z order,
-                           zero-rotation is 1, 0, 0, 0) */
+
+    uint64_t mocap_get_time_usec() const { return time_usec; }
+    Quaternion q; /**< @brief Attitude quaternion (w, x, y, z order,
+                     zero-rotation is 1, 0, 0, 0) */
+
+    const Quaternion &mocap_get_q() const { return q; }
     PositionBody position_body; /**< @brief Body Position (NED) */
+
+    const PositionBody &mocap_get_position_body() const {
+      return position_body;
+    }
     Covariance pose_covariance; /**< @brief Pose cross-covariance matrix. */
+
+    const Covariance &mocap_get_pose_covariance() const {
+      return pose_covariance;
+    }
   };
 
   /**
@@ -354,17 +425,41 @@ public:
     friend std::ostream &operator<<(std::ostream &str,
                                     Mocap::Odometry::MavFrame const &mav_frame);
     uint64_t time_usec; /**< @brief Timestamp (0 to use Backend timestamp). */
-    MavFrame frame_id;  /**< @brief Coordinate frame of reference for the pose
-                           data. */
+
+    uint64_t mocap_get_time_usec() const { return time_usec; }
+    MavFrame frame_id; /**< @brief Coordinate frame of reference for the pose
+                          data. */
+
+    const MavFrame &mocap_get_frame_id() const { return frame_id; }
     PositionBody position_body; /**< @brief Body Position. */
+
+    const PositionBody &mocap_get_position_body() const {
+      return position_body;
+    }
     Quaternion q; /**< @brief Quaternion components, w, x, y, z (1 0 0 0 is the
                      null-rotation). */
+
+    const Quaternion &mocap_get_q() const { return q; }
     SpeedBody speed_body; /**< @brief Linear speed (m/s). */
+
+    const SpeedBody &mocap_get_speed_body() const { return speed_body; }
     AngularVelocityBody
-        angular_velocity_body;  /**< @brief Angular speed (rad/s). */
+        angular_velocity_body; /**< @brief Angular speed (rad/s). */
+
+    const AngularVelocityBody &mocap_get_angular_velocity_body() const {
+      return angular_velocity_body;
+    }
     Covariance pose_covariance; /**< @brief Pose cross-covariance matrix. */
+
+    const Covariance &mocap_get_pose_covariance() const {
+      return pose_covariance;
+    }
     Covariance
         velocity_covariance; /**< @brief Velocity cross-covariance matrix. */
+
+    const Covariance &mocap_get_velocity_covariance() const {
+      return velocity_covariance;
+    }
   };
 
   /**

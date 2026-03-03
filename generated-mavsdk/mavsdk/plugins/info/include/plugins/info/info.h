@@ -51,13 +51,25 @@ public:
    */
   struct FlightInfo {
     uint32_t time_boot_ms; /**< @brief Time since system boot */
+
+    uint32_t info_get_time_boot_ms() const { return time_boot_ms; }
     uint64_t
         flight_uid; /**< @brief Flight counter. Starts from zero, is incremented
                        at every disarm and is never reset (even after reboot) */
-    uint32_t duration_since_arming_ms;  /**< @brief Duration since arming in
-                                           milliseconds */
+
+    uint64_t info_get_flight_uid() const { return flight_uid; }
+    uint32_t duration_since_arming_ms; /**< @brief Duration since arming in
+                                          milliseconds */
+
+    uint32_t info_get_duration_since_arming_ms() const {
+      return duration_since_arming_ms;
+    }
     uint32_t duration_since_takeoff_ms; /**< @brief Duration since takeoff in
                                            milliseconds */
+
+    uint32_t info_get_duration_since_takeoff_ms() const {
+      return duration_since_takeoff_ms;
+    }
   };
 
   /**
@@ -83,11 +95,13 @@ public:
     std::string hardware_uid; /**< @brief UID of the hardware. This refers to
                                  uid2 of MAVLink. If the system does not support
                                  uid2 yet, this is all zeros. */
-    const std::string &get_hardware_uid() const { return hardware_uid; }
+
+    const std::string &info_get_hardware_uid() const { return hardware_uid; }
     uint64_t legacy_uid; /**< @brief Legacy UID of the hardware, referred to as
                             uid in MAVLink (formerly exposed during system
                             discovery as UUID). */
-    uint64_t get_legacy_uid() const { return legacy_uid; }
+
+    uint64_t info_get_legacy_uid() const { return legacy_uid; }
   };
 
   /**
@@ -111,13 +125,17 @@ public:
    */
   struct Product {
     int32_t vendor_id; /**< @brief ID of the board vendor */
-    int32_t get_vendor_id() const { return vendor_id; }
+
+    int32_t info_get_vendor_id() const { return vendor_id; }
     std::string vendor_name; /**< @brief Name of the vendor */
-    const std::string &get_vendor_name() const { return vendor_name; }
+
+    const std::string &info_get_vendor_name() const { return vendor_name; }
     int32_t product_id; /**< @brief ID of the product */
-    int32_t get_product_id() const { return product_id; }
+
+    int32_t info_get_product_id() const { return product_id; }
     std::string product_name; /**< @brief Name of the product */
-    const std::string &get_product_name() const { return product_name; }
+
+    const std::string &info_get_product_name() const { return product_name; }
   };
 
   /**
@@ -161,42 +179,56 @@ public:
     operator<<(std::ostream &str, Info::Version::FlightSoftwareVersionType const
                                       &flight_software_version_type);
     int32_t flight_sw_major; /**< @brief Flight software major version */
-    int32_t get_flight_sw_major() const { return flight_sw_major; }
+
+    int32_t info_get_flight_sw_major() const { return flight_sw_major; }
     int32_t flight_sw_minor; /**< @brief Flight software minor version */
-    int32_t get_flight_sw_minor() const { return flight_sw_minor; }
+
+    int32_t info_get_flight_sw_minor() const { return flight_sw_minor; }
     int32_t flight_sw_patch; /**< @brief Flight software patch version */
-    int32_t get_flight_sw_patch() const { return flight_sw_patch; }
+
+    int32_t info_get_flight_sw_patch() const { return flight_sw_patch; }
     int32_t flight_sw_vendor_major; /**< @brief Flight software vendor major
                                        version */
-    int32_t get_flight_sw_vendor_major() const {
+
+    int32_t info_get_flight_sw_vendor_major() const {
       return flight_sw_vendor_major;
     }
     int32_t flight_sw_vendor_minor; /**< @brief Flight software vendor minor
                                        version */
-    int32_t get_flight_sw_vendor_minor() const {
+
+    int32_t info_get_flight_sw_vendor_minor() const {
       return flight_sw_vendor_minor;
     }
     int32_t flight_sw_vendor_patch; /**< @brief Flight software vendor patch
                                        version */
-    int32_t get_flight_sw_vendor_patch() const {
+
+    int32_t info_get_flight_sw_vendor_patch() const {
       return flight_sw_vendor_patch;
     }
     int32_t os_sw_major; /**< @brief Operating system software major version */
-    int32_t get_os_sw_major() const { return os_sw_major; }
+
+    int32_t info_get_os_sw_major() const { return os_sw_major; }
     int32_t os_sw_minor; /**< @brief Operating system software minor version */
-    int32_t get_os_sw_minor() const { return os_sw_minor; }
+
+    int32_t info_get_os_sw_minor() const { return os_sw_minor; }
     int32_t os_sw_patch; /**< @brief Operating system software patch version */
-    int32_t get_os_sw_patch() const { return os_sw_patch; }
+
+    int32_t info_get_os_sw_patch() const { return os_sw_patch; }
     std::string flight_sw_git_hash; /**< @brief Flight software git hash */
-    const std::string &get_flight_sw_git_hash() const {
+
+    const std::string &info_get_flight_sw_git_hash() const {
       return flight_sw_git_hash;
     }
     std::string
         os_sw_git_hash; /**< @brief Operating system software git hash */
-    const std::string &get_os_sw_git_hash() const { return os_sw_git_hash; }
+
+    const std::string &info_get_os_sw_git_hash() const {
+      return os_sw_git_hash;
+    }
     FlightSoftwareVersionType
         flight_sw_version_type; /**< @brief Flight software version type */
-    FlightSoftwareVersionType get_flight_sw_version_type() const {
+
+    const FlightSoftwareVersionType &info_get_flight_sw_version_type() const {
       return flight_sw_version_type;
     }
   };
@@ -299,7 +331,7 @@ public:
   /**
    * @brief Subscribe to 'flight information' updates.
    */
-  uintptr_t subscribe_flight_information(uintptr_t cb_ptr);
+  uintptr_t subscribe_flight_information(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_flight_information

@@ -88,11 +88,13 @@ public:
     std::vector<SongElement>
         song_elements; /**< @brief The list of song elements (notes, pauses,
                           ...) to be played */
-    const std::vector<SongElement> &get_song_elements() const {
+
+    const std::vector<SongElement> &tune_get_song_elements() const {
       return song_elements;
     }
     int32_t tempo; /**< @brief The tempo of the song (range: 32 - 255) */
-    int32_t get_tempo() const { return tempo; }
+
+    int32_t tune_get_tempo() const { return tempo; }
   };
 
   /**

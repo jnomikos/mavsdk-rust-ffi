@@ -19,16 +19,16 @@ Shell::Result Shell::send(std::string command) const {
   return _impl->send(command);
 }
 
-uintptr_t Shell::subscribe_receive(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<ReceiveCallback *>(cb_ptr);
+uintptr_t Shell::subscribe_receive(uintptr_t cb_ptr, uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, std::string);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Shell::ReceiveHandle handle =
-      _impl->subscribe_receive([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_receive([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Shell::ReceiveHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);

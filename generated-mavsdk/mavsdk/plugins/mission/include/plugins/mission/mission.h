@@ -106,31 +106,71 @@ public:
                Mission::MissionItem::VehicleAction const &vehicle_action);
     double latitude_deg{
         double(NAN)}; /**< @brief Latitude in degrees (range: -90 to +90) */
+
+    double mission_get_latitude_deg() const { return latitude_deg; }
     double longitude_deg{
         double(NAN)}; /**< @brief Longitude in degrees (range: -180 to +180) */
+
+    double mission_get_longitude_deg() const { return longitude_deg; }
     float relative_altitude_m{float(
         NAN)}; /**< @brief Altitude relative to takeoff altitude in metres */
+
+    float mission_get_relative_altitude_m() const {
+      return relative_altitude_m;
+    }
     float speed_m_s{float(NAN)}; /**< @brief Speed to use after this mission
                                     item (in metres/second) */
+
+    float mission_get_speed_m_s() const { return speed_m_s; }
     bool is_fly_through{false}; /**< @brief True will make the drone fly through
                                    without stopping, while false will make the
                                    drone stop on the waypoint */
+
+    bool mission_get_is_fly_through() const { return is_fly_through; }
     float gimbal_pitch_deg{float(NAN)}; /**< @brief Gimbal pitch (in degrees) */
-    float gimbal_yaw_deg{float(NAN)};   /**< @brief Gimbal yaw (in degrees) */
+
+    float mission_get_gimbal_pitch_deg() const { return gimbal_pitch_deg; }
+    float gimbal_yaw_deg{float(NAN)}; /**< @brief Gimbal yaw (in degrees) */
+
+    float mission_get_gimbal_yaw_deg() const { return gimbal_yaw_deg; }
     CameraAction camera_action; /**< @brief Camera action to trigger at this
                                    mission item */
+
+    const CameraAction &mission_get_camera_action() const {
+      return camera_action;
+    }
     float loiter_time_s{float(NAN)}; /**< @brief Loiter time (in seconds) */
+
+    float mission_get_loiter_time_s() const { return loiter_time_s; }
     double camera_photo_interval_s{
         1.0}; /**< @brief Camera photo interval to use after this mission item
                  (in seconds) */
+
+    double mission_get_camera_photo_interval_s() const {
+      return camera_photo_interval_s;
+    }
     float acceptance_radius_m{float(
         NAN)}; /**< @brief Radius for completing a mission item (in metres) */
+
+    float mission_get_acceptance_radius_m() const {
+      return acceptance_radius_m;
+    }
     float yaw_deg{float(NAN)}; /**< @brief Absolute yaw angle (in degrees) */
+
+    float mission_get_yaw_deg() const { return yaw_deg; }
     float camera_photo_distance_m{
         NAN}; /**< @brief Camera photo distance to use after this mission item
                  (in meters) */
+
+    float mission_get_camera_photo_distance_m() const {
+      return camera_photo_distance_m;
+    }
     VehicleAction vehicle_action; /**< @brief Vehicle action to trigger at this
                                      mission item. */
+
+    const VehicleAction &mission_get_vehicle_action() const {
+      return vehicle_action;
+    }
   };
 
   /**
@@ -154,7 +194,8 @@ public:
    */
   struct MissionPlan {
     std::vector<MissionItem> mission_items; /**< @brief The mission items */
-    const std::vector<MissionItem> &get_mission_items() const {
+
+    const std::vector<MissionItem> &mission_get_mission_items() const {
       return mission_items;
     }
   };
@@ -181,7 +222,11 @@ public:
   struct MissionProgress {
     int32_t current; /**< @brief Current mission item index (0-based), if equal
                         to total, the mission is finished */
-    int32_t total;   /**< @brief Total number of mission items */
+
+    int32_t mission_get_current() const { return current; }
+    int32_t total; /**< @brief Total number of mission items */
+
+    int32_t mission_get_total() const { return total; }
   };
 
   /**
@@ -240,6 +285,8 @@ public:
    */
   struct ProgressData {
     float progress{float(NAN)}; /**< @brief Progress (0..1.0) */
+
+    float mission_get_progress() const { return progress; }
   };
 
   /**
@@ -264,12 +311,20 @@ public:
    * (if the transfer succeeds).
    */
   struct ProgressDataOrMission {
-    bool has_progress{false};   /**< @brief Whether this ProgressData contains a
-                                   'progress' status or not */
+    bool has_progress{false}; /**< @brief Whether this ProgressData contains a
+                                 'progress' status or not */
+
+    bool mission_get_has_progress() const { return has_progress; }
     float progress{float(NAN)}; /**< @brief Progress (0..1.0) */
-    bool has_mission;           /**< @brief Whether this ProgressData contains a
-                                   'mission_plan' or not */
-    MissionPlan mission_plan;   /**< @brief Mission plan */
+
+    float mission_get_progress() const { return progress; }
+    bool has_mission; /**< @brief Whether this ProgressData contains a
+                         'mission_plan' or not */
+
+    bool mission_get_has_mission() const { return has_mission; }
+    MissionPlan mission_plan; /**< @brief Mission plan */
+
+    const MissionPlan &mission_get_mission_plan() const { return mission_plan; }
   };
 
   /**
@@ -542,7 +597,7 @@ public:
   /**
    * @brief Subscribe to mission progress updates.
    */
-  uintptr_t subscribe_mission_progress(uintptr_t cb_ptr);
+  uintptr_t subscribe_mission_progress(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Unsubscribe from subscribe_mission_progress

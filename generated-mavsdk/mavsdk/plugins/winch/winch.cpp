@@ -18,16 +18,16 @@ Winch::Winch(std::shared_ptr<System> system)
 
 Winch::~Winch() {}
 
-uintptr_t Winch::subscribe_status(uintptr_t cb_ptr) {
-
-  auto callback = reinterpret_cast<StatusCallback *>(cb_ptr);
+uintptr_t Winch::subscribe_status(uintptr_t cb_ptr, uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Status);
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
   if (!callback) {
     return 0;
   }
 
   Winch::StatusHandle handle =
-      _impl->subscribe_status([callback](auto &&...args) {
-        return (*callback)(std::forward<decltype(args)>(args)...);
+      _impl->subscribe_status([callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
       });
   auto *handle_ptr = new Winch::StatusHandle(handle);
   return reinterpret_cast<uintptr_t>(handle_ptr);
