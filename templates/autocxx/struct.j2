@@ -1,0 +1,13 @@
+{%- if not name.upper_camel_case.endswith('Result') -%}
+{%- for field in fields -%}
+{%- if field.type_info.name in nested_enums %}
+generate_pod!("mavsdk::{{ plugin_name.upper_camel_case }}_{{ name.upper_camel_case }}_{{ field.type_info.name }}")
+{%- endif -%}
+{%- endfor -%}
+
+{%- if is_pod %}
+generate_pod!("mavsdk::{{ plugin_name.upper_camel_case }}_{{ name.upper_camel_case }}")
+{%- else %}
+generate!("mavsdk::{{ plugin_name.upper_camel_case }}_{{ name.upper_camel_case }}")
+{%- endif %}
+{%- endif -%}

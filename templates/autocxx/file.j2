@@ -1,0 +1,34 @@
+pub mod {{ plugin_name.lower_snake_case }} {
+    autocxx::include_cpp! {
+        #include "{{ plugin_name.lower_snake_case }}.h"
+        name!({{ plugin_name.lower_snake_case }})
+        safety!(unsafe_ffi)
+
+        generate!("mavsdk::{{ plugin_name.upper_camel_case }}")
+        
+        {%- if has_result %}
+        generate_pod!("mavsdk::{{ plugin_name.upper_camel_case }}_Result")
+        {%- endif %}
+        {%- for struct in structs -%}
+        {{ indent(struct, 2) }}
+        {%- endfor %}
+
+        {%- for enum in enums %}
+        {{ enum }}
+        {%- endfor %}
+        {{ methods
+            | map('string')
+            | map('trim')
+            | select
+            | join('\n')
+            | indent(8) }}
+
+        {%- if is_server %}
+        extern_cpp_type!("mavsdk::ServerComponent", crate::core::mavsdk::ServerComponent)
+        {%- else %}
+        extern_cpp_type!("mavsdk::System", crate::core::mavsdk::System)
+        {%- endif %}
+    }
+    pub use {{ plugin_name.lower_snake_case }}::*;
+}
+
