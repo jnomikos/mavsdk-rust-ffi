@@ -392,6 +392,17 @@ public:
    * The mission items are uploaded to a drone. Once uploaded the mission can be
    * started and executed even if the connection is lost.
    */
+  void upload_mission_with_progress_async(MissionPlan mission_plan,
+                                          uintptr_t cb_ptr,
+                                          uintptr_t user_data);
+
+  /**
+   * @brief Upload a list of mission items to the system and report upload
+   * progress.
+   *
+   * The mission items are uploaded to a drone. Once uploaded the mission can be
+   * started and executed even if the connection is lost.
+   */
   void upload_mission_with_progress_async(
       MissionPlan mission_plan,
       const UploadMissionWithProgressCallback &callback);
@@ -441,6 +452,16 @@ public:
    */
   using DownloadMissionWithProgressCallback =
       std::function<void(Result, ProgressDataOrMission)>;
+
+  /**
+   * @brief Download a list of mission items from the system (asynchronous) and
+   * report progress.
+   *
+   * Will fail if any of the downloaded mission items are not supported
+   * by the MAVSDK API.
+   */
+  void download_mission_with_progress_async(uintptr_t cb_ptr,
+                                            uintptr_t user_data);
 
   /**
    * @brief Download a list of mission items from the system (asynchronous) and

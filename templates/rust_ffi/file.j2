@@ -353,6 +353,23 @@ impl<'a> {{ safe_struct_name(struct.name.upper_camel_case) }}<'a> {
             {%- endif %}
         {%- endfor %}
     }
+    
+    {% if methods | selectattr('is_async') | selectattr('is_stream') | selectattr('is_finite', 'equalto', false) | list | length > 0 %}
+        impl Drop for {{ plugin_name.upper_camel_case }}Client {
+            fn drop(&mut self) {
+                if let Ok(mut inner) = self.inner.lock() {
+                    {% for method in methods if method.is_async and method.is_stream and not method.is_finite %}
+                        {%- if method.params|length == 0 %}
+                            if let Some(handle) = inner.{{ method.name.lower_snake_case }}_handle {
+                                inner.plugin.pin_mut().unsubscribe_{{ method.name.lower_snake_case }}(handle as libc::uintptr_t);
+                                unsafe { let _ = Box::from_raw(inner.{{ method.name.lower_snake_case }}_user_data as *mut watch::Sender<std::option::Option<{{ rust_owned_method_type(method) }}>>); }
+                            }
+                        {%- endif %}
+                    {%- endfor %}
+                }
+            }
+        }
+    {% endif %}
 {%- endif %}
 
 {% for method in methods if method.is_async and method.is_stream and not method.is_finite %}

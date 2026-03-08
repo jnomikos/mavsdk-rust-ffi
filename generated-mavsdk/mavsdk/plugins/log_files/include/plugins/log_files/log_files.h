@@ -164,6 +164,12 @@ public:
   /**
    * @brief Download log file.
    */
+  void download_log_file_async(Entry entry, std::string path, uintptr_t cb_ptr,
+                               uintptr_t user_data);
+
+  /**
+   * @brief Download log file.
+   */
   void download_log_file_async(Entry entry, std::string path,
                                const DownloadLogFileCallback &callback);
 

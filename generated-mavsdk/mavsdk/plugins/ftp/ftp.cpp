@@ -19,8 +19,45 @@ Ftp::Ftp(std::shared_ptr<System> system)
 Ftp::~Ftp() {}
 
 void Ftp::download_async(std::string remote_file_path, std::string local_dir,
+                         bool use_burst, uintptr_t cb_ptr,
+                         uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Result, ProgressData);
+
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
+  if (!callback) {
+    // Pass an empty lambda if Rust sends a null pointer to prevent C++ crashes
+    _impl->download_async(remote_file_path, local_dir, use_burst,
+                          [](auto &&...) {});
+    return;
+  }
+
+  _impl->download_async(remote_file_path, local_dir, use_burst,
+                        [callback, user_data](auto &&...args) {
+                          callback(user_data,
+                                   std::forward<decltype(args)>(args)...);
+                        });
+}
+
+void Ftp::download_async(std::string remote_file_path, std::string local_dir,
                          bool use_burst, const DownloadCallback &callback) {
   _impl->download_async(remote_file_path, local_dir, use_burst, callback);
+}
+
+void Ftp::upload_async(std::string local_file_path, std::string remote_dir,
+                       uintptr_t cb_ptr, uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Result, ProgressData);
+
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
+  if (!callback) {
+    // Pass an empty lambda if Rust sends a null pointer to prevent C++ crashes
+    _impl->upload_async(local_file_path, remote_dir, [](auto &&...) {});
+    return;
+  }
+
+  _impl->upload_async(
+      local_file_path, remote_dir, [callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
+      });
 }
 
 void Ftp::upload_async(std::string local_file_path, std::string remote_dir,

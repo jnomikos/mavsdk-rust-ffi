@@ -27,6 +27,23 @@ LogFiles::get_entries() const {
   return _impl->get_entries();
 }
 
+void LogFiles::download_log_file_async(Entry entry, std::string path,
+                                       uintptr_t cb_ptr, uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Result, ProgressData);
+
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
+  if (!callback) {
+    // Pass an empty lambda if Rust sends a null pointer to prevent C++ crashes
+    _impl->download_log_file_async(entry, path, [](auto &&...) {});
+    return;
+  }
+
+  _impl->download_log_file_async(
+      entry, path, [callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
+      });
+}
+
 void LogFiles::download_log_file_async(
     Entry entry, std::string path, const DownloadLogFileCallback &callback) {
   _impl->download_log_file_async(entry, path, callback);

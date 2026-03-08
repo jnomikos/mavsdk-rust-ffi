@@ -1,5 +1,24 @@
 {% if is_async %}
     {% if is_finite %}
+void {{ plugin_name.upper_camel_case }}::{{ name.lower_snake_case }}_async({% for param in params %}{{ param.type_info.name }} {{ param.name.lower_snake_case }}, {% endfor %}uintptr_t cb_ptr, uintptr_t user_data)
+{
+    using RawCallbackType = void(*)(uintptr_t{% if has_result %}, Result{% endif %}{% if return_type.name and return_type.name != 'void' %}, {{ return_type.name }}{% endif %});
+
+    auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
+    if (!callback) {
+        // Pass an empty lambda if Rust sends a null pointer to prevent C++ crashes
+        _impl->{{ name.lower_snake_case }}_async({% for param in params %}{{ param.name.lower_snake_case }}, {% endfor %}[](auto&&...) {});
+        return;
+    }
+
+    _impl->{{ name.lower_snake_case }}_async({% for param in params %}{{ param.name.lower_snake_case }}, {% endfor %}
+        [callback, user_data](auto&&... args) {
+            callback(user_data, std::forward<decltype(args)>(args)...);
+        }
+    );
+    
+}
+
 void {{ plugin_name.upper_camel_case }}::{{ name.lower_snake_case }}_async({% for param in params %}{{ param.type_info.name }} {{ param.name.lower_snake_case }}, {% endfor %}const {{ name.upper_camel_case }}Callback& callback)
 {
     _impl->{{ name.lower_snake_case }}_async({% for param in params %}{{ param.name.lower_snake_case }}, {% endfor %}callback);

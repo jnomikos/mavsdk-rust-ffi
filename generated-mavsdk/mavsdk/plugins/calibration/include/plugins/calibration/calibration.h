@@ -129,6 +129,11 @@ public:
   /**
    * @brief Perform gyro calibration.
    */
+  void calibrate_gyro_async(uintptr_t cb_ptr, uintptr_t user_data);
+
+  /**
+   * @brief Perform gyro calibration.
+   */
   void calibrate_gyro_async(const CalibrateGyroCallback &callback);
 
   /**
@@ -136,6 +141,11 @@ public:
    */
   using CalibrateAccelerometerCallback =
       std::function<void(Result, ProgressData)>;
+
+  /**
+   * @brief Perform accelerometer calibration.
+   */
+  void calibrate_accelerometer_async(uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Perform accelerometer calibration.
@@ -152,6 +162,11 @@ public:
   /**
    * @brief Perform magnetometer calibration.
    */
+  void calibrate_magnetometer_async(uintptr_t cb_ptr, uintptr_t user_data);
+
+  /**
+   * @brief Perform magnetometer calibration.
+   */
   void
   calibrate_magnetometer_async(const CalibrateMagnetometerCallback &callback);
 
@@ -164,6 +179,11 @@ public:
   /**
    * @brief Perform board level horizon calibration.
    */
+  void calibrate_level_horizon_async(uintptr_t cb_ptr, uintptr_t user_data);
+
+  /**
+   * @brief Perform board level horizon calibration.
+   */
   void
   calibrate_level_horizon_async(const CalibrateLevelHorizonCallback &callback);
 
@@ -172,6 +192,12 @@ public:
    */
   using CalibrateGimbalAccelerometerCallback =
       std::function<void(Result, ProgressData)>;
+
+  /**
+   * @brief Perform gimbal accelerometer calibration.
+   */
+  void calibrate_gimbal_accelerometer_async(uintptr_t cb_ptr,
+                                            uintptr_t user_data);
 
   /**
    * @brief Perform gimbal accelerometer calibration.

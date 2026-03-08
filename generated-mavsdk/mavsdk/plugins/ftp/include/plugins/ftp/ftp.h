@@ -144,12 +144,24 @@ public:
    * @brief Downloads a file to local directory.
    */
   void download_async(std::string remote_file_path, std::string local_dir,
+                      bool use_burst, uintptr_t cb_ptr, uintptr_t user_data);
+
+  /**
+   * @brief Downloads a file to local directory.
+   */
+  void download_async(std::string remote_file_path, std::string local_dir,
                       bool use_burst, const DownloadCallback &callback);
 
   /**
    * @brief Callback type for upload_async.
    */
   using UploadCallback = std::function<void(Result, ProgressData)>;
+
+  /**
+   * @brief Uploads local file to remote directory.
+   */
+  void upload_async(std::string local_file_path, std::string remote_dir,
+                    uintptr_t cb_ptr, uintptr_t user_data);
 
   /**
    * @brief Uploads local file to remote directory.

@@ -4,19 +4,12 @@
 #![allow(unused_variables)]
 
 use std::ffi::c_void;
-use tokio::sync::watch;
 use std::sync::Mutex;
-
-
-
-
-
+use tokio::sync::watch;
 
 pub struct ListDirectoryDataOwned {
-        pub dirs: 
-            std::vec::Vec<String>,
-        pub files: 
-            std::vec::Vec<String>,
+    pub dirs: std::vec::Vec<String>,
+    pub files: std::vec::Vec<String>,
 }
 
 /*  */
@@ -31,37 +24,35 @@ impl<'a> ListDirectoryData<'a> {
 
     pub fn into_owned(&self) -> ListDirectoryDataOwned {
         ListDirectoryDataOwned {
-            
             dirs: self.dirs(),
             files: self.files(),
         }
     }
-        ///  The found directories.
+    ///  The found directories.
 
-    pub fn dirs(&self) -> 
-            std::vec::Vec<String> {
-            // CxxString convert to Rust String in vector
-            self.inner.ftp_get_dirs()
-                .iter()
-                .map(|s| s.to_string_lossy().into_owned())
-                .collect()
+    pub fn dirs(&self) -> std::vec::Vec<String> {
+        // CxxString convert to Rust String in vector
+        self.inner
+            .ftp_get_dirs()
+            .iter()
+            .map(|s| s.to_string_lossy().into_owned())
+            .collect()
     }
-        ///  The found files.
+    ///  The found files.
 
-    pub fn files(&self) -> 
-            std::vec::Vec<String> {
-            // CxxString convert to Rust String in vector
-            self.inner.ftp_get_files()
-                .iter()
-                .map(|s| s.to_string_lossy().into_owned())
-                .collect()
+    pub fn files(&self) -> std::vec::Vec<String> {
+        // CxxString convert to Rust String in vector
+        self.inner
+            .ftp_get_files()
+            .iter()
+            .map(|s| s.to_string_lossy().into_owned())
+            .collect()
     }
 }
 
-
 pub struct ProgressDataOwned {
-        pub bytes_transferred: u32,
-        pub total_bytes: u32,
+    pub bytes_transferred: u32,
+    pub total_bytes: u32,
 }
 
 /*  */
@@ -76,46 +67,34 @@ impl<'a> ProgressData<'a> {
 
     pub fn into_owned(&self) -> ProgressDataOwned {
         ProgressDataOwned {
-            
             bytes_transferred: self.bytes_transferred(),
             total_bytes: self.total_bytes(),
         }
     }
-        ///  The number of bytes already transferred.
+    ///  The number of bytes already transferred.
 
     pub fn bytes_transferred(&self) -> u32 {
         self.inner.ftp_get_bytes_transferred()
     }
-        ///  The total bytes to transfer.
+    ///  The total bytes to transfer.
 
     pub fn total_bytes(&self) -> u32 {
         self.inner.ftp_get_total_bytes()
     }
 }
 
-    struct FtpInner {
-        plugin: cxx::UniquePtr<crate::ftp::mavsdk::Ftp>,
-        
-    }
+struct FtpInner {
+    plugin: cxx::UniquePtr<crate::ftp::mavsdk::Ftp>,
+}
 
-    pub struct FtpClient {
-        inner: Mutex<FtpInner>,
-        
-    }
+pub struct FtpClient {
+    inner: Mutex<FtpInner>,
+}
 
-    impl FtpClient {
-        pub fn new(plugin: cxx::UniquePtr<crate::ftp::mavsdk::Ftp>) -> Self {
-            
-
-            Self {
-                inner: Mutex::new(FtpInner {
-                    plugin,
-                    
-                }),
-                
-            }
+impl FtpClient {
+    pub fn new(plugin: cxx::UniquePtr<crate::ftp::mavsdk::Ftp>) -> Self {
+        Self {
+            inner: Mutex::new(FtpInner { plugin }),
         }
-        
-        
     }
-
+}

@@ -31,6 +31,24 @@ Mission::Result Mission::upload_mission(MissionPlan mission_plan) const {
   return _impl->upload_mission(mission_plan);
 }
 
+void Mission::upload_mission_with_progress_async(MissionPlan mission_plan,
+                                                 uintptr_t cb_ptr,
+                                                 uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Result, ProgressData);
+
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
+  if (!callback) {
+    // Pass an empty lambda if Rust sends a null pointer to prevent C++ crashes
+    _impl->upload_mission_with_progress_async(mission_plan, [](auto &&...) {});
+    return;
+  }
+
+  _impl->upload_mission_with_progress_async(
+      mission_plan, [callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
+      });
+}
+
 void Mission::upload_mission_with_progress_async(
     MissionPlan mission_plan,
     const UploadMissionWithProgressCallback &callback) {
@@ -48,6 +66,23 @@ void Mission::download_mission_async(const DownloadMissionCallback callback) {
 std::pair<Mission::Result, Mission::MissionPlan>
 Mission::download_mission() const {
   return _impl->download_mission();
+}
+
+void Mission::download_mission_with_progress_async(uintptr_t cb_ptr,
+                                                   uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Result, ProgressDataOrMission);
+
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
+  if (!callback) {
+    // Pass an empty lambda if Rust sends a null pointer to prevent C++ crashes
+    _impl->download_mission_with_progress_async([](auto &&...) {});
+    return;
+  }
+
+  _impl->download_mission_with_progress_async(
+      [callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
+      });
 }
 
 void Mission::download_mission_with_progress_async(

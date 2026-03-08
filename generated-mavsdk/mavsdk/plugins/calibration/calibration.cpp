@@ -17,8 +17,39 @@ Calibration::Calibration(std::shared_ptr<System> system)
 
 Calibration::~Calibration() {}
 
+void Calibration::calibrate_gyro_async(uintptr_t cb_ptr, uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Result, ProgressData);
+
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
+  if (!callback) {
+    // Pass an empty lambda if Rust sends a null pointer to prevent C++ crashes
+    _impl->calibrate_gyro_async([](auto &&...) {});
+    return;
+  }
+
+  _impl->calibrate_gyro_async([callback, user_data](auto &&...args) {
+    callback(user_data, std::forward<decltype(args)>(args)...);
+  });
+}
+
 void Calibration::calibrate_gyro_async(const CalibrateGyroCallback &callback) {
   _impl->calibrate_gyro_async(callback);
+}
+
+void Calibration::calibrate_accelerometer_async(uintptr_t cb_ptr,
+                                                uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Result, ProgressData);
+
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
+  if (!callback) {
+    // Pass an empty lambda if Rust sends a null pointer to prevent C++ crashes
+    _impl->calibrate_accelerometer_async([](auto &&...) {});
+    return;
+  }
+
+  _impl->calibrate_accelerometer_async([callback, user_data](auto &&...args) {
+    callback(user_data, std::forward<decltype(args)>(args)...);
+  });
 }
 
 void Calibration::calibrate_accelerometer_async(
@@ -26,14 +57,63 @@ void Calibration::calibrate_accelerometer_async(
   _impl->calibrate_accelerometer_async(callback);
 }
 
+void Calibration::calibrate_magnetometer_async(uintptr_t cb_ptr,
+                                               uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Result, ProgressData);
+
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
+  if (!callback) {
+    // Pass an empty lambda if Rust sends a null pointer to prevent C++ crashes
+    _impl->calibrate_magnetometer_async([](auto &&...) {});
+    return;
+  }
+
+  _impl->calibrate_magnetometer_async([callback, user_data](auto &&...args) {
+    callback(user_data, std::forward<decltype(args)>(args)...);
+  });
+}
+
 void Calibration::calibrate_magnetometer_async(
     const CalibrateMagnetometerCallback &callback) {
   _impl->calibrate_magnetometer_async(callback);
 }
 
+void Calibration::calibrate_level_horizon_async(uintptr_t cb_ptr,
+                                                uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Result, ProgressData);
+
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
+  if (!callback) {
+    // Pass an empty lambda if Rust sends a null pointer to prevent C++ crashes
+    _impl->calibrate_level_horizon_async([](auto &&...) {});
+    return;
+  }
+
+  _impl->calibrate_level_horizon_async([callback, user_data](auto &&...args) {
+    callback(user_data, std::forward<decltype(args)>(args)...);
+  });
+}
+
 void Calibration::calibrate_level_horizon_async(
     const CalibrateLevelHorizonCallback &callback) {
   _impl->calibrate_level_horizon_async(callback);
+}
+
+void Calibration::calibrate_gimbal_accelerometer_async(uintptr_t cb_ptr,
+                                                       uintptr_t user_data) {
+  using RawCallbackType = void (*)(uintptr_t, Result, ProgressData);
+
+  auto callback = reinterpret_cast<RawCallbackType>(cb_ptr);
+  if (!callback) {
+    // Pass an empty lambda if Rust sends a null pointer to prevent C++ crashes
+    _impl->calibrate_gimbal_accelerometer_async([](auto &&...) {});
+    return;
+  }
+
+  _impl->calibrate_gimbal_accelerometer_async(
+      [callback, user_data](auto &&...args) {
+        callback(user_data, std::forward<decltype(args)>(args)...);
+      });
 }
 
 void Calibration::calibrate_gimbal_accelerometer_async(

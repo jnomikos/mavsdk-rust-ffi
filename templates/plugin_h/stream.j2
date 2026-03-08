@@ -8,6 +8,11 @@ using {{ name.upper_camel_case }}Callback = std::function<void({% if has_result 
 /**
  * @brief {{ method_description | replace('\n', '\n *')}}
  */
+void {{ name.lower_snake_case }}_async({% for param in params %}{{ param.type_info.name }} {{ param.name.lower_snake_case }}, {% endfor %}uintptr_t cb_ptr, uintptr_t user_data);
+
+/**
+ * @brief {{ method_description | replace('\n', '\n *')}}
+ */
 void {{ name.lower_snake_case }}_async({% for param in params %}{{ param.type_info.name }} {{ param.name.lower_snake_case }}, {% endfor %}const {{ name.upper_camel_case }}Callback& callback);
 
     {% else %}
